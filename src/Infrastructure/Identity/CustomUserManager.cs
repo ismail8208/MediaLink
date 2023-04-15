@@ -22,9 +22,12 @@ public class CustomUserManager : UserManager<ApplicationUser>
     {
         // Add your custom logic here
         CreateUserCommand command = new CreateUserCommand();
+
         command.Email = user.UserName;
         command.Password = password;
+
         var InnerMyUser = await _mediator.Send(command);
+
         user.User = InnerMyUser;
         
         // Call the base CreateAsync method to create the user

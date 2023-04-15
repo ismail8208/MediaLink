@@ -38,7 +38,7 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, int>
         };
 
         entity.AddDomainEvent(new PostCreatedEvent(entity));
-
+      
         _context.Posts.Add(entity);
         await _context.SaveChangesAsync(cancellationToken);
 
