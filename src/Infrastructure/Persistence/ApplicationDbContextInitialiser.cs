@@ -90,7 +90,7 @@ public class ApplicationDbContextInitialiser
             await _context.SaveChangesAsync();
         }
 
-        // Default innerUser
+/*        // Default innerUser
         // Seed, if necessary
         if (!_context.InnerUsers.Any())
         {
@@ -186,7 +186,7 @@ public class ApplicationDbContextInitialiser
                      }
                );
             await _context.SaveChangesAsync();
-        }
+        }*/
 
 
     }
