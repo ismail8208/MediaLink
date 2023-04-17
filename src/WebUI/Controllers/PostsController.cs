@@ -2,13 +2,21 @@
 using MediaLink.Application.Posts.Commands.CreatePost;
 using MediaLink.Application.Posts.Commands.DeletePost;
 using MediaLink.Application.Posts.Commands.UpdatePost;
+using MediaLink.Application.Posts.Queries;
 using MediaLink.Application.Posts.Queries.GetPost;
+using MediaLink.Application.Posts.Queries.GetPostsWithPagination;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace MediaLink.WebUI.Controllers;
 public class PostsController : ApiControllerBase
 {
+    [HttpGet]
+    public async Task<ActionResult<PaginatedList<PostDto>>> GetPostsWithPagination([FromQuery] GetPostsWithPaginationQuery query)
+    {
+        return await Mediator.Send(query);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<PostDto>> Get(int id)
     {

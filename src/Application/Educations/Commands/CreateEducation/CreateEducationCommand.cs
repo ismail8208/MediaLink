@@ -32,7 +32,7 @@ public class CreateEducationCommandHandler : IRequestHandler<CreateEducationComm
         entity.AddDomainEvent(new EducationCreatedEvent(entity));
 
         _context.Educations.Add(entity);
-       
+
         await _context.SaveChangesAsync(cancellationToken);
 
         return entity.Id;

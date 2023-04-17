@@ -1,5 +1,8 @@
-﻿namespace MediaLink.Application.Posts.Queries.GetPost;
-public class PostDto
+﻿using MediaLink.Application.Common.Mappings;
+using MediaLink.Domain.Entities;
+
+namespace MediaLink.Application.Posts.Queries;
+public class PostDto : IMapFrom<Post>
 {
     public int Id { get; set; }
     public string? Content { get; set; }
