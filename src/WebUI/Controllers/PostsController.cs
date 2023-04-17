@@ -13,3 +13,4 @@ public class PostsController : ApiControllerBase
         return await Mediator.Send(command);
     }
 }
+
