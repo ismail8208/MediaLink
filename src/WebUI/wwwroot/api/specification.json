@@ -831,8 +831,648 @@
           "userId": {
             "type": "integer",
             "format": "int32"
+          },
+          "user": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/InnerUser"
+              }
+            ]
           }
         }
+      },
+      "InnerUser": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "firstName": {
+                "type": "string",
+                "nullable": true
+              },
+              "lastName": {
+                "type": "string",
+                "nullable": true
+              },
+              "userName": {
+                "type": "string",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "nullable": true
+              },
+              "password": {
+                "type": "string",
+                "nullable": true
+              },
+              "address": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Address"
+                  }
+                ]
+              },
+              "dateOfBirth": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "gender": {
+                "type": "string",
+                "nullable": true
+              },
+              "skills": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Skill"
+                }
+              },
+              "projects": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              },
+              "experiences": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Experience"
+                }
+              },
+              "endorsements": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Endorsement"
+                }
+              },
+              "educations": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Education"
+                }
+              },
+              "posts": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              },
+              "followers": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Follow"
+                }
+              },
+              "followings": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Follow"
+                }
+              },
+              "sharedPosts": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Share"
+                }
+              },
+              "likes": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Like"
+                }
+              },
+              "comments": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Address": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "country": {
+                "type": "string",
+                "nullable": true
+              },
+              "city": {
+                "type": "string",
+                "nullable": true
+              },
+              "street": {
+                "type": "string",
+                "nullable": true
+              },
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "BaseEntity": {
+        "type": "object",
+        "x-abstract": true,
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "domainEvents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BaseEvent"
+            }
+          }
+        }
+      },
+      "BaseEvent": {
+        "type": "object",
+        "x-abstract": true,
+        "additionalProperties": false
+      },
+      "Skill": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "type": "string",
+                "nullable": true
+              },
+              "endorsements": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Endorsement"
+                }
+              },
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Endorsement": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "skillId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "skill": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Skill"
+                  }
+                ]
+              },
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "BaseAuditableEntity": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseEntity"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "created": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "createdBy": {
+                "type": "string",
+                "nullable": true
+              },
+              "lastModified": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "lastModifiedBy": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "Project": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "experienceId": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "experience": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Experience"
+                  }
+                ]
+              },
+              "content": {
+                "type": "string",
+                "nullable": true
+              },
+              "imageURL": {
+                "type": "string",
+                "nullable": true
+              },
+              "link": {
+                "type": "string",
+                "nullable": true
+              },
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Experience": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "project": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Project"
+                  }
+                ]
+              },
+              "title": {
+                "type": "string",
+                "nullable": true
+              },
+              "content": {
+                "type": "string",
+                "nullable": true
+              },
+              "experienceDate": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Education": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "level": {
+                "type": "string",
+                "nullable": true
+              },
+              "title": {
+                "type": "string",
+                "nullable": true
+              },
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Post": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "content": {
+                "type": "string",
+                "nullable": true
+              },
+              "imageURL": {
+                "type": "string",
+                "nullable": true
+              },
+              "videoURL": {
+                "type": "string",
+                "nullable": true
+              },
+              "numberOfLikes": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "numberOfComments": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              },
+              "likes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Like"
+                }
+              },
+              "comments": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              },
+              "shares": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Share"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Like": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              },
+              "postId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "post": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Post"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Comment": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "content": {
+                "type": "string",
+                "nullable": true
+              },
+              "postId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "post": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Post"
+                  }
+                ]
+              },
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Share": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              },
+              "postId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "post": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Post"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Follow": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "followerID": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "followingID": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "follower": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              },
+              "followee": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              }
+            }
+          }
+        ]
       },
       "CreateCommentCommand": {
         "type": "object",

@@ -8,4 +8,5 @@ public class CommentDto : IMapFrom<Comment>
     public string? Content { get; set; }
     public int PostId { get; set; }
     public int UserId { get; set; }
+    public InnerUser? User { get; set; }
 }

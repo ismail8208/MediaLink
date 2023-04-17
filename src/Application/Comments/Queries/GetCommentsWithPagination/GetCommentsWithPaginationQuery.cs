@@ -29,6 +29,7 @@ public class GetCommentsWithPaginationQueryHandler : IRequestHandler<GetComments
         return await _context.Comments
             .Where(x => x.PostId == request.PostId)
             .OrderBy(x => x.Created)
+            .Include(u => u.User)
             .ProjectTo<CommentDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }
