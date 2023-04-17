@@ -13,6 +13,7 @@ public record UpdatePostCommand : IRequest
     public int NumberOfComments { get; set; }
 }
 
+
 public class UpdatePostCommandHandler : IRequestHandler<UpdatePostCommand>
 {
     private readonly IApplicationDbContext _context;
