@@ -1,10 +1,9 @@
 ﻿using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
-using MediaLink.Application.Educations.Commands.UpdateEducation;
 using MediaLink.Domain.Entities;
 using MediatR;
 
-namespace MediaLink.Application.Projects.UpdateProject;
+namespace MediaLink.Application.Projects.Commands.UpdateProject;
 
 public record UpdateProjectCommand : IRequest
 {
