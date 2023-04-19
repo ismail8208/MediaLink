@@ -48,16 +48,19 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
 
         builder.Entity<Follow>()
                 .HasKey(f => new { f.FollowerID, f.FollowingID });
+
         builder.Entity<Follow>()
             .HasOne(f => f.Follower)
             .WithMany(u => u.Followings)
             .HasForeignKey(f => f.FollowerID)
             .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<Follow>()
             .HasOne(f => f.Followee)
             .WithMany(u => u.Followers)
             .HasForeignKey(f => f.FollowingID)
             .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<Share>()
             .HasOne(s => s.User)
             .WithMany(u => u.SharedPosts)

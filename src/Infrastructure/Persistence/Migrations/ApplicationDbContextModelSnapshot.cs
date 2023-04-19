@@ -930,13 +930,13 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
                     b.HasOne("MediaLink.Domain.Entities.InnerUser", "Follower")
                         .WithMany("Followings")
                         .HasForeignKey("FollowerID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MediaLink.Domain.Entities.InnerUser", "Followee")
                         .WithMany("Followers")
                         .HasForeignKey("FollowingID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Followee");
