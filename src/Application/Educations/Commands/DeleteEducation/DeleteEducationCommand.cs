@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MediaLink.Application.Common.Exceptions;
+﻿using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
-using MediaLink.Application.Educations.Commands.CreateEducation;
-using MediaLink.Domain.Entities;
 using MediaLink.Domain.Events.EducationEvents;
-using MediaLink.Domain.Events.LikeEvents;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Educations.Commands.DeleteEducation;
-public record DeleteEducationCommand(int Id) : IRequest
 
+public record DeleteEducationCommand(int Id) : IRequest;
 
-public class DeleteEducationCommandHandler : IRequestHandler<DeleteEducationCommand, int>
+public class DeleteEducationCommandHandler : IRequestHandler<DeleteEducationCommand>
 {
     private readonly IApplicationDbContext _context;
 

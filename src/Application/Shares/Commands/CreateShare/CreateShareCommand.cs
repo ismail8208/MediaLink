@@ -1,5 +1,6 @@
 ﻿using MediaLink.Application.Common.Interfaces;
 using MediaLink.Domain.Entities;
+using MediaLink.Domain.Events.ShareEvents;
 using MediatR;
 
 namespace MediaLink.Application.Shares.Commands.CreateShare;
