@@ -8,6 +8,9 @@ namespace MediaLink.Application.Educations.Commands.DeleteEducation;
 
 public record DeleteEducationCommand(int Id) : IRequest;
 
+
+public record DeleteEducationCommand(int Id) : IRequest;
+
 public class DeleteEducationCommandHandler : IRequestHandler<DeleteEducationCommand>
 {
     private readonly IApplicationDbContext _context;

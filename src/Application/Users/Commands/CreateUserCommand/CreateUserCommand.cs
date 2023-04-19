@@ -6,7 +6,7 @@ using MediatR;
 namespace MediaLink.Application.Users.Commands.CreateUserCommand;
 public record CreateUserCommand : IRequest<InnerUser>
 {
-    public string? Email { get; set; }
+    public string? UserName { get; set; }
     public string? Password { get; set; }
 }
 
@@ -24,7 +24,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Inner
     {
         var entity = new InnerUser
         {
-            Email = request.Email,
+            UserName = request.UserName,
             Password = request.Password,
         };
         entity.AddDomainEvent(new UserCreatedEvent(entity));
