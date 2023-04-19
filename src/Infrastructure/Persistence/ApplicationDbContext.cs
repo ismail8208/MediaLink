@@ -49,6 +49,10 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
         builder.Entity<Follow>()
                 .HasKey(f => new { f.FollowerID, f.FollowingID });
 
+        builder.Entity<InnerUser>()
+                .HasIndex(u => u.UserName)
+                .IsUnique();
+
         builder.Entity<Follow>()
             .HasOne(f => f.Follower)
             .WithMany(u => u.Followings)
