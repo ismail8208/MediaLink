@@ -28,7 +28,7 @@ public class CustomUserManager : UserManager<ApplicationUser>
         _context = context;
     }
 
-    public override async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
+/*    public override async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
     {
         // Add your custom logic here
         CreateUserCommand command = new CreateUserCommand();
@@ -44,7 +44,7 @@ public class CustomUserManager : UserManager<ApplicationUser>
         var result = await base.CreateAsync(user, password);
 
         return result;
-    }
+    }*/
 
     public override Task<IdentityResult> UpdateAsync(ApplicationUser user)
     {

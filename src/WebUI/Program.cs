@@ -1,4 +1,7 @@
 using MediaLink.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using WebUI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
