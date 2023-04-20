@@ -6,8 +6,8 @@ using MediaLink.Application.Common.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace MediaLink.Application.Comments.Queries.GetCommentsWithPagination;
-public record GetCommentsWithPaginationQuery :IRequest<PaginatedList<CommentDto>>
+namespace MediaLink.Application.Shares.Queries.GetSharesWithPagination;
+public record GetSharesWithPaginationQuery : IRequest<PaginatedList<SharesDto>>
 {
     public int PostId { get; set; }
     public int PageNumber { get; init; } = 1;
@@ -27,8 +27,8 @@ public class GetCommentsWithPaginationQueryHandler : IRequestHandler<GetComments
     public async Task<PaginatedList<CommentDto>> Handle(GetCommentsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.Comments
-            .Where(C => C.PostId == request.PostId)
-            .OrderBy(C => C.Created)
+            .Where(x => x.PostId == request.PostId)
+            .OrderBy(x => x.Created)
             .Include(u => u.User)
             .ProjectTo<CommentDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);

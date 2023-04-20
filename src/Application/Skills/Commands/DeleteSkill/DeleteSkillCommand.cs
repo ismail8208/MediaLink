@@ -1,26 +1,25 @@
 ﻿using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
-using MediaLink.Domain.Events.EducationEvents;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace MediaLink.Application.Educations.Commands.DeleteEducation;
+namespace MediaLink.Application.Skills.Commands.DeleteSkill;
 
 public record DeleteSkillCommand(int Id) : IRequest;
 
-public class DeleteEducationCommandHandler : IRequestHandler<DeleteSkillCommand>
+public class DeleteSkillCommandHandler : IRequestHandler<DeleteSkillCommand>
 {
     private readonly IApplicationDbContext _context;
 
-    public DeleteEducationCommandHandler(IApplicationDbContext context)
+    public DeleteSkillCommandHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
     public async Task<Unit> Handle(DeleteSkillCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Educations
-           .Where(E => E.Id == request.Id)
+        var entity = await _context.Skills
+           .Where(S => S.Id == request.Id)
            .SingleOrDefaultAsync(cancellationToken);
 
         if (entity == null)
@@ -28,9 +27,9 @@ public class DeleteEducationCommandHandler : IRequestHandler<DeleteSkillCommand>
             throw new NotFoundException(nameof(entity));
         }
 
-        _context.Educations.Remove(entity);
+        _context.Skills.Remove(entity);
 
-        entity.AddDomainEvent(new EducationDeletedEvent(entity));
+        entity.AddDomainEvent(new SkillDeletedEvent(entity));
 
         await _context.SaveChangesAsync(cancellationToken);
 

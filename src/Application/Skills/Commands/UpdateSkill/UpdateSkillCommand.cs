@@ -3,39 +3,37 @@ using MediaLink.Application.Common.Interfaces;
 using MediaLink.Domain.Entities;
 using MediatR;
 
-namespace MediaLink.Application.Educations.Commands.UpdateEducation;
+namespace MediaLink.Application.Skills.Commands.UpdateSkill;
 
 public record UpdateSkillCommand : IRequest
 {
     public int Id { get; set; }
-    public string? Level { get; set; }
     public string? Title { get; set; }
     public int UserId { get; set; }
 }
 
-public class UpdateEducationCommandHandler : IRequestHandler<UpdateSkillCommand>
+public class UpdateSkillCommandHandler : IRequestHandler<UpdateSkillCommand>
 {
     private readonly IApplicationDbContext _context;
 
-    public UpdateEducationCommandHandler(IApplicationDbContext context)
+    public UpdateSkillCommandHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
     public async Task<Unit> Handle(UpdateSkillCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Educations
+        var entity = await _context.Skills
             .FindAsync(new object[] { request.Id }, cancellationToken);
 
         if (entity == null)
         {
-            throw new NotFoundException(nameof(Education), request.Id);
+            throw new NotFoundException(nameof(Skill), request.Id);
         }
 
-        entity.Level = request.Level;
         entity.Title = request.Title;
         entity.UserId = request.UserId;
-
+       
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
