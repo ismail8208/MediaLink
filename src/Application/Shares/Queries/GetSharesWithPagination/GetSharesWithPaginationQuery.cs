@@ -7,30 +7,30 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Shares.Queries.GetSharesWithPagination;
-public record GetSharesWithPaginationQuery : IRequest<PaginatedList<SharesDto>>
+public record GetSharesWithPaginationQuery : IRequest<PaginatedList<ShareDto>>
 {
     public int PostId { get; set; }
     public int PageNumber { get; init; } = 1;
     public int PageSize { get; init; } = 10;
 }
 
-public class GetCommentsWithPaginationQueryHandler : IRequestHandler<GetCommentsWithPaginationQuery, PaginatedList<CommentDto>>
+public class GetSharesWithPaginationQueryHandler : IRequestHandler<GetSharesWithPaginationQuery, PaginatedList<ShareDto>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
 
-    public GetCommentsWithPaginationQueryHandler(IApplicationDbContext context, IMapper mapper)
+    public GetSharesWithPaginationQueryHandler(IApplicationDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
     }
-    public async Task<PaginatedList<CommentDto>> Handle(GetCommentsWithPaginationQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedList<ShareDto>> Handle(GetSharesWithPaginationQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Comments
-            .Where(x => x.PostId == request.PostId)
-            .OrderBy(x => x.Created)
+        return await _context.Shares
+            .Where(S => S.PostId == request.PostId)
+            .OrderBy(S => S.Created)
             .Include(u => u.User)
-            .ProjectTo<CommentDto>(_mapper.ConfigurationProvider)
+            .ProjectTo<ShareDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }
 }

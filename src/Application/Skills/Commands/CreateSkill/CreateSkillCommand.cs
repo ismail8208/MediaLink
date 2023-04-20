@@ -1,5 +1,6 @@
 ﻿using MediaLink.Application.Common.Interfaces;
 using MediaLink.Domain.Entities;
+using MediaLink.Domain.Events.SkillEvents;
 using MediatR;
 
 namespace MediaLink.Application.Skills.Commands.CreateSkill;

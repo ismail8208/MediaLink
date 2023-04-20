@@ -1,5 +1,6 @@
 ﻿using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Domain.Events.SkillEvents;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
