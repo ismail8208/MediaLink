@@ -28,23 +28,25 @@ public class CustomUserManager : UserManager<ApplicationUser>
         _context = context;
     }
 
-/*    public override async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
+    public override async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
     {
         // Add your custom logic here
-        CreateUserCommand command = new CreateUserCommand();
 
+        //from me
+        CreateUserCommand command = new CreateUserCommand();
+        command.Email = user.Email;
         command.UserName = user.UserName;
         command.Password = password;
+        command.FirstName = user.FirstName;
+        command.LastName = user.LastName;
+        user.User = await _mediator.Send(command);
+        //from me
 
-        var InnerMyUser = await _mediator.Send(command);
-
-        user.User = InnerMyUser;
-        
         // Call the base CreateAsync method to create the user
         var result = await base.CreateAsync(user, password);
 
         return result;
-    }*/
+    }
 
     public override Task<IdentityResult> UpdateAsync(ApplicationUser user)
     {

@@ -53,6 +53,10 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
                 .HasIndex(u => u.UserName)
                 .IsUnique();
 
+        builder.Entity<InnerUser>()
+               .HasIndex(u => u.Email)
+               .IsUnique();
+
         builder.Entity<Follow>()
             .HasOne(f => f.Follower)
             .WithMany(u => u.Followings)

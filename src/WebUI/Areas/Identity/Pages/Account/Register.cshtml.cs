@@ -136,23 +136,14 @@ namespace WebUI.Areas.Identity.Pages.Account
                 {
 
                     var user = CreateUser();
-
+                    user.FirstName = Input.FirstName;
+                    user.LastName = Input.LastName;
                     await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                     await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                     var result = await _userManager.CreateAsync(user, Input.Password);
 
                     if (result.Succeeded)
                     {
-
-                        //from me
-                        CreateUserCommand command = new CreateUserCommand();
-                        command.Email = Input.Email;
-                        command.UserName = Input.UserName;
-                        command.Password = Input.Password;
-                        command.FirstName = Input.FirstName;
-                        command.LastName = Input.LastName;
-                        user.User = await _mediator.Send(command);
-                        //from me
                         _logger.LogInformation("User created a new account with password.");
 
                         var userId = await _userManager.GetUserIdAsync(user);
