@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Educations.Commands.DeleteEducation;
 
-public record DeleteSkillCommand(int Id) : IRequest;
+public record DeleteEducationCommand(int Id) : IRequest;
 
-public class DeleteEducationCommandHandler : IRequestHandler<DeleteSkillCommand>
+public class DeleteEducationCommandHandler : IRequestHandler<DeleteEducationCommand>
 {
     private readonly IApplicationDbContext _context;
 
@@ -17,7 +17,7 @@ public class DeleteEducationCommandHandler : IRequestHandler<DeleteSkillCommand>
         _context = context;
     }
 
-    public async Task<Unit> Handle(DeleteSkillCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeleteEducationCommand request, CancellationToken cancellationToken)
     {
         var entity = await _context.Educations
            .Where(E => E.Id == request.Id)

@@ -19,20 +19,15 @@ public record GetSkillsWithPaginationQuery : IRequest<PaginatedList<Skill>>
 public class GetSkillsWithPaginationQueryHandler : IRequestHandler<GetSkillsWithPaginationQuery, PaginatedList<Skill>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetSkillsWithPaginationQueryHandler(IApplicationDbContext context, IMapper mapper)
+    public GetSkillsWithPaginationQueryHandler(IApplicationDbContext context)
     {
         _context = context;
-        _mapper = mapper;
     }
     public async Task<PaginatedList<Skill>> Handle(GetSkillsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.Skills
               .Where(S => S.UserId == request.UserId)
               .OrderBy(S => S.Created)
-              .Include(u => u.User)
-              .ProjectTo<Skill>(_mapper.ConfigurationProvider)
               .PaginatedListAsync(request.PageNumber, request.PageSize);
     }
 }

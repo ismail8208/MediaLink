@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using MediaLink.Application.Common.Interfaces;
+﻿using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Common.Mappings;
 using MediaLink.Application.Common.Models;
 using MediaLink.Domain.Entities;
@@ -19,20 +17,15 @@ public record GetExperiencesWithPaginationQuery : IRequest<PaginatedList<Experie
 public class GetExperiencesWithPaginationQueryHandler : IRequestHandler<GetExperiencesWithPaginationQuery, PaginatedList<Experience>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetExperiencesWithPaginationQueryHandler(IApplicationDbContext context, IMapper mapper)
+    public GetExperiencesWithPaginationQueryHandler(IApplicationDbContext context)
     {
         _context = context;
-        _mapper = mapper;
     }
     public async Task<PaginatedList<Experience>> Handle(GetExperiencesWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.Experiences
             .Where(E => E.UserId == request.UserId)
             .OrderBy(E => E.Created)
-            .Include(u => u.User)
-            .ProjectTo<Experience>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }
 }

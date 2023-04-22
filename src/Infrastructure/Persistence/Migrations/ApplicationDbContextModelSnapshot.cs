@@ -166,7 +166,10 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("MediaLink.Domain.Entities.Address", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
@@ -181,6 +184,9 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Addresses");
                 });
@@ -320,6 +326,9 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -327,6 +336,10 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectId")
+                        .IsUnique()
+                        .HasFilter("[ProjectId] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -476,7 +489,10 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("MediaLink.Domain.Entities.Project", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -486,9 +502,6 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ExperienceId")
-                        .HasColumnType("int");
 
                     b.Property<string>("ImageURL")
                         .HasColumnType("nvarchar(max)");
@@ -506,6 +519,8 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Projects");
                 });
@@ -875,7 +890,7 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("MediaLink.Domain.Entities.InnerUser", "User")
                         .WithOne("Address")
-                        .HasForeignKey("MediaLink.Domain.Entities.Address", "Id")
+                        .HasForeignKey("MediaLink.Domain.Entities.Address", "UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -933,11 +948,17 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("MediaLink.Domain.Entities.Experience", b =>
                 {
+                    b.HasOne("MediaLink.Domain.Entities.Project", "Project")
+                        .WithOne("Experience")
+                        .HasForeignKey("MediaLink.Domain.Entities.Experience", "ProjectId");
+
                     b.HasOne("MediaLink.Domain.Entities.InnerUser", "User")
                         .WithMany("Experiences")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Project");
 
                     b.Navigation("User");
                 });
@@ -993,19 +1014,11 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("MediaLink.Domain.Entities.Project", b =>
                 {
-                    b.HasOne("MediaLink.Domain.Entities.Experience", "Experience")
-                        .WithOne("Project")
-                        .HasForeignKey("MediaLink.Domain.Entities.Project", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MediaLink.Domain.Entities.InnerUser", "User")
                         .WithMany("Projects")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Experience");
 
                     b.Navigation("User");
                 });
@@ -1134,11 +1147,6 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MediaLink.Domain.Entities.Experience", b =>
-                {
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("MediaLink.Domain.Entities.InnerUser", b =>
                 {
                     b.Navigation("Address");
@@ -1173,6 +1181,11 @@ namespace MediaLink.Infrastructure.Persistence.Migrations
                     b.Navigation("Likes");
 
                     b.Navigation("Shares");
+                });
+
+            modelBuilder.Entity("MediaLink.Domain.Entities.Project", b =>
+                {
+                    b.Navigation("Experience");
                 });
 
             modelBuilder.Entity("MediaLink.Domain.Entities.Skill", b =>

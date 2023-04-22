@@ -139,7 +139,7 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
         builder.Entity<Project>()
             .HasOne<InnerUser>(u => u.User)
             .WithMany(p => p.Projects)
-            .HasForeignKey(p => p.Id)
+            .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<Endorsement>()
@@ -157,13 +157,13 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
         builder.Entity<InnerUser>()
             .HasOne<Address>(u => u.Address)
             .WithOne(s => s.User)
-            .HasForeignKey<Address>(u => u.Id)
+            .HasForeignKey<Address>(u => u.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<Experience>()
-           .HasOne<Project>(u => u.Project)
+           .HasOne<Project>(p => p.Project)
            .WithOne(p => p.Experience)
-           .HasForeignKey<Project>(u => u.Id);
+           .HasForeignKey<Experience>(u => u.ProjectId);
 
 
         base.OnModelCreating(builder);

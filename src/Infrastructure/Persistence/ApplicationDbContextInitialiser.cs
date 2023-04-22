@@ -111,103 +111,103 @@ public class ApplicationDbContextInitialiser
             await _context.SaveChangesAsync();
         }
 
-/*        // Default innerUser
-        // Seed, if necessary
-        if (!_context.InnerUsers.Any())
-        {
-            _context.InnerUsers.AddRange(
-                new InnerUser
+        /*        // Default innerUser
+                // Seed, if necessary
+                if (!_context.InnerUsers.Any())
                 {
-                    FirstName = "F_user 1",
-                    LastName = "L_user 1",
-                    Email = "email user 1",
-                    Password = "Password user 1",
-                    DateOfBirth = DateTime.Now,
-                    Gender = "Gender 1"
-                },
-                new InnerUser
+                    _context.InnerUsers.AddRange(
+                        new InnerUser
+                        {
+                            FirstName = "F_user 1",
+                            LastName = "L_user 1",
+                            Email = "email user 1",
+                            Password = "Password user 1",
+                            DateOfBirth = DateTime.Now,
+                            Gender = "Gender 1"
+                        },
+                        new InnerUser
+                        {
+                            FirstName = "F_user 2",
+                            LastName = "L_user 2",
+                            Email = "email user 2",
+                            Password = "Password user 2",
+                            DateOfBirth = DateTime.Now,
+                            Gender = "Gender 2"
+                        },
+                        new InnerUser
+                        {
+                            FirstName = "F_user 3",
+                            LastName = "L_user 3",
+                            Email = "email user 3",
+                            Password = "Password user 3",
+                            DateOfBirth = DateTime.Now,
+                            Gender = "Gender 3"
+                        });
+                    await _context.SaveChangesAsync();
+                }
+
+                // Default Posts
+                // Seed, if necessary
+                if (!_context.Posts.Any())
                 {
-                    FirstName = "F_user 2",
-                    LastName = "L_user 2",
-                    Email = "email user 2",
-                    Password = "Password user 2",
-                    DateOfBirth = DateTime.Now,
-                    Gender = "Gender 2"
-                },
-                new InnerUser
-                {
-                    FirstName = "F_user 3",
-                    LastName = "L_user 3",
-                    Email = "email user 3",
-                    Password = "Password user 3",
-                    DateOfBirth = DateTime.Now,
-                    Gender = "Gender 3"
-                });
-            await _context.SaveChangesAsync();
-        }
+                    _context.Posts.AddRange(
+                        new Post
+                        {
+                            Content = " Content of 1 Post",
+                            ImageURL = "Image 1",
+                            NumberOfComments= 2,
+                            NumberOfLikes= 2,
+                            UserId = 1
 
-        // Default Posts
-        // Seed, if necessary
-        if (!_context.Posts.Any())
-        {
-            _context.Posts.AddRange(
-                new Post
-                {
-                    Content = " Content of 1 Post",
-                    ImageURL = "Image 1",
-                    NumberOfComments= 2,
-                    NumberOfLikes= 2,
-                    UserId = 1
+                        },
+                         new Post
+                         {
+                             Content = " Content of 2 Post",
+                             ImageURL = "Image 2",
+                             NumberOfComments = 5,
+                             NumberOfLikes = 7,
+                             UserId = 1
 
-                },
-                 new Post
-                 {
-                     Content = " Content of 2 Post",
-                     ImageURL = "Image 2",
-                     NumberOfComments = 5,
-                     NumberOfLikes = 7,
-                     UserId = 1
+                         },
+                          new Post
+                          {
+                              Content = " Content of 3 Post",
+                              ImageURL = "Image 3",
+                              NumberOfComments = 12,
+                              NumberOfLikes = 8,
+                              UserId = 1
 
-                 },
-                  new Post
-                  {
-                      Content = " Content of 3 Post",
-                      ImageURL = "Image 3",
-                      NumberOfComments = 12,
-                      NumberOfLikes = 8,
-                      UserId = 1
+                          },
+                           new Post
+                           {
+                               Content = " Content of 4 Post",
+                               VideoURL = "Video 1",
+                               NumberOfComments = 6,
+                               NumberOfLikes = 52,
+                               UserId = 2
 
-                  },
-                   new Post
-                   {
-                       Content = " Content of 4 Post",
-                       VideoURL = "Video 1",
-                       NumberOfComments = 6,
-                       NumberOfLikes = 52,
-                       UserId = 2
+                           },
+                            new Post
+                            {
+                                Content = " Content of 5 Post",
+                                ImageURL = "Image 4",
+                                NumberOfComments = 2,
+                                NumberOfLikes = 2,
+                                UserId = 2
 
-                   },
-                    new Post
-                    {
-                        Content = " Content of 5 Post",
-                        ImageURL = "Image 4",
-                        NumberOfComments = 2,
-                        NumberOfLikes = 2,
-                        UserId = 2
+                            },
+                             new Post
+                             {
+                                 Content = " Content of 6 Post",
+                                 ImageURL = "Image 5",
+                                 NumberOfComments = 2,
+                                 NumberOfLikes = 2,
+                                 UserId = 3
 
-                    },
-                     new Post
-                     {
-                         Content = " Content of 6 Post",
-                         ImageURL = "Image 5",
-                         NumberOfComments = 2,
-                         NumberOfLikes = 2,
-                         UserId = 3
-
-                     }
-               );
-            await _context.SaveChangesAsync();
-        }*/
+                             }
+                       );
+                    await _context.SaveChangesAsync();
+                }*/
 
 
     }

@@ -8,7 +8,6 @@ namespace MediaLink.Application.Projects.Commands.UpdateProject;
 public record UpdateProjectCommand : IRequest
 {
     public int Id { get; set; }
-    public int? ExperienceId { get; set; }
     public string? Content { get; set; }
     public string? ImageURL { get; set; }
     public string? Link { get; set; }
@@ -34,7 +33,6 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand>
             throw new NotFoundException(nameof(Project), request.Id);
         }
 
-        entity.ExperienceId = request.ExperienceId;
         entity.Content = request.Content;
         entity.ImageURL = request.ImageURL;
         entity.Link = request.Link;

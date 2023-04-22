@@ -19,20 +19,16 @@ public record GetEducationsWithPaginationQuery : IRequest<PaginatedList<Educatio
 public class GetEducationsWithPaginationQueryHandler : IRequestHandler<GetEducationsWithPaginationQuery, PaginatedList<Education>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
 
-    public GetEducationsWithPaginationQueryHandler(IApplicationDbContext context, IMapper mapper)
+    public GetEducationsWithPaginationQueryHandler(IApplicationDbContext context)
     {
         _context = context;
-        _mapper = mapper;
     }
     public async Task<PaginatedList<Education>> Handle(GetEducationsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.Educations
               .Where(E => E.UserId == request.UserId)
               .OrderBy(E => E.Created)
-              .Include(u => u.User)
-              .ProjectTo<Education>(_mapper.ConfigurationProvider)
               .PaginatedListAsync(request.PageNumber, request.PageSize);
     }
 }

@@ -5,14 +5,14 @@ using MediatR;
 
 namespace MediaLink.Application.Educations.Commands.CreateEducation;
 
-public record CreateSkillCommand : IRequest<int>
+public record CreateEducationCommand : IRequest<int>
 {
     public string? Level { get; set; }
     public string? Title { get; set; }
     public int UserId { get; set; }
 }
 
-public class CreateEducationCommandHandler : IRequestHandler<CreateSkillCommand, int>
+public class CreateEducationCommandHandler : IRequestHandler<CreateEducationCommand, int>
 {
     private readonly IApplicationDbContext _context;
 
@@ -20,7 +20,7 @@ public class CreateEducationCommandHandler : IRequestHandler<CreateSkillCommand,
     {
         _context = context;
     }
-    public async Task<int> Handle(CreateSkillCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(CreateEducationCommand request, CancellationToken cancellationToken)
     {
         var entity = new Education
         {

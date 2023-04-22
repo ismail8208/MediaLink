@@ -1,14 +1,12 @@
-﻿using MediaLink.Application.Common.Interfaces;
+﻿using MediaLink.Application.Common.Exceptions;
+using MediaLink.Application.Common.Interfaces;
 using MediaLink.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Addresses.Queries.GetAddressByUserId;
 
-public record GetAddressQuery : IRequest<Address>
-{
-    public int UserId { get; set; }
-}
+public record GetAddressQuery(int id) : IRequest<Address>;
 
 
 public class GetAddressQueryHandler : IRequestHandler<GetAddressQuery, Address>
@@ -21,8 +19,11 @@ public class GetAddressQueryHandler : IRequestHandler<GetAddressQuery, Address>
     }
     public async Task<Address> Handle(GetAddressQuery request, CancellationToken cancellationToken)
     {
-        return  await _context.Addresses
-            .FirstOrDefaultAsync(A=>A.UserId == request.UserId);
-        
+        var address =  await _context.Addresses.FirstOrDefaultAsync(a=>a.UserId == request.id);
+        if (address == null)
+        {
+            throw new NotFoundException();
+        }
+        return address;
     }
 }

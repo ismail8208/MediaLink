@@ -5,7 +5,7 @@ using MediatR;
 
 namespace MediaLink.Application.Educations.Commands.UpdateEducation;
 
-public record UpdateSkillCommand : IRequest
+public record UpdateEducationCommand : IRequest
 {
     public int Id { get; set; }
     public string? Level { get; set; }
@@ -13,7 +13,7 @@ public record UpdateSkillCommand : IRequest
     public int UserId { get; set; }
 }
 
-public class UpdateEducationCommandHandler : IRequestHandler<UpdateSkillCommand>
+public class UpdateEducationCommandHandler : IRequestHandler<UpdateEducationCommand>
 {
     private readonly IApplicationDbContext _context;
 
@@ -22,7 +22,7 @@ public class UpdateEducationCommandHandler : IRequestHandler<UpdateSkillCommand>
         _context = context;
     }
 
-    public async Task<Unit> Handle(UpdateSkillCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UpdateEducationCommand request, CancellationToken cancellationToken)
     {
         var entity = await _context.Educations
             .FindAsync(new object[] { request.Id }, cancellationToken);
