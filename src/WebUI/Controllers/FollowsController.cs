@@ -8,15 +8,33 @@ using MediaLink.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediaLink.WebUI.Controllers;
-public class FollowersController : ApiControllerBase
+public class FollowsController : ApiControllerBase
 {
-    [HttpPost]
+    [HttpPost("Follow")]
     public async Task<ActionResult<int>> Follow([FromBody] FollowCommand command)
     {
         return Ok(await Mediator.Send(command));
     }
 
-    [HttpGet]
+    [HttpPost("UnFollow")]
+    public async Task<ActionResult<int>> UnFollow([FromBody] UnFollowCommand command)
+    {
+        return Ok(await Mediator.Send(command));
+    }
+
+    [HttpPost("CancelFollower")]
+    public async Task<ActionResult<int>> CancelFollower([FromBody] CancelFollowerCommand command)
+    {
+        return Ok(await Mediator.Send(command));
+    }
+
+    [HttpGet("Followings")]
+    public async Task<ActionResult<PaginatedList<InnerUser>>> GetFollowingsWithPagination([FromQuery] GetFollowingsWithPaginationQuery query)
+    {
+        return await Mediator.Send(query);
+    }
+
+    [HttpGet("Followers")]
     public async Task<ActionResult<PaginatedList<InnerUser>>> GetFollowersWithPagination([FromQuery] GetFollowersWithPaginationQuery query)
     {
         return await Mediator.Send(query);

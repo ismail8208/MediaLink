@@ -2,6 +2,8 @@
 using MediaLink.Application.Addresses.Commands.DeleteAddress;
 using MediaLink.Application.Addresses.Commands.UpdateAddress;
 using MediaLink.Application.Addresses.Queries.GetAddressByUserId;
+using MediaLink.Application.Addresses.Queries.SearchAddress;
+using MediaLink.Application.Common.Models;
 using MediaLink.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +11,14 @@ namespace MediaLink.WebUI.Controllers;
 
 public class AddressesController : ApiControllerBase
 {
+    [HttpGet("{address}/Search")]
+    public async Task<ActionResult<PaginatedList<AddressDto>>> Search(string address)
+    {
+        var query = new SearchAddressQuery();
+        query.Query = address;
+        return await Mediator.Send(query);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Address>> Get(int id)
     {

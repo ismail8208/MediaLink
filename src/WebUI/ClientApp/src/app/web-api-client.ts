@@ -16,6 +16,7 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAddressesClient {
+    search(address: string | null): Observable<PaginatedListOfAddressDto>;
     get(id: number): Observable<Address>;
     update(id: number, command: UpdateAddressCommand): Observable<FileResponse>;
     delete(id: number): Observable<FileResponse>;
@@ -33,6 +34,57 @@ export class AddressesClient implements IAddressesClient {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    search(address: string | null): Observable<PaginatedListOfAddressDto> {
+        let url_ = this.baseUrl + "/api/Addresses/{address}/Search";
+        if (address === undefined || address === null)
+            throw new Error("The parameter 'address' must be defined.");
+        url_ = url_.replace("{address}", encodeURIComponent("" + address));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSearch(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSearch(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaginatedListOfAddressDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaginatedListOfAddressDto>;
+        }));
+    }
+
+    protected processSearch(response: HttpResponseBase): Observable<PaginatedListOfAddressDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaginatedListOfAddressDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
     }
 
     get(id: number): Observable<Address> {
@@ -231,77 +283,6 @@ export class AddressesClient implements IAddressesClient {
     }
 
     protected processCreate(response: HttpResponseBase): Observable<number> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-}
-
-export interface ICancelFollowerClient {
-    cancelFollow(command: CancelFollowerCommand): Observable<number>;
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class CancelFollowerClient implements ICancelFollowerClient {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-    }
-
-    cancelFollow(command: CancelFollowerCommand): Observable<number> {
-        let url_ = this.baseUrl + "/api/CancelFollower";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(command);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCancelFollow(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCancelFollow(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<number>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<number>;
-        }));
-    }
-
-    protected processCancelFollow(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -574,6 +555,7 @@ export class CommentsClient implements ICommentsClient {
 }
 
 export interface IEducationsClient {
+    search(education: string | null): Observable<PaginatedListOfEducationDto>;
     getEducationsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfEducation>;
     create(command: CreateEducationCommand): Observable<number>;
     update(id: number, command: UpdateEducationCommand): Observable<FileResponse>;
@@ -591,6 +573,57 @@ export class EducationsClient implements IEducationsClient {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    search(education: string | null): Observable<PaginatedListOfEducationDto> {
+        let url_ = this.baseUrl + "/api/Educations/{education}/Search";
+        if (education === undefined || education === null)
+            throw new Error("The parameter 'education' must be defined.");
+        url_ = url_.replace("{education}", encodeURIComponent("" + education));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSearch(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSearch(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaginatedListOfEducationDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaginatedListOfEducationDto>;
+        }));
+    }
+
+    protected processSearch(response: HttpResponseBase): Observable<PaginatedListOfEducationDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaginatedListOfEducationDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
     }
 
     getEducationsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfEducation> {
@@ -1314,15 +1347,18 @@ export class ExperiencesClient implements IExperiencesClient {
     }
 }
 
-export interface IFollowersClient {
+export interface IFollowsClient {
     follow(command: FollowCommand): Observable<number>;
+    unFollow(command: UnFollowCommand): Observable<number>;
+    cancelFollower(command: CancelFollowerCommand): Observable<number>;
+    getFollowingsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfInnerUser>;
     getFollowersWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfInnerUser>;
 }
 
 @Injectable({
     providedIn: 'root'
 })
-export class FollowersClient implements IFollowersClient {
+export class FollowsClient implements IFollowsClient {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -1333,7 +1369,7 @@ export class FollowersClient implements IFollowersClient {
     }
 
     follow(command: FollowCommand): Observable<number> {
-        let url_ = this.baseUrl + "/api/Followers";
+        let url_ = this.baseUrl + "/api/Follows/Follow";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(command);
@@ -1385,87 +1421,8 @@ export class FollowersClient implements IFollowersClient {
         return _observableOf(null as any);
     }
 
-    getFollowersWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfInnerUser> {
-        let url_ = this.baseUrl + "/api/Followers?";
-        if (userId === null)
-            throw new Error("The parameter 'userId' cannot be null.");
-        else if (userId !== undefined)
-            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
-        if (pageNumber === null)
-            throw new Error("The parameter 'pageNumber' cannot be null.");
-        else if (pageNumber !== undefined)
-            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
-        if (pageSize === null)
-            throw new Error("The parameter 'pageSize' cannot be null.");
-        else if (pageSize !== undefined)
-            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetFollowersWithPagination(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetFollowersWithPagination(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<PaginatedListOfInnerUser>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<PaginatedListOfInnerUser>;
-        }));
-    }
-
-    protected processGetFollowersWithPagination(response: HttpResponseBase): Observable<PaginatedListOfInnerUser> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PaginatedListOfInnerUser.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-}
-
-export interface IFollowingsClient {
-    unFollow(command: UnFollowCommand): Observable<number>;
-    getFollowingsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfInnerUser>;
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class FollowingsClient implements IFollowingsClient {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-    }
-
     unFollow(command: UnFollowCommand): Observable<number> {
-        let url_ = this.baseUrl + "/api/Followings";
+        let url_ = this.baseUrl + "/api/Follows/UnFollow";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(command);
@@ -1517,8 +1474,61 @@ export class FollowingsClient implements IFollowingsClient {
         return _observableOf(null as any);
     }
 
+    cancelFollower(command: CancelFollowerCommand): Observable<number> {
+        let url_ = this.baseUrl + "/api/Follows/CancelFollower";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelFollower(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelFollower(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processCancelFollower(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
     getFollowingsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfInnerUser> {
-        let url_ = this.baseUrl + "/api/Followings?";
+        let url_ = this.baseUrl + "/api/Follows/Followings?";
         if (userId === null)
             throw new Error("The parameter 'userId' cannot be null.");
         else if (userId !== undefined)
@@ -1556,6 +1566,66 @@ export class FollowingsClient implements IFollowingsClient {
     }
 
     protected processGetFollowingsWithPagination(response: HttpResponseBase): Observable<PaginatedListOfInnerUser> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaginatedListOfInnerUser.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getFollowersWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfInnerUser> {
+        let url_ = this.baseUrl + "/api/Follows/Followers?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
+        if (pageNumber === null)
+            throw new Error("The parameter 'pageNumber' cannot be null.");
+        else if (pageNumber !== undefined)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetFollowersWithPagination(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetFollowersWithPagination(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaginatedListOfInnerUser>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaginatedListOfInnerUser>;
+        }));
+    }
+
+    protected processGetFollowersWithPagination(response: HttpResponseBase): Observable<PaginatedListOfInnerUser> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2503,6 +2573,7 @@ export class SharesClient implements ISharesClient {
 }
 
 export interface ISkillsClient {
+    search(skill: string | null): Observable<PaginatedListOfSkillDto>;
     getSkillsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfSkill>;
     create(command: CreateSkillCommand): Observable<number>;
     update(id: number, command: UpdateSkillCommand): Observable<FileResponse>;
@@ -2520,6 +2591,57 @@ export class SkillsClient implements ISkillsClient {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    search(skill: string | null): Observable<PaginatedListOfSkillDto> {
+        let url_ = this.baseUrl + "/api/Skills/{skill}/Search";
+        if (skill === undefined || skill === null)
+            throw new Error("The parameter 'skill' must be defined.");
+        url_ = url_.replace("{skill}", encodeURIComponent("" + skill));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSearch(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSearch(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaginatedListOfSkillDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaginatedListOfSkillDto>;
+        }));
+    }
+
+    protected processSearch(response: HttpResponseBase): Observable<PaginatedListOfSkillDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaginatedListOfSkillDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
     }
 
     getSkillsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfSkill> {
@@ -3351,6 +3473,75 @@ export class TodoListsClient implements ITodoListsClient {
     }
 }
 
+export interface IUsersClient {
+    search(name: string | null): Observable<PaginatedListOfUserDto>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class UsersClient implements IUsersClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    search(name: string | null): Observable<PaginatedListOfUserDto> {
+        let url_ = this.baseUrl + "/api/Users/{name}";
+        if (name === undefined || name === null)
+            throw new Error("The parameter 'name' must be defined.");
+        url_ = url_.replace("{name}", encodeURIComponent("" + name));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSearch(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSearch(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaginatedListOfUserDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaginatedListOfUserDto>;
+        }));
+    }
+
+    protected processSearch(response: HttpResponseBase): Observable<PaginatedListOfUserDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaginatedListOfUserDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface IWeatherForecastClient {
     get(): Observable<WeatherForecast[]>;
 }
@@ -3422,6 +3613,118 @@ export class WeatherForecastClient implements IWeatherForecastClient {
         }
         return _observableOf(null as any);
     }
+}
+
+export class PaginatedListOfAddressDto implements IPaginatedListOfAddressDto {
+    items?: AddressDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+
+    constructor(data?: IPaginatedListOfAddressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(AddressDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            this.hasPreviousPage = _data["hasPreviousPage"];
+            this.hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedListOfAddressDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedListOfAddressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export interface IPaginatedListOfAddressDto {
+    items?: AddressDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export class AddressDto implements IAddressDto {
+    id?: number;
+    country?: string | undefined;
+    city?: string | undefined;
+    street?: string | undefined;
+
+    constructor(data?: IAddressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.country = _data["country"];
+            this.city = _data["city"];
+            this.street = _data["street"];
+        }
+    }
+
+    static fromJS(data: any): AddressDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["country"] = this.country;
+        data["city"] = this.city;
+        data["street"] = this.street;
+        return data;
+    }
+}
+
+export interface IAddressDto {
+    id?: number;
+    country?: string | undefined;
+    city?: string | undefined;
+    street?: string | undefined;
 }
 
 export abstract class BaseEntity implements IBaseEntity {
@@ -3528,6 +3831,7 @@ export class InnerUser extends BaseEntity implements IInnerUser {
     address?: Address | undefined;
     dateOfBirth?: Date;
     gender?: string | undefined;
+    profileImage?: string | undefined;
     skills?: Skill[] | undefined;
     projects?: Project[] | undefined;
     experiences?: Experience[] | undefined;
@@ -3555,6 +3859,7 @@ export class InnerUser extends BaseEntity implements IInnerUser {
             this.address = _data["address"] ? Address.fromJS(_data["address"]) : <any>undefined;
             this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
             this.gender = _data["gender"];
+            this.profileImage = _data["profileImage"];
             if (Array.isArray(_data["skills"])) {
                 this.skills = [] as any;
                 for (let item of _data["skills"])
@@ -3630,6 +3935,7 @@ export class InnerUser extends BaseEntity implements IInnerUser {
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
         data["gender"] = this.gender;
+        data["profileImage"] = this.profileImage;
         if (Array.isArray(this.skills)) {
             data["skills"] = [];
             for (let item of this.skills)
@@ -3699,6 +4005,7 @@ export interface IInnerUser extends IBaseEntity {
     address?: Address | undefined;
     dateOfBirth?: Date;
     gender?: string | undefined;
+    profileImage?: string | undefined;
     skills?: Skill[] | undefined;
     projects?: Project[] | undefined;
     experiences?: Experience[] | undefined;
@@ -3758,9 +4065,9 @@ export interface IBaseAuditableEntity extends IBaseEntity {
 export class Skill extends BaseAuditableEntity implements ISkill {
     title?: string | undefined;
     endorsements?: Endorsement[] | undefined;
-    userId?: number;
+    userId?: number | undefined;
     user?: InnerUser | undefined;
-    jobId?: number;
+    jobId?: number | undefined;
     job?: Job | undefined;
 
     constructor(data?: ISkill) {
@@ -3810,9 +4117,9 @@ export class Skill extends BaseAuditableEntity implements ISkill {
 export interface ISkill extends IBaseAuditableEntity {
     title?: string | undefined;
     endorsements?: Endorsement[] | undefined;
-    userId?: number;
+    userId?: number | undefined;
     user?: InnerUser | undefined;
-    jobId?: number;
+    jobId?: number | undefined;
     job?: Job | undefined;
 }
 
@@ -3891,7 +4198,7 @@ export interface IBaseEvent {
 
 export class Job extends BaseAuditableEntity implements IJob {
     title?: string | undefined;
-    content?: string | undefined;
+    description?: string | undefined;
     userId?: number;
     user?: InnerUser | undefined;
     comments?: Comment[] | undefined;
@@ -3906,7 +4213,7 @@ export class Job extends BaseAuditableEntity implements IJob {
         super.init(_data);
         if (_data) {
             this.title = _data["title"];
-            this.content = _data["content"];
+            this.description = _data["description"];
             this.userId = _data["userId"];
             this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
             if (Array.isArray(_data["comments"])) {
@@ -3937,7 +4244,7 @@ export class Job extends BaseAuditableEntity implements IJob {
     override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["title"] = this.title;
-        data["content"] = this.content;
+        data["description"] = this.description;
         data["userId"] = this.userId;
         data["user"] = this.user ? this.user.toJSON() : <any>undefined;
         if (Array.isArray(this.comments)) {
@@ -3962,7 +4269,7 @@ export class Job extends BaseAuditableEntity implements IJob {
 
 export interface IJob extends IBaseAuditableEntity {
     title?: string | undefined;
-    content?: string | undefined;
+    description?: string | undefined;
     userId?: number;
     user?: InnerUser | undefined;
     comments?: Comment[] | undefined;
@@ -3972,11 +4279,11 @@ export interface IJob extends IBaseAuditableEntity {
 
 export class Comment extends BaseAuditableEntity implements IComment {
     content?: string | undefined;
-    postId?: number;
+    postId?: number | undefined;
     post?: Post | undefined;
     userId?: number;
     user?: InnerUser | undefined;
-    jobId?: number;
+    jobId?: number | undefined;
     job?: Job | undefined;
 
     constructor(data?: IComment) {
@@ -4019,11 +4326,11 @@ export class Comment extends BaseAuditableEntity implements IComment {
 
 export interface IComment extends IBaseAuditableEntity {
     content?: string | undefined;
-    postId?: number;
+    postId?: number | undefined;
     post?: Post | undefined;
     userId?: number;
     user?: InnerUser | undefined;
-    jobId?: number;
+    jobId?: number | undefined;
     job?: Job | undefined;
 }
 
@@ -4121,11 +4428,11 @@ export interface IPost extends IBaseAuditableEntity {
 }
 
 export class Like extends BaseAuditableEntity implements ILike {
-    userId?: number;
+    userId?: number | undefined;
     user?: InnerUser | undefined;
     postId?: number;
     post?: Post | undefined;
-    jobId?: number;
+    jobId?: number | undefined;
     job?: Job | undefined;
 
     constructor(data?: ILike) {
@@ -4165,11 +4472,11 @@ export class Like extends BaseAuditableEntity implements ILike {
 }
 
 export interface ILike extends IBaseAuditableEntity {
-    userId?: number;
+    userId?: number | undefined;
     user?: InnerUser | undefined;
     postId?: number;
     post?: Post | undefined;
-    jobId?: number;
+    jobId?: number | undefined;
     job?: Job | undefined;
 }
 
@@ -4223,7 +4530,8 @@ export interface IShare extends IBaseAuditableEntity {
 }
 
 export class Project extends BaseAuditableEntity implements IProject {
-    content?: string | undefined;
+    title?: string | undefined;
+    description?: string | undefined;
     imageURL?: string | undefined;
     link?: string | undefined;
     userId?: number;
@@ -4237,7 +4545,8 @@ export class Project extends BaseAuditableEntity implements IProject {
     override init(_data?: any) {
         super.init(_data);
         if (_data) {
-            this.content = _data["content"];
+            this.title = _data["title"];
+            this.description = _data["description"];
             this.imageURL = _data["imageURL"];
             this.link = _data["link"];
             this.userId = _data["userId"];
@@ -4255,7 +4564,8 @@ export class Project extends BaseAuditableEntity implements IProject {
 
     override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["content"] = this.content;
+        data["title"] = this.title;
+        data["description"] = this.description;
         data["imageURL"] = this.imageURL;
         data["link"] = this.link;
         data["userId"] = this.userId;
@@ -4267,7 +4577,8 @@ export class Project extends BaseAuditableEntity implements IProject {
 }
 
 export interface IProject extends IBaseAuditableEntity {
-    content?: string | undefined;
+    title?: string | undefined;
+    description?: string | undefined;
     imageURL?: string | undefined;
     link?: string | undefined;
     userId?: number;
@@ -4279,7 +4590,7 @@ export class Experience extends BaseAuditableEntity implements IExperience {
     projectId?: number | undefined;
     project?: Project | undefined;
     title?: string | undefined;
-    content?: string | undefined;
+    description?: string | undefined;
     experienceDate?: Date | undefined;
     userId?: number;
     user?: InnerUser | undefined;
@@ -4294,7 +4605,7 @@ export class Experience extends BaseAuditableEntity implements IExperience {
             this.projectId = _data["projectId"];
             this.project = _data["project"] ? Project.fromJS(_data["project"]) : <any>undefined;
             this.title = _data["title"];
-            this.content = _data["content"];
+            this.description = _data["description"];
             this.experienceDate = _data["experienceDate"] ? new Date(_data["experienceDate"].toString()) : <any>undefined;
             this.userId = _data["userId"];
             this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
@@ -4313,7 +4624,7 @@ export class Experience extends BaseAuditableEntity implements IExperience {
         data["projectId"] = this.projectId;
         data["project"] = this.project ? this.project.toJSON() : <any>undefined;
         data["title"] = this.title;
-        data["content"] = this.content;
+        data["description"] = this.description;
         data["experienceDate"] = this.experienceDate ? this.experienceDate.toISOString() : <any>undefined;
         data["userId"] = this.userId;
         data["user"] = this.user ? this.user.toJSON() : <any>undefined;
@@ -4326,7 +4637,7 @@ export interface IExperience extends IBaseAuditableEntity {
     projectId?: number | undefined;
     project?: Project | undefined;
     title?: string | undefined;
-    content?: string | undefined;
+    description?: string | undefined;
     experienceDate?: Date | undefined;
     userId?: number;
     user?: InnerUser | undefined;
@@ -4516,46 +4827,6 @@ export interface IUpdateAddressCommand {
     country?: string | undefined;
     city?: string | undefined;
     street?: string | undefined;
-}
-
-export class CancelFollowerCommand implements ICancelFollowerCommand {
-    userId?: number;
-    specificUserId?: number;
-
-    constructor(data?: ICancelFollowerCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.userId = _data["userId"];
-            this.specificUserId = _data["specificUserId"];
-        }
-    }
-
-    static fromJS(data: any): CancelFollowerCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new CancelFollowerCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["specificUserId"] = this.specificUserId;
-        return data;
-    }
-}
-
-export interface ICancelFollowerCommand {
-    userId?: number;
-    specificUserId?: number;
 }
 
 export class PaginatedListOfCommentDto implements IPaginatedListOfCommentDto {
@@ -4756,6 +5027,110 @@ export class UpdateCommentCommand implements IUpdateCommentCommand {
 export interface IUpdateCommentCommand {
     id?: number;
     content?: string | undefined;
+}
+
+export class PaginatedListOfEducationDto implements IPaginatedListOfEducationDto {
+    items?: EducationDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+
+    constructor(data?: IPaginatedListOfEducationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(EducationDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            this.hasPreviousPage = _data["hasPreviousPage"];
+            this.hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedListOfEducationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedListOfEducationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export interface IPaginatedListOfEducationDto {
+    items?: EducationDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export class EducationDto implements IEducationDto {
+    id?: number;
+    level?: string | undefined;
+
+    constructor(data?: IEducationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.level = _data["level"];
+        }
+    }
+
+    static fromJS(data: any): EducationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EducationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["level"] = this.level;
+        return data;
+    }
+}
+
+export interface IEducationDto {
+    id?: number;
+    level?: string | undefined;
 }
 
 export class PaginatedListOfEducation implements IPaginatedListOfEducation {
@@ -5128,7 +5503,7 @@ export interface IPaginatedListOfExperience {
 
 export class CreateExperienceCommand implements ICreateExperienceCommand {
     title?: string | undefined;
-    content?: string | undefined;
+    description?: string | undefined;
     experienceDate?: Date | undefined;
     userId?: number;
 
@@ -5144,7 +5519,7 @@ export class CreateExperienceCommand implements ICreateExperienceCommand {
     init(_data?: any) {
         if (_data) {
             this.title = _data["title"];
-            this.content = _data["content"];
+            this.description = _data["description"];
             this.experienceDate = _data["experienceDate"] ? new Date(_data["experienceDate"].toString()) : <any>undefined;
             this.userId = _data["userId"];
         }
@@ -5160,7 +5535,7 @@ export class CreateExperienceCommand implements ICreateExperienceCommand {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["title"] = this.title;
-        data["content"] = this.content;
+        data["description"] = this.description;
         data["experienceDate"] = this.experienceDate ? this.experienceDate.toISOString() : <any>undefined;
         data["userId"] = this.userId;
         return data;
@@ -5169,7 +5544,7 @@ export class CreateExperienceCommand implements ICreateExperienceCommand {
 
 export interface ICreateExperienceCommand {
     title?: string | undefined;
-    content?: string | undefined;
+    description?: string | undefined;
     experienceDate?: Date | undefined;
     userId?: number;
 }
@@ -5177,7 +5552,7 @@ export interface ICreateExperienceCommand {
 export class UpdateExperienceCommand implements IUpdateExperienceCommand {
     id?: number;
     title?: string | undefined;
-    content?: string | undefined;
+    description?: string | undefined;
     experienceDate?: Date | undefined;
     userId?: number;
 
@@ -5194,7 +5569,7 @@ export class UpdateExperienceCommand implements IUpdateExperienceCommand {
         if (_data) {
             this.id = _data["id"];
             this.title = _data["title"];
-            this.content = _data["content"];
+            this.description = _data["description"];
             this.experienceDate = _data["experienceDate"] ? new Date(_data["experienceDate"].toString()) : <any>undefined;
             this.userId = _data["userId"];
         }
@@ -5211,7 +5586,7 @@ export class UpdateExperienceCommand implements IUpdateExperienceCommand {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["title"] = this.title;
-        data["content"] = this.content;
+        data["description"] = this.description;
         data["experienceDate"] = this.experienceDate ? this.experienceDate.toISOString() : <any>undefined;
         data["userId"] = this.userId;
         return data;
@@ -5221,7 +5596,7 @@ export class UpdateExperienceCommand implements IUpdateExperienceCommand {
 export interface IUpdateExperienceCommand {
     id?: number;
     title?: string | undefined;
-    content?: string | undefined;
+    description?: string | undefined;
     experienceDate?: Date | undefined;
     userId?: number;
 }
@@ -5306,6 +5681,86 @@ export interface IFollowCommand {
     specificUserId?: number;
 }
 
+export class UnFollowCommand implements IUnFollowCommand {
+    userId?: number;
+    specificUserId?: number;
+
+    constructor(data?: IUnFollowCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.specificUserId = _data["specificUserId"];
+        }
+    }
+
+    static fromJS(data: any): UnFollowCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UnFollowCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["specificUserId"] = this.specificUserId;
+        return data;
+    }
+}
+
+export interface IUnFollowCommand {
+    userId?: number;
+    specificUserId?: number;
+}
+
+export class CancelFollowerCommand implements ICancelFollowerCommand {
+    userId?: number;
+    specificUserId?: number;
+
+    constructor(data?: ICancelFollowerCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.specificUserId = _data["specificUserId"];
+        }
+    }
+
+    static fromJS(data: any): CancelFollowerCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelFollowerCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["specificUserId"] = this.specificUserId;
+        return data;
+    }
+}
+
+export interface ICancelFollowerCommand {
+    userId?: number;
+    specificUserId?: number;
+}
+
 export class PaginatedListOfInnerUser implements IPaginatedListOfInnerUser {
     items?: InnerUser[];
     pageNumber?: number;
@@ -5368,46 +5823,6 @@ export interface IPaginatedListOfInnerUser {
     totalCount?: number;
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
-}
-
-export class UnFollowCommand implements IUnFollowCommand {
-    userId?: number;
-    specificUserId?: number;
-
-    constructor(data?: IUnFollowCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.userId = _data["userId"];
-            this.specificUserId = _data["specificUserId"];
-        }
-    }
-
-    static fromJS(data: any): UnFollowCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new UnFollowCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["specificUserId"] = this.specificUserId;
-        return data;
-    }
-}
-
-export interface IUnFollowCommand {
-    userId?: number;
-    specificUserId?: number;
 }
 
 export class PaginatedListOfLikeDto implements IPaginatedListOfLikeDto {
@@ -5923,7 +6338,8 @@ export interface IProjectDto {
 }
 
 export class CreateProjectCommand implements ICreateProjectCommand {
-    content?: string | undefined;
+    title?: string | undefined;
+    description?: string | undefined;
     imageURL?: string | undefined;
     link?: string | undefined;
     userId?: number;
@@ -5939,7 +6355,8 @@ export class CreateProjectCommand implements ICreateProjectCommand {
 
     init(_data?: any) {
         if (_data) {
-            this.content = _data["content"];
+            this.title = _data["title"];
+            this.description = _data["description"];
             this.imageURL = _data["imageURL"];
             this.link = _data["link"];
             this.userId = _data["userId"];
@@ -5955,7 +6372,8 @@ export class CreateProjectCommand implements ICreateProjectCommand {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["content"] = this.content;
+        data["title"] = this.title;
+        data["description"] = this.description;
         data["imageURL"] = this.imageURL;
         data["link"] = this.link;
         data["userId"] = this.userId;
@@ -5964,7 +6382,8 @@ export class CreateProjectCommand implements ICreateProjectCommand {
 }
 
 export interface ICreateProjectCommand {
-    content?: string | undefined;
+    title?: string | undefined;
+    description?: string | undefined;
     imageURL?: string | undefined;
     link?: string | undefined;
     userId?: number;
@@ -5972,7 +6391,7 @@ export interface ICreateProjectCommand {
 
 export class UpdateProjectCommand implements IUpdateProjectCommand {
     id?: number;
-    content?: string | undefined;
+    description?: string | undefined;
     imageURL?: string | undefined;
     link?: string | undefined;
     userId?: number;
@@ -5989,7 +6408,7 @@ export class UpdateProjectCommand implements IUpdateProjectCommand {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
-            this.content = _data["content"];
+            this.description = _data["description"];
             this.imageURL = _data["imageURL"];
             this.link = _data["link"];
             this.userId = _data["userId"];
@@ -6006,7 +6425,7 @@ export class UpdateProjectCommand implements IUpdateProjectCommand {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["content"] = this.content;
+        data["description"] = this.description;
         data["imageURL"] = this.imageURL;
         data["link"] = this.link;
         data["userId"] = this.userId;
@@ -6016,7 +6435,7 @@ export class UpdateProjectCommand implements IUpdateProjectCommand {
 
 export interface IUpdateProjectCommand {
     id?: number;
-    content?: string | undefined;
+    description?: string | undefined;
     imageURL?: string | undefined;
     link?: string | undefined;
     userId?: number;
@@ -6172,6 +6591,110 @@ export class CreateShareCommand implements ICreateShareCommand {
 export interface ICreateShareCommand {
     userId?: number;
     postId?: number;
+}
+
+export class PaginatedListOfSkillDto implements IPaginatedListOfSkillDto {
+    items?: SkillDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+
+    constructor(data?: IPaginatedListOfSkillDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SkillDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            this.hasPreviousPage = _data["hasPreviousPage"];
+            this.hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedListOfSkillDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedListOfSkillDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export interface IPaginatedListOfSkillDto {
+    items?: SkillDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export class SkillDto implements ISkillDto {
+    id?: number;
+    title?: string | undefined;
+
+    constructor(data?: ISkillDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.title = _data["title"];
+        }
+    }
+
+    static fromJS(data: any): SkillDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SkillDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        return data;
+    }
+}
+
+export interface ISkillDto {
+    id?: number;
+    title?: string | undefined;
 }
 
 export class PaginatedListOfSkill implements IPaginatedListOfSkill {
@@ -6855,6 +7378,122 @@ export class UpdateTodoListCommand implements IUpdateTodoListCommand {
 export interface IUpdateTodoListCommand {
     id?: number;
     title?: string | undefined;
+}
+
+export class PaginatedListOfUserDto implements IPaginatedListOfUserDto {
+    items?: UserDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+
+    constructor(data?: IPaginatedListOfUserDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(UserDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            this.hasPreviousPage = _data["hasPreviousPage"];
+            this.hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedListOfUserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedListOfUserDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export interface IPaginatedListOfUserDto {
+    items?: UserDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export class UserDto implements IUserDto {
+    id?: number;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    userName?: string | undefined;
+    profileImage?: string | undefined;
+
+    constructor(data?: IUserDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.userName = _data["userName"];
+            this.profileImage = _data["profileImage"];
+        }
+    }
+
+    static fromJS(data: any): UserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["userName"] = this.userName;
+        data["profileImage"] = this.profileImage;
+        return data;
+    }
+}
+
+export interface IUserDto {
+    id?: number;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    userName?: string | undefined;
+    profileImage?: string | undefined;
 }
 
 export class WeatherForecast implements IWeatherForecast {

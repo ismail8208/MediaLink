@@ -8,7 +8,7 @@ namespace MediaLink.Application.Experiences.Commands.CreateExperience;
 public record CreateExperienceCommand : IRequest <int>
 {
     public string? Title { get; set; }
-    public string? Content { get; set; }
+    public string? Description { get; set; }
     public DateTime? ExperienceDate { get; set; }
     public int UserId { get; set; }
 }
@@ -27,7 +27,7 @@ public class CreateExperienceCommandHandler : IRequestHandler<CreateExperienceCo
         var entity = new Experience
         {
             Title = request.Title,
-            Content = request.Content,
+            Description = request.Description,
             ExperienceDate = request.ExperienceDate,
             UserId = request.UserId
             

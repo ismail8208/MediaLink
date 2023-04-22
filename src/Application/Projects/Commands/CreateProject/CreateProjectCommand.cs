@@ -7,7 +7,8 @@ namespace MediaLink.Application.Projects.Commands.CreateProject;
 
 public record CreateProjectCommand : IRequest<int>
 {
-    public string? Content { get; set; }
+    public string? Title { get; set; }
+    public string? Description { get; set; }
     public string? ImageURL { get; set; }
     public string? Link { get; set; }
     public int UserId { get; set; }
@@ -25,7 +26,8 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     {
         var entity = new Project
         {
-            Content = request.Content,
+            Title = request.Title,
+            Description = request.Description,
             ImageURL = request.ImageURL,
             Link = request.Link,
             UserId = request.UserId

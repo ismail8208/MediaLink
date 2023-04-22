@@ -1,8 +1,10 @@
 ﻿using MediaLink.Application.Common.Models;
+using MediaLink.Application.Educations.Queries.SearchEducation;
 using MediaLink.Application.Skills.Commands.CreateSkill;
 using MediaLink.Application.Skills.Commands.DeleteSkill;
 using MediaLink.Application.Skills.Commands.UpdateSkill;
 using MediaLink.Application.Skills.Queries.GetSkillsWithPagination;
+using MediaLink.Application.Skills.Queries.SearchSkill;
 using MediaLink.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +12,13 @@ namespace MediaLink.WebUI.Controllers;
 
 public class SkillsController : ApiControllerBase
 {
+    [HttpGet("{skill}/Search")]
+    public async Task<ActionResult<PaginatedList<SkillDto>>> Search(string skill)
+    {
+        var query = new SearchSkillQuery();
+        query.Query = skill;
+        return await Mediator.Send(query);
+    }
     [HttpGet]
     public async Task<ActionResult<PaginatedList<Skill>>> GetSkillsWithPagination([FromQuery] GetSkillsWithPaginationQuery query)
     {

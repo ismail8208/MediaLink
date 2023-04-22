@@ -14,7 +14,7 @@ public record UpdateExperienceCommand : IRequest
 {
     public int Id { get; set; }
     public string? Title { get; set; }
-    public string? Content { get; set; }
+    public string? Description { get; set; }
     public DateTime? ExperienceDate { get; set; }
     public int UserId { get; set; }
 }
@@ -39,7 +39,7 @@ public class UpdateExperienceCommandHandler : IRequestHandler<UpdateExperienceCo
         }
 
         entity.Title = request.Title;
-        entity.Content = request.Content;
+        entity.Description = request.Description;
         entity.ExperienceDate = request.ExperienceDate;
         entity.UserId = request.UserId;
 

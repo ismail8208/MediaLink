@@ -8,7 +8,7 @@ namespace MediaLink.Application.Projects.Commands.DeleteProject;
 
 public record DeleteProjectCommand(int Id) : IRequest;
 
-public class DeleteProjectCommandHandler : IRequest<DeleteProjectCommand>
+public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand>
 {
     private readonly IApplicationDbContext _context;
 
@@ -19,9 +19,7 @@ public class DeleteProjectCommandHandler : IRequest<DeleteProjectCommand>
 
     public async Task<Unit> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Projects
-           .Where(P => P.Id == request.Id)
-           .SingleOrDefaultAsync(cancellationToken);
+        var entity = await _context.Projects.FirstOrDefaultAsync(p => p.Id == request.Id);
 
         if (entity == null)
         {

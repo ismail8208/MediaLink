@@ -2,7 +2,7 @@
 public class Job : BaseAuditableEntity
 {
     public string? Title { get; set; }
-    public string? Content { get; set; }
+    public string? Description { get; set; }
     public int UserId { get; set; }
     public InnerUser? User { get; set; }
     public List<Comment>? Comments { get; set; }
