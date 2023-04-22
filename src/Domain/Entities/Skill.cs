@@ -6,5 +6,8 @@ public class Skill : BaseAuditableEntity
     public List<Endorsement>? Endorsements { get; set; }
     public int UserId { get; set; }
     public InnerUser? User { get; set; }
+
+    public int JobId { get; set; }
+    public Job? Job { get; set; }
 }
 

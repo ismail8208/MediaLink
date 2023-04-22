@@ -2302,6 +2302,18 @@
                     "$ref": "#/components/schemas/InnerUser"
                   }
                 ]
+              },
+              "jobId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "job": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Job"
+                  }
+                ]
               }
             }
           }
@@ -2396,6 +2408,266 @@
         "type": "object",
         "x-abstract": true,
         "additionalProperties": false
+      },
+      "Job": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "type": "string",
+                "nullable": true
+              },
+              "content": {
+                "type": "string",
+                "nullable": true
+              },
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              },
+              "comments": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              },
+              "likes": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Like"
+                }
+              },
+              "skills": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Skill"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Comment": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "content": {
+                "type": "string",
+                "nullable": true
+              },
+              "postId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "post": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Post"
+                  }
+                ]
+              },
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              },
+              "jobId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "job": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Job"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Post": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "content": {
+                "type": "string",
+                "nullable": true
+              },
+              "imageURL": {
+                "type": "string",
+                "nullable": true
+              },
+              "videoURL": {
+                "type": "string",
+                "nullable": true
+              },
+              "numberOfLikes": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "numberOfComments": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              },
+              "likes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Like"
+                }
+              },
+              "comments": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              },
+              "shares": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Share"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Like": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              },
+              "postId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "post": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Post"
+                  }
+                ]
+              },
+              "jobId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "job": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Job"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Share": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseAuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "type": "string",
+                "nullable": true
+              },
+              "userId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "user": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/InnerUser"
+                  }
+                ]
+              },
+              "postId": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "post": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Post"
+                  }
+                ]
+              }
+            }
+          }
+        ]
       },
       "Project": {
         "allOf": [
@@ -2519,184 +2791,6 @@
                 "oneOf": [
                   {
                     "$ref": "#/components/schemas/InnerUser"
-                  }
-                ]
-              }
-            }
-          }
-        ]
-      },
-      "Post": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/BaseAuditableEntity"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "content": {
-                "type": "string",
-                "nullable": true
-              },
-              "imageURL": {
-                "type": "string",
-                "nullable": true
-              },
-              "videoURL": {
-                "type": "string",
-                "nullable": true
-              },
-              "numberOfLikes": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "numberOfComments": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "userId": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "user": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/InnerUser"
-                  }
-                ]
-              },
-              "likes": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Like"
-                }
-              },
-              "comments": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Comment"
-                }
-              },
-              "shares": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Share"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "Like": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/BaseAuditableEntity"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "userId": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "user": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/InnerUser"
-                  }
-                ]
-              },
-              "postId": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "post": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Post"
-                  }
-                ]
-              }
-            }
-          }
-        ]
-      },
-      "Comment": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/BaseAuditableEntity"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "content": {
-                "type": "string",
-                "nullable": true
-              },
-              "postId": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "post": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Post"
-                  }
-                ]
-              },
-              "userId": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "user": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/InnerUser"
-                  }
-                ]
-              }
-            }
-          }
-        ]
-      },
-      "Share": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/BaseAuditableEntity"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "userId": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "user": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/InnerUser"
-                  }
-                ]
-              },
-              "postId": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "post": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Post"
                   }
                 ]
               }

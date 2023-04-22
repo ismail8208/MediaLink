@@ -7,4 +7,6 @@ public class Comment : BaseAuditableEntity
     public Post? Post { get; set; }
     public int UserId { get; set; }
     public InnerUser? User { get; set; }
+    public int JobId { get; set; }
+    public Job? Job { get; set; }
 }

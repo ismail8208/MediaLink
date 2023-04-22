@@ -3760,6 +3760,8 @@ export class Skill extends BaseAuditableEntity implements ISkill {
     endorsements?: Endorsement[] | undefined;
     userId?: number;
     user?: InnerUser | undefined;
+    jobId?: number;
+    job?: Job | undefined;
 
     constructor(data?: ISkill) {
         super(data);
@@ -3776,6 +3778,8 @@ export class Skill extends BaseAuditableEntity implements ISkill {
             }
             this.userId = _data["userId"];
             this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            this.jobId = _data["jobId"];
+            this.job = _data["job"] ? Job.fromJS(_data["job"]) : <any>undefined;
         }
     }
 
@@ -3796,6 +3800,8 @@ export class Skill extends BaseAuditableEntity implements ISkill {
         }
         data["userId"] = this.userId;
         data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["jobId"] = this.jobId;
+        data["job"] = this.job ? this.job.toJSON() : <any>undefined;
         super.toJSON(data);
         return data;
     }
@@ -3806,6 +3812,8 @@ export interface ISkill extends IBaseAuditableEntity {
     endorsements?: Endorsement[] | undefined;
     userId?: number;
     user?: InnerUser | undefined;
+    jobId?: number;
+    job?: Job | undefined;
 }
 
 export class Endorsement extends BaseAuditableEntity implements IEndorsement {
@@ -3879,6 +3887,339 @@ export abstract class BaseEvent implements IBaseEvent {
 }
 
 export interface IBaseEvent {
+}
+
+export class Job extends BaseAuditableEntity implements IJob {
+    title?: string | undefined;
+    content?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    comments?: Comment[] | undefined;
+    likes?: Like[] | undefined;
+    skills?: Skill[] | undefined;
+
+    constructor(data?: IJob) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.title = _data["title"];
+            this.content = _data["content"];
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            if (Array.isArray(_data["comments"])) {
+                this.comments = [] as any;
+                for (let item of _data["comments"])
+                    this.comments!.push(Comment.fromJS(item));
+            }
+            if (Array.isArray(_data["likes"])) {
+                this.likes = [] as any;
+                for (let item of _data["likes"])
+                    this.likes!.push(Like.fromJS(item));
+            }
+            if (Array.isArray(_data["skills"])) {
+                this.skills = [] as any;
+                for (let item of _data["skills"])
+                    this.skills!.push(Skill.fromJS(item));
+            }
+        }
+    }
+
+    static override fromJS(data: any): Job {
+        data = typeof data === 'object' ? data : {};
+        let result = new Job();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        data["content"] = this.content;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        if (Array.isArray(this.comments)) {
+            data["comments"] = [];
+            for (let item of this.comments)
+                data["comments"].push(item.toJSON());
+        }
+        if (Array.isArray(this.likes)) {
+            data["likes"] = [];
+            for (let item of this.likes)
+                data["likes"].push(item.toJSON());
+        }
+        if (Array.isArray(this.skills)) {
+            data["skills"] = [];
+            for (let item of this.skills)
+                data["skills"].push(item.toJSON());
+        }
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IJob extends IBaseAuditableEntity {
+    title?: string | undefined;
+    content?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    comments?: Comment[] | undefined;
+    likes?: Like[] | undefined;
+    skills?: Skill[] | undefined;
+}
+
+export class Comment extends BaseAuditableEntity implements IComment {
+    content?: string | undefined;
+    postId?: number;
+    post?: Post | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    jobId?: number;
+    job?: Job | undefined;
+
+    constructor(data?: IComment) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.content = _data["content"];
+            this.postId = _data["postId"];
+            this.post = _data["post"] ? Post.fromJS(_data["post"]) : <any>undefined;
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            this.jobId = _data["jobId"];
+            this.job = _data["job"] ? Job.fromJS(_data["job"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Comment {
+        data = typeof data === 'object' ? data : {};
+        let result = new Comment();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["content"] = this.content;
+        data["postId"] = this.postId;
+        data["post"] = this.post ? this.post.toJSON() : <any>undefined;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["jobId"] = this.jobId;
+        data["job"] = this.job ? this.job.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IComment extends IBaseAuditableEntity {
+    content?: string | undefined;
+    postId?: number;
+    post?: Post | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    jobId?: number;
+    job?: Job | undefined;
+}
+
+export class Post extends BaseAuditableEntity implements IPost {
+    content?: string | undefined;
+    imageURL?: string | undefined;
+    videoURL?: string | undefined;
+    numberOfLikes?: number;
+    numberOfComments?: number;
+    userId?: number;
+    user?: InnerUser | undefined;
+    likes?: Like[];
+    comments?: Comment[];
+    shares?: Share[];
+
+    constructor(data?: IPost) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.content = _data["content"];
+            this.imageURL = _data["imageURL"];
+            this.videoURL = _data["videoURL"];
+            this.numberOfLikes = _data["numberOfLikes"];
+            this.numberOfComments = _data["numberOfComments"];
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            if (Array.isArray(_data["likes"])) {
+                this.likes = [] as any;
+                for (let item of _data["likes"])
+                    this.likes!.push(Like.fromJS(item));
+            }
+            if (Array.isArray(_data["comments"])) {
+                this.comments = [] as any;
+                for (let item of _data["comments"])
+                    this.comments!.push(Comment.fromJS(item));
+            }
+            if (Array.isArray(_data["shares"])) {
+                this.shares = [] as any;
+                for (let item of _data["shares"])
+                    this.shares!.push(Share.fromJS(item));
+            }
+        }
+    }
+
+    static override fromJS(data: any): Post {
+        data = typeof data === 'object' ? data : {};
+        let result = new Post();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["content"] = this.content;
+        data["imageURL"] = this.imageURL;
+        data["videoURL"] = this.videoURL;
+        data["numberOfLikes"] = this.numberOfLikes;
+        data["numberOfComments"] = this.numberOfComments;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        if (Array.isArray(this.likes)) {
+            data["likes"] = [];
+            for (let item of this.likes)
+                data["likes"].push(item.toJSON());
+        }
+        if (Array.isArray(this.comments)) {
+            data["comments"] = [];
+            for (let item of this.comments)
+                data["comments"].push(item.toJSON());
+        }
+        if (Array.isArray(this.shares)) {
+            data["shares"] = [];
+            for (let item of this.shares)
+                data["shares"].push(item.toJSON());
+        }
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IPost extends IBaseAuditableEntity {
+    content?: string | undefined;
+    imageURL?: string | undefined;
+    videoURL?: string | undefined;
+    numberOfLikes?: number;
+    numberOfComments?: number;
+    userId?: number;
+    user?: InnerUser | undefined;
+    likes?: Like[];
+    comments?: Comment[];
+    shares?: Share[];
+}
+
+export class Like extends BaseAuditableEntity implements ILike {
+    userId?: number;
+    user?: InnerUser | undefined;
+    postId?: number;
+    post?: Post | undefined;
+    jobId?: number;
+    job?: Job | undefined;
+
+    constructor(data?: ILike) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            this.postId = _data["postId"];
+            this.post = _data["post"] ? Post.fromJS(_data["post"]) : <any>undefined;
+            this.jobId = _data["jobId"];
+            this.job = _data["job"] ? Job.fromJS(_data["job"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Like {
+        data = typeof data === 'object' ? data : {};
+        let result = new Like();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["postId"] = this.postId;
+        data["post"] = this.post ? this.post.toJSON() : <any>undefined;
+        data["jobId"] = this.jobId;
+        data["job"] = this.job ? this.job.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ILike extends IBaseAuditableEntity {
+    userId?: number;
+    user?: InnerUser | undefined;
+    postId?: number;
+    post?: Post | undefined;
+    jobId?: number;
+    job?: Job | undefined;
+}
+
+export class Share extends BaseAuditableEntity implements IShare {
+    title?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    postId?: number;
+    post?: Post | undefined;
+
+    constructor(data?: IShare) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.title = _data["title"];
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            this.postId = _data["postId"];
+            this.post = _data["post"] ? Post.fromJS(_data["post"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Share {
+        data = typeof data === 'object' ? data : {};
+        let result = new Share();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["postId"] = this.postId;
+        data["post"] = this.post ? this.post.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IShare extends IBaseAuditableEntity {
+    title?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    postId?: number;
+    post?: Post | undefined;
 }
 
 export class Project extends BaseAuditableEntity implements IProject {
@@ -4034,238 +4375,6 @@ export interface IEducation extends IBaseAuditableEntity {
     title?: string | undefined;
     userId?: number;
     user?: InnerUser | undefined;
-}
-
-export class Post extends BaseAuditableEntity implements IPost {
-    content?: string | undefined;
-    imageURL?: string | undefined;
-    videoURL?: string | undefined;
-    numberOfLikes?: number;
-    numberOfComments?: number;
-    userId?: number;
-    user?: InnerUser | undefined;
-    likes?: Like[];
-    comments?: Comment[];
-    shares?: Share[];
-
-    constructor(data?: IPost) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.content = _data["content"];
-            this.imageURL = _data["imageURL"];
-            this.videoURL = _data["videoURL"];
-            this.numberOfLikes = _data["numberOfLikes"];
-            this.numberOfComments = _data["numberOfComments"];
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-            if (Array.isArray(_data["likes"])) {
-                this.likes = [] as any;
-                for (let item of _data["likes"])
-                    this.likes!.push(Like.fromJS(item));
-            }
-            if (Array.isArray(_data["comments"])) {
-                this.comments = [] as any;
-                for (let item of _data["comments"])
-                    this.comments!.push(Comment.fromJS(item));
-            }
-            if (Array.isArray(_data["shares"])) {
-                this.shares = [] as any;
-                for (let item of _data["shares"])
-                    this.shares!.push(Share.fromJS(item));
-            }
-        }
-    }
-
-    static override fromJS(data: any): Post {
-        data = typeof data === 'object' ? data : {};
-        let result = new Post();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["content"] = this.content;
-        data["imageURL"] = this.imageURL;
-        data["videoURL"] = this.videoURL;
-        data["numberOfLikes"] = this.numberOfLikes;
-        data["numberOfComments"] = this.numberOfComments;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        if (Array.isArray(this.likes)) {
-            data["likes"] = [];
-            for (let item of this.likes)
-                data["likes"].push(item.toJSON());
-        }
-        if (Array.isArray(this.comments)) {
-            data["comments"] = [];
-            for (let item of this.comments)
-                data["comments"].push(item.toJSON());
-        }
-        if (Array.isArray(this.shares)) {
-            data["shares"] = [];
-            for (let item of this.shares)
-                data["shares"].push(item.toJSON());
-        }
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IPost extends IBaseAuditableEntity {
-    content?: string | undefined;
-    imageURL?: string | undefined;
-    videoURL?: string | undefined;
-    numberOfLikes?: number;
-    numberOfComments?: number;
-    userId?: number;
-    user?: InnerUser | undefined;
-    likes?: Like[];
-    comments?: Comment[];
-    shares?: Share[];
-}
-
-export class Like extends BaseAuditableEntity implements ILike {
-    userId?: number;
-    user?: InnerUser | undefined;
-    postId?: number;
-    post?: Post | undefined;
-
-    constructor(data?: ILike) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-            this.postId = _data["postId"];
-            this.post = _data["post"] ? Post.fromJS(_data["post"]) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Like {
-        data = typeof data === 'object' ? data : {};
-        let result = new Like();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        data["postId"] = this.postId;
-        data["post"] = this.post ? this.post.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface ILike extends IBaseAuditableEntity {
-    userId?: number;
-    user?: InnerUser | undefined;
-    postId?: number;
-    post?: Post | undefined;
-}
-
-export class Comment extends BaseAuditableEntity implements IComment {
-    content?: string | undefined;
-    postId?: number;
-    post?: Post | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-
-    constructor(data?: IComment) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.content = _data["content"];
-            this.postId = _data["postId"];
-            this.post = _data["post"] ? Post.fromJS(_data["post"]) : <any>undefined;
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Comment {
-        data = typeof data === 'object' ? data : {};
-        let result = new Comment();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["content"] = this.content;
-        data["postId"] = this.postId;
-        data["post"] = this.post ? this.post.toJSON() : <any>undefined;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IComment extends IBaseAuditableEntity {
-    content?: string | undefined;
-    postId?: number;
-    post?: Post | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-}
-
-export class Share extends BaseAuditableEntity implements IShare {
-    userId?: number;
-    user?: InnerUser | undefined;
-    postId?: number;
-    post?: Post | undefined;
-
-    constructor(data?: IShare) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-            this.postId = _data["postId"];
-            this.post = _data["post"] ? Post.fromJS(_data["post"]) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Share {
-        data = typeof data === 'object' ? data : {};
-        let result = new Share();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        data["postId"] = this.postId;
-        data["post"] = this.post ? this.post.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IShare extends IBaseAuditableEntity {
-    userId?: number;
-    user?: InnerUser | undefined;
-    postId?: number;
-    post?: Post | undefined;
 }
 
 export class Follow extends BaseEntity implements IFollow {
