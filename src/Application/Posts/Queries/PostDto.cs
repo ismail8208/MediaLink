@@ -12,6 +12,7 @@ public class PostDto : IMapFrom<Post>
     public string? VideoURL { get; set; }
     public int NumberOfLikes { get; set; }
     public int NumberOfComments { get; set; }
+    public DateTime Created { get; set; }
     public int UserId { get; set; }
     public string? UserName { get; set; }
     public void Mapping(Profile profile)

@@ -1542,6 +1542,55 @@
         }
       }
     },
+    "/api/Posts/LatestNews": {
+      "get": {
+        "tags": [
+          "Posts"
+        ],
+        "operationId": "Posts_LatestNews",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedListOfPostDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Posts/{id}": {
       "get": {
         "tags": [
@@ -4214,6 +4263,10 @@
           "numberOfComments": {
             "type": "integer",
             "format": "int32"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
           },
           "userId": {
             "type": "integer",

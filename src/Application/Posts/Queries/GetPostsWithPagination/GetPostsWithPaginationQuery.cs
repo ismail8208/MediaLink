@@ -11,7 +11,7 @@ public record GetPostsWithPaginationQuery : IRequest<PaginatedList<PostDto>>
 {
     public int UserId { get; init; }
     public int PageNumber { get; init; } = 1;
-    public int PageSize { get; init; } = 5;
+    public int PageSize { get; init; } = 10;
 }
 
 public class GetPostsWithPaginationQueryHandler : IRequestHandler<GetPostsWithPaginationQuery, PaginatedList<PostDto>>

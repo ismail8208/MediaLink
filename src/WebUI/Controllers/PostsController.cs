@@ -5,6 +5,7 @@ using MediaLink.Application.Posts.Commands.UpdatePost;
 using MediaLink.Application.Posts.Queries;
 using MediaLink.Application.Posts.Queries.GetPost;
 using MediaLink.Application.Posts.Queries.GetPostsWithPagination;
+using MediaLink.Application.Posts.Queries.LatestNews;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -13,6 +14,12 @@ public class PostsController : ApiControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<PaginatedList<PostDto>>> GetPostsWithPagination([FromQuery] GetPostsWithPaginationQuery query)
+    {
+        return await Mediator.Send(query);
+    }
+
+    [HttpGet("LatestNews")]
+    public async Task<ActionResult<PaginatedList<PostDto>>> LatestNews([FromQuery] LatestNewsQuery query)
     {
         return await Mediator.Send(query);
     }

@@ -2,6 +2,7 @@
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Posts.Queries.GetPost;
@@ -30,7 +31,8 @@ public class GetPostQureyHandler : IRequestHandler<GetPostQurey, PostDto>
             NumberOfLikes = post.NumberOfLikes,
             UserId= post.UserId,
             VideoURL = post.VideoURL,
-            UserName = post.User.UserName
+            UserName = post.User.UserName,
+            Created = post.Created,
         };
 
         return entity;

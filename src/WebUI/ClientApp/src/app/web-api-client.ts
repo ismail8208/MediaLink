@@ -2360,6 +2360,7 @@ export class LikesClient implements ILikesClient {
 export interface IPostsClient {
     getPostsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfPostDto>;
     create(command: CreatePostCommand): Observable<number>;
+    latestNews(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfPostDto>;
     get(id: number): Observable<PostDto>;
     delete(id: number): Observable<FileResponse>;
     update(id: number, command: UpdatePostCommand): Observable<FileResponse>;
@@ -2481,6 +2482,66 @@ export class PostsClient implements IPostsClient {
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
                 result200 = resultData200 !== undefined ? resultData200 : <any>null;
     
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    latestNews(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfPostDto> {
+        let url_ = this.baseUrl + "/api/Posts/LatestNews?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
+        if (pageNumber === null)
+            throw new Error("The parameter 'pageNumber' cannot be null.");
+        else if (pageNumber !== undefined)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLatestNews(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLatestNews(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaginatedListOfPostDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaginatedListOfPostDto>;
+        }));
+    }
+
+    protected processLatestNews(response: HttpResponseBase): Observable<PaginatedListOfPostDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaginatedListOfPostDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -7093,6 +7154,7 @@ export class PostDto implements IPostDto {
     videoURL?: string | undefined;
     numberOfLikes?: number;
     numberOfComments?: number;
+    created?: Date;
     userId?: number;
     userName?: string | undefined;
 
@@ -7113,6 +7175,7 @@ export class PostDto implements IPostDto {
             this.videoURL = _data["videoURL"];
             this.numberOfLikes = _data["numberOfLikes"];
             this.numberOfComments = _data["numberOfComments"];
+            this.created = _data["created"] ? new Date(_data["created"].toString()) : <any>undefined;
             this.userId = _data["userId"];
             this.userName = _data["userName"];
         }
@@ -7133,6 +7196,7 @@ export class PostDto implements IPostDto {
         data["videoURL"] = this.videoURL;
         data["numberOfLikes"] = this.numberOfLikes;
         data["numberOfComments"] = this.numberOfComments;
+        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
         data["userId"] = this.userId;
         data["userName"] = this.userName;
         return data;
@@ -7146,6 +7210,7 @@ export interface IPostDto {
     videoURL?: string | undefined;
     numberOfLikes?: number;
     numberOfComments?: number;
+    created?: Date;
     userId?: number;
     userName?: string | undefined;
 }
