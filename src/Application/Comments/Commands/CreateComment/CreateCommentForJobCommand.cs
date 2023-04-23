@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediaLink.Domain.Events.CommentEvents;
 using MediatR;
 
 namespace MediaLink.Application.Comments.Commands.CreateComment;
+[Authorize(Roles = "member")]
 public record CreateCommentForJobCommand : IRequest<int>
 {
     public string? Content { get; set; }

@@ -1,10 +1,12 @@
-﻿using MediaLink.Application.Common.Interfaces;
+﻿using System.Data;
+using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediaLink.Domain.Events.EducationEvents;
 using MediatR;
 
 namespace MediaLink.Application.Educations.Commands.CreateEducation;
-
+[Authorize(Roles = "member")]
 public record CreateEducationCommand : IRequest<int>
 {
     public string? Level { get; set; }

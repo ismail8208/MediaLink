@@ -1,11 +1,13 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using System.Data;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Events.ProjectEvents;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Projects.Commands.DeleteProject;
-
+[Authorize(Roles = "member")]
 public record DeleteProjectCommand(int Id) : IRequest;
 
 public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand>

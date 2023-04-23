@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Common.Mappings;
 using MediaLink.Application.Common.Models;
-using MediaLink.Application.Educations.Queries.SearchEducation;
+using MediaLink.Application.Common.Security;
 using MediatR;
 
 namespace MediaLink.Application.Skills.Queries.SearchSkill;
+[Authorize(Roles = "member")]
 public record SearchSkillQuery : IRequest<PaginatedList<SkillDto>>
 {
     public string? Query { get; set; }

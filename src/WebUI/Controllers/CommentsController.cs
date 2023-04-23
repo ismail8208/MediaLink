@@ -4,8 +4,10 @@ using MediaLink.Application.Comments.Queries.GetCommentsWithPagination;
 using MediaLink.Application.Comments.Commands.CreateComment;
 using MediaLink.Application.Comments.Commands.UpdateComment;
 using MediaLink.Application.Comments.Commands.DeleteComment;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MediaLink.WebUI.Controllers;
+[Authorize]
 public class CommentsController : ApiControllerBase
 {
     [HttpGet]

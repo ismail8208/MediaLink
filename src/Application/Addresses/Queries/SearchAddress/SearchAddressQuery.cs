@@ -1,12 +1,15 @@
-﻿using AutoMapper;
+﻿using System.Data;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Common.Mappings;
 using MediaLink.Application.Common.Models;
+using MediaLink.Application.Common.Security;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Addresses.Queries.SearchAddress;
+[Authorize(Roles = "member")]
 public record SearchAddressQuery : IRequest<PaginatedList<AddressDto>>
 {
     public string? Query { get; set; }

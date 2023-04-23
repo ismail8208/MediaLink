@@ -1,10 +1,12 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using System.Data;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MediaLink.Application.Addresses.Commands.UpdateAddress;
-
+[Authorize(Roles = "member")]
 public record UpdateAddressCommand : IRequest
 {
     public int Id { get; set; }

@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediaLink.Application.Addresses.Commands.UpdateAddress;
 using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediatR;
 
 namespace MediaLink.Application.Experiences.Commands.UpdateExperience;
+[Authorize(Roles = "member")]
 public record UpdateExperienceCommand : IRequest
 {
     public int Id { get; set; }

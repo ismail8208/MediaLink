@@ -1,11 +1,14 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using System.Data;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Events.AddressEvents;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Addresses.Commands.DeleteAddress;
 
+[Authorize(Roles = "member")]
 public record DeleteAddressCommand (int Id) : IRequest;
 
 

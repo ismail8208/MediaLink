@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -31,7 +32,6 @@ public class CustomUserManager : UserManager<ApplicationUser>
     public override async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
     {
         // Add your custom logic here
-
         //from me
         CreateUserCommand command = new CreateUserCommand();
         command.Email = user.Email;
@@ -41,11 +41,17 @@ public class CustomUserManager : UserManager<ApplicationUser>
         command.LastName = user.LastName;
         user.User = await _mediator.Send(command);
         //from me
-
         // Call the base CreateAsync method to create the user
         var result = await base.CreateAsync(user, password);
 
+       // await AddToRolesAsync(user, new[] { "member" });
+
         return result;
+    }
+
+    public async override Task<IdentityResult> AddToRolesAsync(ApplicationUser user, IEnumerable<string> roles)
+    {
+        return await base.AddToRolesAsync(user, roles);
     }
 
     public override Task<IdentityResult> UpdateAsync(ApplicationUser user)
@@ -98,5 +104,11 @@ public class CustomUserManager : UserManager<ApplicationUser>
 
         await _context.SaveChangesAsync(CancellationToken.None);
         return await base.ChangeEmailAsync(user, newEmail, token);
+    }
+
+    public override Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role)
+    {
+
+        return base.AddToRoleAsync(user, role);
     }
 }

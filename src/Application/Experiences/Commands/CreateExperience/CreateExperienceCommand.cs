@@ -1,10 +1,12 @@
-﻿using MediaLink.Application.Common.Interfaces;
+﻿using System.Data;
+using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediaLink.Domain.Events.ExperienceEvents;
 using MediatR;
 
 namespace MediaLink.Application.Experiences.Commands.CreateExperience;
-
+[Authorize(Roles = "member")]
 public record CreateExperienceCommand : IRequest <int>
 {
     public string? Title { get; set; }

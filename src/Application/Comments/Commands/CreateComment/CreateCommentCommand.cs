@@ -1,10 +1,12 @@
-﻿using MediaLink.Application.Common.Interfaces;
+﻿using System.Data;
+using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediaLink.Domain.Events.CommentEvents;
 using MediatR;
 
 namespace MediaLink.Application.Comments.Commands.CreateComment;
-
+[Authorize(Roles = "member")]
 public record CreateCommentCommand : IRequest<int>
 {
     public string? Content { get; set; }

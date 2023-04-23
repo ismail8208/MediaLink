@@ -6,7 +6,7 @@ using MediaLink.Domain.Events;
 using MediatR;
 
 namespace MediaLink.Application.Posts.Commands.CreatePost;
-
+[Authorize(Roles = "member")]
 public record CreatePostCommand : IRequest<int>
 {
     public string? Content { get; set; }

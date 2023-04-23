@@ -1,9 +1,12 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using System.Data;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediatR;
 
 namespace MediaLink.Application.Comments.Commands.UpdateComment;
+[Authorize(Roles = "member")]
 public record UpdateCommentCommand : IRequest
 {
     public int Id { get; init; }

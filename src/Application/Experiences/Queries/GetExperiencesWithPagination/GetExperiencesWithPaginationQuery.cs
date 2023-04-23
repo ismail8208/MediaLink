@@ -1,14 +1,16 @@
-﻿using AutoMapper;
+﻿using System.Data;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Common.Mappings;
 using MediaLink.Application.Common.Models;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Experiences.Queries.GetExperiencesWithPagination;
-
+[Authorize(Roles = "member")]
 public record GetExperiencesWithPaginationQuery : IRequest<PaginatedList<ExperienceDto>>
 {
     public int UserId { get; set; }

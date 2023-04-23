@@ -1,9 +1,12 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using System.Data;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediatR;
 
 namespace MediaLink.Application.Posts.Commands.UpdatePost;
+[Authorize(Roles = "member")]
 public record UpdatePostCommand : IRequest
 {
     public int Id { get; set; }

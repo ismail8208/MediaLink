@@ -6,10 +6,11 @@ using MediaLink.Application.Skills.Commands.UpdateSkill;
 using MediaLink.Application.Skills.Queries.GetSkillsWithPagination;
 using MediaLink.Application.Skills.Queries.SearchSkill;
 using MediaLink.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediaLink.WebUI.Controllers;
-
+[Authorize]
 public class SkillsController : ApiControllerBase
 {
     [HttpGet("{skill}/Search")]

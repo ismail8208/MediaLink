@@ -1,9 +1,12 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using System.Data;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediatR;
 
 namespace MediaLink.Application.Jobs.Commands.DeleteJob;
+[Authorize(Roles = "company")]
 public record DeleteJobCommand(int Id) : IRequest;
 
 public class DeleteJobCommandHandler : IRequestHandler<DeleteJobCommand>

@@ -1,7 +1,10 @@
-﻿using MediaLink.Application.Common.Interfaces;
+﻿using System.Data;
+using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediatR;
 
 namespace MediaLink.Application.Follows.Commands.Follow;
+[Authorize(Roles = "member")]
 public record FollowCommand : IRequest
 {
     public int UserId { get; set; }

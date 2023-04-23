@@ -1,9 +1,12 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using System.Data;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Experiences.Commands.AddProjectToExperience;
+[Authorize(Roles = "member")]
 public record AddProjectCommand : IRequest
 {
     public int ProjectId { get; set; }

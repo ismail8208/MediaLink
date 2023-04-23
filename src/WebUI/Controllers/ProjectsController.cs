@@ -3,10 +3,11 @@ using MediaLink.Application.Projects.Commands.CreateProject;
 using MediaLink.Application.Projects.Commands.DeleteProject;
 using MediaLink.Application.Projects.Commands.UpdateProject;
 using MediaLink.Application.Projects.Queries.GetProjectsWithPagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediaLink.WebUI.Controllers;
-
+[Authorize]
 public class ProjectsController : ApiControllerBase
 {
     [HttpGet]

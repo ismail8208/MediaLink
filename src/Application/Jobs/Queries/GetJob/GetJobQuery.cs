@@ -1,10 +1,13 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using System.Data;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Jobs.Queries.GetJob;
+[Authorize(Roles = "member")]
 public record GetJobQuery(int Id) : IRequest<JobDto>;
 public class GetJobQueryHandler : IRequestHandler<GetJobQuery, JobDto>
 {

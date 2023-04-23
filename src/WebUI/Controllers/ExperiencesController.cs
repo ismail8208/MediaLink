@@ -4,10 +4,11 @@ using MediaLink.Application.Experiences.Commands.CreateExperience;
 using MediaLink.Application.Experiences.Commands.DeleteExperience;
 using MediaLink.Application.Experiences.Commands.UpdateExperience;
 using MediaLink.Application.Experiences.Queries.GetExperiencesWithPagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediaLink.WebUI.Controllers;
-
+[Authorize]
 public class ExperiencesController : ApiControllerBase
 {
     [HttpGet]

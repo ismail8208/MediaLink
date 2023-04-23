@@ -5,10 +5,11 @@ using MediaLink.Application.Educations.Commands.UpdateEducation;
 using MediaLink.Application.Educations.Queries;
 using MediaLink.Application.Educations.Queries.GetEducationsWithPagination;
 using MediaLink.Application.Educations.Queries.SearchEducation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediaLink.WebUI.Controllers;
-
+[Authorize]
 public class EducationsController : ApiControllerBase
 {
     [HttpGet("{education}/Search")]

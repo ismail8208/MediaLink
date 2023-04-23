@@ -6,9 +6,10 @@ using MediaLink.Application.Jobs.Queries.GetJob;
 using MediaLink.Application.Jobs.Commands.CreateJob;
 using MediaLink.Application.Jobs.Commands.DeleteJob;
 using MediaLink.Application.Jobs.Commands.UpdateJob;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MediaLink.WebUI.Controllers;
-
+[Authorize]
 public class JobsController : ApiControllerBase
 {
     [HttpGet("{job}/Search")]

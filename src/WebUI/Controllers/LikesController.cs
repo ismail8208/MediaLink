@@ -5,9 +5,11 @@ using MediaLink.Application.Likes.Commands.CreateLike;
 using MediaLink.Application.Likes.Commands.DeleteLike;
 using MediaLink.Application.Likes.Queries.GetLikesForJobWithPagination;
 using MediaLink.Application.Likes.Queries.GetLikesWithPagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediaLink.WebUI.Controllers;
+[Authorize]
 public class LikesController : ApiControllerBase
 {
     [HttpGet]

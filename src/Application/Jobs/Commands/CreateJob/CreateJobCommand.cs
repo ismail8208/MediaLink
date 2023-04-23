@@ -1,8 +1,11 @@
-﻿using MediaLink.Application.Common.Interfaces;
+﻿using System.Data;
+using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediatR;
 
 namespace MediaLink.Application.Jobs.Commands.CreateJob;
+[Authorize(Roles = "company")]
 public record CreateJobCommand : IRequest<int>
 {
     public string? Title { get; set; }

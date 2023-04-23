@@ -5,9 +5,11 @@ using MediaLink.Application.Follows.Commands.UnFollow;
 using MediaLink.Application.Follows.Queries.GetFollowers;
 using MediaLink.Application.Follows.Queries.GetFollowingsWithPagination;
 using MediaLink.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediaLink.WebUI.Controllers;
+[Authorize]
 public class FollowsController : ApiControllerBase
 {
     [HttpPost("Follow")]

@@ -1,10 +1,12 @@
-﻿using MediaLink.Application.Common.Interfaces;
+﻿using System.Data;
+using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediaLink.Domain.Events.EndorsementEvents;
 using MediatR;
 
 namespace MediaLink.Application.Endorsements.Commands.CreateEndorsement;
-
+[Authorize(Roles = "member")]
 public record CreateEndorsementCommand : IRequest<int>
 {
     public int SkillId { get; set; }

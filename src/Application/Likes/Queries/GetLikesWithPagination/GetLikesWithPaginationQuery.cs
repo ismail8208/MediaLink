@@ -1,13 +1,15 @@
-﻿using AutoMapper;
+﻿using System.Data;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Common.Mappings;
-using MediaLink.Application.Common.Models; 
+using MediaLink.Application.Common.Models;
+using MediaLink.Application.Common.Security;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Likes.Queries.GetLikesWithPagination;
-
+[Authorize(Roles = "member")]
 public record GetLikesWithPaginationQuery :IRequest<PaginatedList<LikeDto>>
 {
     public int PostId { get; set; }

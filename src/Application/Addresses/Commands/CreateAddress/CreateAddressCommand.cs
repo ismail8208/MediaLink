@@ -1,10 +1,11 @@
 ﻿using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediaLink.Domain.Events.AddressEvents;
 using MediatR;
 
 namespace MediaLink.Application.Addresses.Commands.CreateAddress;
-
+[Authorize(Roles = "member")]
 public record CreateAddressCommand : IRequest<int>
 {
     public string? Country { get; set; }

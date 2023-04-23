@@ -2,9 +2,11 @@
 using MediaLink.Application.Endorsements.Commands.CreateEndorsement;
 using MediaLink.Application.Endorsements.Commands.DeleteEndorsement;
 using MediaLink.Application.Endorsements.Queries.GetEndorsmentsWithPagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediaLink.WebUI.Controllers;
+[Authorize]
 public class EndorsementsController : ApiControllerBase
 {
     [HttpGet]

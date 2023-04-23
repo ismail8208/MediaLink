@@ -1,10 +1,12 @@
-﻿using MediaLink.Application.Common.Interfaces;
+﻿using System.Data;
+using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediaLink.Domain.Events.ShareEvents;
 using MediatR;
 
 namespace MediaLink.Application.Shares.Commands.CreateShare;
-
+[Authorize(Roles = "member")]
 public record CreateShareCommand : IRequest<int>
 {
     public int UserId { get; set; }

@@ -1,11 +1,13 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using System.Data;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediaLink.Domain.Events.ShareEvents; 
 using MediatR;
 
 namespace MediaLink.Application.Shares.Commands.DeleteShare;
-
+[Authorize(Roles = "member")]
 public record DeleteShareCommand(int Id) : IRequest;
 
 public class DeleteShareCommandHandler : IRequestHandler<DeleteShareCommand>

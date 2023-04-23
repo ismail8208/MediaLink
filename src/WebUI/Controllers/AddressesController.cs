@@ -5,10 +5,12 @@ using MediaLink.Application.Addresses.Queries;
 using MediaLink.Application.Addresses.Queries.GetAddressByUserId;
 using MediaLink.Application.Addresses.Queries.SearchAddress;
 using MediaLink.Application.Common.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediaLink.WebUI.Controllers;
 
+[Authorize]
 public class AddressesController : ApiControllerBase
 {
     [HttpGet("{address}/Search")]

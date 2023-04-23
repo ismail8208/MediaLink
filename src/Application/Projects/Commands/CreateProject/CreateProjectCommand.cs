@@ -1,10 +1,12 @@
-﻿using MediaLink.Application.Common.Interfaces;
+﻿using System.Data;
+using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediaLink.Domain.Events.ProjectEvents;
 using MediatR;
 
 namespace MediaLink.Application.Projects.Commands.CreateProject;
-
+[Authorize(Roles = "member")]
 public record CreateProjectCommand : IRequest<int>
 {
     public string? Title { get; set; }

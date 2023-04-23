@@ -117,6 +117,8 @@ namespace WebUI.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
+            public bool IsCompanyUser { get; set; }
+
         }
 
 
@@ -144,6 +146,15 @@ namespace WebUI.Areas.Identity.Pages.Account
 
                     if (result.Succeeded)
                     {
+                        if (Input.IsCompanyUser)
+                        {
+                            await _userManager.AddToRolesAsync(user, new[] { "company", "member" });
+                        }
+                        else
+                        {
+                            await _userManager.AddToRolesAsync(user, new[] { "member" });
+                        }
+
                         _logger.LogInformation("User created a new account with password.");
 
                         var userId = await _userManager.GetUserIdAsync(user);

@@ -1,10 +1,13 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using System.Data;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Events.EducationEvents;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Educations.Commands.DeleteEducation;
+[Authorize(Roles = "member")]
 
 public record DeleteEducationCommand(int Id) : IRequest;
 

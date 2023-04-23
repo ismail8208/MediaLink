@@ -1,12 +1,15 @@
-﻿using AutoMapper;
+﻿using System.Data;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Common.Mappings;
 using MediaLink.Application.Common.Models;
+using MediaLink.Application.Common.Security;
 using MediatR;
 
 namespace MediaLink.Application.Users.Queries.FindUser;
+[Authorize(Roles = "member")]
 public record SearchUserQuery : IRequest<PaginatedList<UserDto>>
 {
     public string? Query { get; set; }

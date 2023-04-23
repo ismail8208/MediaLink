@@ -5,8 +5,11 @@ using MediatR;
 using AutoMapper.QueryableExtensions;
 using MediaLink.Application.Common.Mappings;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
+using MediaLink.Application.Common.Security;
 
 namespace MediaLink.Application.Likes.Queries.GetLikesForJobWithPagination;
+[Authorize(Roles = "member")]
 public record GetLikesForJobWithPaginationQuery : IRequest<PaginatedList<LikeForJobDto>>
 {
     public int JobId { get; set; }

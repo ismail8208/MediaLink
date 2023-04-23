@@ -1,9 +1,12 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using System.Data;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Follows.Commands.UnFollow;
+[Authorize(Roles = "member")]
 public record UnFollowCommand : IRequest
 {
     public int UserId { get; set; }

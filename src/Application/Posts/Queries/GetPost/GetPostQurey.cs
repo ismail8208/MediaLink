@@ -1,11 +1,14 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using System.Data;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
+using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Posts.Queries.GetPost;
+[Authorize(Roles = "member")]
 public record GetPostQurey(int Id) : IRequest<PostDto>;
 public class GetPostQureyHandler : IRequestHandler<GetPostQurey, PostDto>
 {

@@ -6,10 +6,12 @@ using MediaLink.Application.Posts.Queries;
 using MediaLink.Application.Posts.Queries.GetPost;
 using MediaLink.Application.Posts.Queries.GetPostsWithPagination;
 using MediaLink.Application.Posts.Queries.LatestNews;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace MediaLink.WebUI.Controllers;
+[Authorize]
 public class PostsController : ApiControllerBase
 {
     [HttpGet]
