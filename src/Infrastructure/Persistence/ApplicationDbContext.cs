@@ -39,6 +39,7 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<Share> Shares => Set<Share>();
     public DbSet<Skill> Skills => Set<Skill>();
+    public DbSet<Job> Jobs => Set<Job>();
     public DbSet<InnerUser> InnerUsers => Set<InnerUser>();
 
 

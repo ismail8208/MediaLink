@@ -1,4 +1,5 @@
-﻿using MediaLink.Application.Common.Interfaces;
+﻿using MediaLink.Application.Common.Exceptions;
+using MediaLink.Application.Common.Interfaces;
 using MediaLink.Domain.Entities;
 using MediatR;
 
@@ -28,7 +29,7 @@ public class UpdatePostCommandHandler : IRequestHandler<UpdatePostCommand>
 
         if (entity == null)
         {
-            throw new NotFiniteNumberException(nameof(Post), request.Id);
+            throw new NotFoundException(nameof(Post), request.Id);
         }
 
         entity.Content= request.Content;

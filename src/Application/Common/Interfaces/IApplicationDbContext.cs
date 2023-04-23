@@ -20,5 +20,6 @@ public interface IApplicationDbContext
     DbSet<Share> Shares { get; }
     DbSet<Skill> Skills { get; }
     DbSet<InnerUser> InnerUsers { get; }
+    DbSet<Job> Jobs { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

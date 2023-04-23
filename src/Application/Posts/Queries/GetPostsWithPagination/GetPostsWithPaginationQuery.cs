@@ -34,7 +34,5 @@ public class GetPostsWithPaginationQueryHandler : IRequestHandler<GetPostsWithPa
             .PaginatedListAsync(request.PageNumber, request.PageSize);
 
         return posts;
-        
-
     }
 }
