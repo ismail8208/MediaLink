@@ -309,6 +309,8 @@ export class AddressesClient implements IAddressesClient {
 export interface ICommentsClient {
     getCommentsWithPagination(postId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfCommentDto>;
     create(command: CreateCommentCommand): Observable<number>;
+    getCommentsForJobWithPagination(jobId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfCommentForJobDto>;
+    create2(command: CreateCommentForJobCommand): Observable<number>;
     delete(id: number): Observable<FileResponse>;
     update(id: number, command: UpdateCommentCommand): Observable<FileResponse>;
 }
@@ -417,6 +419,119 @@ export class CommentsClient implements ICommentsClient {
     }
 
     protected processCreate(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getCommentsForJobWithPagination(jobId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfCommentForJobDto> {
+        let url_ = this.baseUrl + "/api/Comments/Job?";
+        if (jobId === null)
+            throw new Error("The parameter 'jobId' cannot be null.");
+        else if (jobId !== undefined)
+            url_ += "JobId=" + encodeURIComponent("" + jobId) + "&";
+        if (pageNumber === null)
+            throw new Error("The parameter 'pageNumber' cannot be null.");
+        else if (pageNumber !== undefined)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCommentsForJobWithPagination(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCommentsForJobWithPagination(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaginatedListOfCommentForJobDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaginatedListOfCommentForJobDto>;
+        }));
+    }
+
+    protected processGetCommentsForJobWithPagination(response: HttpResponseBase): Observable<PaginatedListOfCommentForJobDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaginatedListOfCommentForJobDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    create2(command: CreateCommentForJobCommand): Observable<number> {
+        let url_ = this.baseUrl + "/api/Comments/Job";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate2(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate2(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processCreate2(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1648,9 +1763,302 @@ export class FollowsClient implements IFollowsClient {
     }
 }
 
+export interface IJobsClient {
+    getJobsWithPagination(job: string | null): Observable<PaginatedListOfJobDto>;
+    get(id: number): Observable<JobDto>;
+    delete(id: number): Observable<FileResponse>;
+    update(id: number, command: UpdateJobCommand): Observable<FileResponse>;
+    create(command: CreateJobCommand): Observable<number>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class JobsClient implements IJobsClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    getJobsWithPagination(job: string | null): Observable<PaginatedListOfJobDto> {
+        let url_ = this.baseUrl + "/api/Jobs/{job}/Search";
+        if (job === undefined || job === null)
+            throw new Error("The parameter 'job' must be defined.");
+        url_ = url_.replace("{job}", encodeURIComponent("" + job));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetJobsWithPagination(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetJobsWithPagination(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaginatedListOfJobDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaginatedListOfJobDto>;
+        }));
+    }
+
+    protected processGetJobsWithPagination(response: HttpResponseBase): Observable<PaginatedListOfJobDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaginatedListOfJobDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    get(id: number): Observable<JobDto> {
+        let url_ = this.baseUrl + "/api/Jobs/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<JobDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<JobDto>;
+        }));
+    }
+
+    protected processGet(response: HttpResponseBase): Observable<JobDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = JobDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    delete(id: number): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Jobs/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    update(id: number, command: UpdateJobCommand): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Jobs/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    create(command: CreateJobCommand): Observable<number> {
+        let url_ = this.baseUrl + "/api/Jobs";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface ILikesClient {
     getLikesWithPagination(postId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfLikeDto>;
     create(command: CreateLikeCommand): Observable<number>;
+    getLikesFoJobWithPagination(jobId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfLikeForJobDto>;
+    create2(command: CreateLikeForJobCommand): Observable<number>;
     delete(id: number): Observable<FileResponse>;
 }
 
@@ -1758,6 +2166,119 @@ export class LikesClient implements ILikesClient {
     }
 
     protected processCreate(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getLikesFoJobWithPagination(jobId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfLikeForJobDto> {
+        let url_ = this.baseUrl + "/api/Likes/Job?";
+        if (jobId === null)
+            throw new Error("The parameter 'jobId' cannot be null.");
+        else if (jobId !== undefined)
+            url_ += "JobId=" + encodeURIComponent("" + jobId) + "&";
+        if (pageNumber === null)
+            throw new Error("The parameter 'pageNumber' cannot be null.");
+        else if (pageNumber !== undefined)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLikesFoJobWithPagination(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLikesFoJobWithPagination(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaginatedListOfLikeForJobDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaginatedListOfLikeForJobDto>;
+        }));
+    }
+
+    protected processGetLikesFoJobWithPagination(response: HttpResponseBase): Observable<PaginatedListOfLikeForJobDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaginatedListOfLikeForJobDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    create2(command: CreateLikeForJobCommand): Observable<number> {
+        let url_ = this.baseUrl + "/api/Likes/Job";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate2(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate2(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processCreate2(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -3491,7 +4012,7 @@ export class UsersClient implements IUsersClient {
     }
 
     search(name: string | null): Observable<PaginatedListOfUserDto> {
-        let url_ = this.baseUrl + "/api/Users/{name}";
+        let url_ = this.baseUrl + "/api/Users/{name}/Search";
         if (name === undefined || name === null)
             throw new Error("The parameter 'name' must be defined.");
         url_ = url_.replace("{name}", encodeURIComponent("" + name));
@@ -3935,6 +4456,122 @@ export interface ICommentDto {
     userName?: string | undefined;
 }
 
+export class PaginatedListOfCommentForJobDto implements IPaginatedListOfCommentForJobDto {
+    items?: CommentForJobDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+
+    constructor(data?: IPaginatedListOfCommentForJobDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(CommentForJobDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            this.hasPreviousPage = _data["hasPreviousPage"];
+            this.hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedListOfCommentForJobDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedListOfCommentForJobDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export interface IPaginatedListOfCommentForJobDto {
+    items?: CommentForJobDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export class CommentForJobDto implements ICommentForJobDto {
+    id?: number;
+    content?: string | undefined;
+    jobId?: number | undefined;
+    userId?: number;
+    userName?: string | undefined;
+
+    constructor(data?: ICommentForJobDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.content = _data["content"];
+            this.jobId = _data["jobId"];
+            this.userId = _data["userId"];
+            this.userName = _data["userName"];
+        }
+    }
+
+    static fromJS(data: any): CommentForJobDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CommentForJobDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["content"] = this.content;
+        data["jobId"] = this.jobId;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        return data;
+    }
+}
+
+export interface ICommentForJobDto {
+    id?: number;
+    content?: string | undefined;
+    jobId?: number | undefined;
+    userId?: number;
+    userName?: string | undefined;
+}
+
 export class CreateCommentCommand implements ICreateCommentCommand {
     content?: string | undefined;
     postId?: number;
@@ -3976,6 +4613,50 @@ export class CreateCommentCommand implements ICreateCommentCommand {
 export interface ICreateCommentCommand {
     content?: string | undefined;
     postId?: number;
+    userId?: number;
+}
+
+export class CreateCommentForJobCommand implements ICreateCommentForJobCommand {
+    content?: string | undefined;
+    jobId?: number;
+    userId?: number;
+
+    constructor(data?: ICreateCommentForJobCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.content = _data["content"];
+            this.jobId = _data["jobId"];
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): CreateCommentForJobCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateCommentForJobCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["content"] = this.content;
+        data["jobId"] = this.jobId;
+        data["userId"] = this.userId;
+        return data;
+    }
+}
+
+export interface ICreateCommentForJobCommand {
+    content?: string | undefined;
+    jobId?: number;
     userId?: number;
 }
 
@@ -5530,7 +6211,7 @@ export interface IPost extends IBaseAuditableEntity {
 export class Like extends BaseAuditableEntity implements ILike {
     userId?: number | undefined;
     user?: InnerUser | undefined;
-    postId?: number;
+    postId?: number | undefined;
     post?: Post | undefined;
     jobId?: number | undefined;
     job?: Job | undefined;
@@ -5574,7 +6255,7 @@ export class Like extends BaseAuditableEntity implements ILike {
 export interface ILike extends IBaseAuditableEntity {
     userId?: number | undefined;
     user?: InnerUser | undefined;
-    postId?: number;
+    postId?: number | undefined;
     post?: Post | undefined;
     jobId?: number | undefined;
     job?: Job | undefined;
@@ -5833,6 +6514,210 @@ export interface IFollow extends IBaseEntity {
     followee?: InnerUser | undefined;
 }
 
+export class PaginatedListOfJobDto implements IPaginatedListOfJobDto {
+    items?: JobDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+
+    constructor(data?: IPaginatedListOfJobDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(JobDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            this.hasPreviousPage = _data["hasPreviousPage"];
+            this.hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedListOfJobDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedListOfJobDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export interface IPaginatedListOfJobDto {
+    items?: JobDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export class JobDto implements IJobDto {
+    id?: number;
+    title?: string | undefined;
+    description?: string | undefined;
+    userId?: number;
+    userName?: string | undefined;
+
+    constructor(data?: IJobDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.userId = _data["userId"];
+            this.userName = _data["userName"];
+        }
+    }
+
+    static fromJS(data: any): JobDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new JobDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        return data;
+    }
+}
+
+export interface IJobDto {
+    id?: number;
+    title?: string | undefined;
+    description?: string | undefined;
+    userId?: number;
+    userName?: string | undefined;
+}
+
+export class CreateJobCommand implements ICreateJobCommand {
+    title?: string | undefined;
+    description?: string | undefined;
+    userId?: number;
+
+    constructor(data?: ICreateJobCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): CreateJobCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateJobCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["userId"] = this.userId;
+        return data;
+    }
+}
+
+export interface ICreateJobCommand {
+    title?: string | undefined;
+    description?: string | undefined;
+    userId?: number;
+}
+
+export class UpdateJobCommand implements IUpdateJobCommand {
+    id?: number;
+    title?: string | undefined;
+    description?: string | undefined;
+
+    constructor(data?: IUpdateJobCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.description = _data["description"];
+        }
+    }
+
+    static fromJS(data: any): UpdateJobCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateJobCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["description"] = this.description;
+        return data;
+    }
+}
+
+export interface IUpdateJobCommand {
+    id?: number;
+    title?: string | undefined;
+    description?: string | undefined;
+}
+
 export class PaginatedListOfLikeDto implements IPaginatedListOfLikeDto {
     items?: LikeDto[];
     pageNumber?: number;
@@ -5945,6 +6830,118 @@ export interface ILikeDto {
     userName?: string | undefined;
 }
 
+export class PaginatedListOfLikeForJobDto implements IPaginatedListOfLikeForJobDto {
+    items?: LikeForJobDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+
+    constructor(data?: IPaginatedListOfLikeForJobDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(LikeForJobDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            this.hasPreviousPage = _data["hasPreviousPage"];
+            this.hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedListOfLikeForJobDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedListOfLikeForJobDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export interface IPaginatedListOfLikeForJobDto {
+    items?: LikeForJobDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export class LikeForJobDto implements ILikeForJobDto {
+    id?: number;
+    userId?: number;
+    jobId?: number;
+    userName?: string | undefined;
+
+    constructor(data?: ILikeForJobDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.userId = _data["userId"];
+            this.jobId = _data["jobId"];
+            this.userName = _data["userName"];
+        }
+    }
+
+    static fromJS(data: any): LikeForJobDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LikeForJobDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userId"] = this.userId;
+        data["jobId"] = this.jobId;
+        data["userName"] = this.userName;
+        return data;
+    }
+}
+
+export interface ILikeForJobDto {
+    id?: number;
+    userId?: number;
+    jobId?: number;
+    userName?: string | undefined;
+}
+
 export class CreateLikeCommand implements ICreateLikeCommand {
     userId?: number;
     postId?: number;
@@ -5983,6 +6980,46 @@ export class CreateLikeCommand implements ICreateLikeCommand {
 export interface ICreateLikeCommand {
     userId?: number;
     postId?: number;
+}
+
+export class CreateLikeForJobCommand implements ICreateLikeForJobCommand {
+    userId?: number;
+    jobId?: number;
+
+    constructor(data?: ICreateLikeForJobCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.jobId = _data["jobId"];
+        }
+    }
+
+    static fromJS(data: any): CreateLikeForJobCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateLikeForJobCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["jobId"] = this.jobId;
+        return data;
+    }
+}
+
+export interface ICreateLikeForJobCommand {
+    userId?: number;
+    jobId?: number;
 }
 
 export class PaginatedListOfPostDto implements IPaginatedListOfPostDto {

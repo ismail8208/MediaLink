@@ -14,8 +14,20 @@ public class CommentsController : ApiControllerBase
         return await Mediator.Send(query);
     }
 
+    [HttpGet("Job")]
+    public async Task<ActionResult<PaginatedList<CommentForJobDto>>> GetCommentsForJobWithPagination([FromQuery] GetCommentsForJobWithPaginationQuery query)
+    {
+        return await Mediator.Send(query);
+    }
+
     [HttpPost]
     public async Task<ActionResult<int>> Create(CreateCommentCommand command)
+    {
+        return await Mediator.Send(command);
+    }
+
+    [HttpPost("Job")]
+    public async Task<ActionResult<int>> Create(CreateCommentForJobCommand command)
     {
         return await Mediator.Send(command);
     }

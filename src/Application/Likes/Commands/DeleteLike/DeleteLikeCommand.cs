@@ -20,9 +20,8 @@ public class DeleteLikeCommandHandler : IRequestHandler<DeleteLikeCommand>
     public async Task<Unit> Handle(DeleteLikeCommand request, CancellationToken cancellationToken)
     {
         var entity = await _context.Likes
-            .Where(l => l.Id == request.Id)
-            .SingleOrDefaultAsync(cancellationToken);
-        
+            .FindAsync(new object[] { request.Id }, cancellationToken);
+
         if (entity == null)
         {
             throw new NotFoundException(nameof(entity));

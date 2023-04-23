@@ -14,7 +14,6 @@ public record UpdateJobCommand : IRequest
     public int Id { get; set; }
     public string? Title { get; set; }
     public string? Description { get; set; }
-    public List<Skill>? Skills { get; set; }
 }
 
 public class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand>
@@ -35,7 +34,6 @@ public class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand>
         }
         entity.Title = request.Title;
         entity.Description = request.Description;
-        entity.Skills = request.Skills;
 
         await _context.SaveChangesAsync(cancellationToken);
 

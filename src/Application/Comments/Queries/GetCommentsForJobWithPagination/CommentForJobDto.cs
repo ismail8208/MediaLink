@@ -2,17 +2,17 @@
 using MediaLink.Application.Common.Mappings;
 using MediaLink.Domain.Entities;
 
-namespace MediaLink.Application.Jobs.Queries;
-public class JobDto : IMapFrom<Job>
+namespace MediaLink.Application.Comments.Queries.GetCommentsWithPagination;
+public class CommentForJobDto : IMapFrom<Comment>
 {
     public int Id { get; set; }
-    public string? Title { get; set; }
-    public string? Description { get; set; }
+    public string? Content { get; set; }
+    public int? JobId { get; set; }
     public int UserId { get; set; }
     public string? UserName { get; set; }
     public void Mapping(Profile profile)
     {
-        profile.CreateMap<Job, JobDto>()
+        profile.CreateMap<Comment, CommentForJobDto>()
             .ForMember(d => d.UserName, opt => opt.MapFrom(s => s.User.UserName));
     }
 }

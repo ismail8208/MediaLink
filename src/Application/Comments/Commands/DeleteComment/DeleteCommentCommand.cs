@@ -2,7 +2,6 @@
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Domain.Events.CommentEvents;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Comments.Commands.DeleteComment;
 
@@ -18,9 +17,7 @@ public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand>
 
     public async Task<Unit> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Comments
-            .Where(C => C.Id == request.Id)
-            .SingleOrDefaultAsync(cancellationToken);
+        var entity = await _context.Comments.FindAsync(new object[] { request.Id }, cancellationToken);
 
         if (entity == null)
         {

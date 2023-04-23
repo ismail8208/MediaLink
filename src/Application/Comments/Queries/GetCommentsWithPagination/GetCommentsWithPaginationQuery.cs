@@ -27,10 +27,10 @@ public class GetCommentsWithPaginationQueryHandler : IRequestHandler<GetComments
     public async Task<PaginatedList<CommentDto>> Handle(GetCommentsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.Comments
-            .Where(C => C.PostId == request.PostId)
-            .OrderBy(C => C.Created)
+            .Where(c =>c.PostId== request.PostId)
+            .OrderBy(c => c.Created)
             .Include(u => u.User)
             .ProjectTo<CommentDto>(_mapper.ConfigurationProvider)
-            .PaginatedListAsync(request.PageNumber, request.PageSize);
+            .PaginatedListAsync(request.PageNumber,request.PageSize);
     }
 }

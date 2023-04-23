@@ -3,6 +3,7 @@ using MediaLink.Application.Comments.Queries.GetCommentsWithPagination;
 using MediaLink.Application.Common.Models;
 using MediaLink.Application.Likes.Commands.CreateLike;
 using MediaLink.Application.Likes.Commands.DeleteLike;
+using MediaLink.Application.Likes.Queries.GetLikesForJobWithPagination;
 using MediaLink.Application.Likes.Queries.GetLikesWithPagination;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,8 +16,20 @@ public class LikesController : ApiControllerBase
         return await Mediator.Send(query);
     }
 
+    [HttpGet("Job")]
+    public async Task<ActionResult<PaginatedList<LikeForJobDto>>> GetLikesFoJobWithPagination([FromQuery] GetLikesForJobWithPaginationQuery query)
+    {
+        return await Mediator.Send(query);
+    }
+
     [HttpPost]
     public async Task<ActionResult<int>> Create([FromBody]CreateLikeCommand command)
+    {
+        return await Mediator.Send(command);
+    }
+
+    [HttpPost("Job")]
+    public async Task<ActionResult<int>> Create([FromBody] CreateLikeForJobCommand command)
     {
         return await Mediator.Send(command);
     }

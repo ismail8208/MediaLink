@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MediaLink.WebUI.Controllers;
 public class UsersController : ApiControllerBase
 {
-    [HttpGet("{name}")]
+    [HttpGet("{name}/Search")]
     public async Task<ActionResult<PaginatedList<UserDto>>> Search(string name)
     {
         var query = new SearchUserQuery();
