@@ -4,7 +4,6 @@ using MediaLink.Application.Experiences.Commands.CreateExperience;
 using MediaLink.Application.Experiences.Commands.DeleteExperience;
 using MediaLink.Application.Experiences.Commands.UpdateExperience;
 using MediaLink.Application.Experiences.Queries.GetExperiencesWithPagination;
-using MediaLink.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediaLink.WebUI.Controllers;
@@ -12,7 +11,7 @@ namespace MediaLink.WebUI.Controllers;
 public class ExperiencesController : ApiControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<PaginatedList<Experience>>> GetExperiencesWithPagination([FromQuery] GetExperiencesWithPaginationQuery query)
+    public async Task<ActionResult<PaginatedList<ExperienceDto>>> GetExperiencesWithPagination([FromQuery] GetExperiencesWithPaginationQuery query)
     {
         return await Mediator.Send(query);
     }

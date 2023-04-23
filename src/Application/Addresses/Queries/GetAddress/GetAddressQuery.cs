@@ -1,4 +1,6 @@
-﻿using MediaLink.Application.Common.Exceptions;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Domain.Entities;
 using MediatR;
@@ -6,20 +8,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Addresses.Queries.GetAddressByUserId;
 
-public record GetAddressQuery(int id) : IRequest<Address>;
+public record GetAddressQuery(int id) : IRequest<AddressDto>;
 
 
-public class GetAddressQueryHandler : IRequestHandler<GetAddressQuery, Address>
+public class GetAddressQueryHandler : IRequestHandler<GetAddressQuery, AddressDto>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IMapper _mapper;
 
-    public GetAddressQueryHandler(IApplicationDbContext context)
+    public GetAddressQueryHandler(IApplicationDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
-    public async Task<Address> Handle(GetAddressQuery request, CancellationToken cancellationToken)
+    public async Task<AddressDto> Handle(GetAddressQuery request, CancellationToken cancellationToken)
     {
-        var address =  await _context.Addresses.FirstOrDefaultAsync(a=>a.UserId == request.id);
+        var address =  await _context.Addresses
+            .Include(u => u.User)
+            .ProjectTo<AddressDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(a=>a.UserId == request.id);
         if (address == null)
         {
             throw new NotFoundException();

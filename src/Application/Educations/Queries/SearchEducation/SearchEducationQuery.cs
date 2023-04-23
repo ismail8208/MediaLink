@@ -4,6 +4,7 @@ using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Common.Mappings;
 using MediaLink.Application.Common.Models;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Educations.Queries.SearchEducation;
 public record SearchEducationQuery : IRequest<PaginatedList<EducationDto>>
@@ -27,6 +28,7 @@ public class SearchEducationQueryHandler : IRequestHandler<SearchEducationQuery,
     {
         return await _context.Educations
             .Where(u => u.Title.StartsWith(request.Query))
+            .Include(u => u.User)
             .ProjectTo<EducationDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }

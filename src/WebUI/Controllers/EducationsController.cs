@@ -2,9 +2,9 @@
 using MediaLink.Application.Educations.Commands.CreateEducation;
 using MediaLink.Application.Educations.Commands.DeleteEducation;
 using MediaLink.Application.Educations.Commands.UpdateEducation;
+using MediaLink.Application.Educations.Queries;
 using MediaLink.Application.Educations.Queries.GetEducationsWithPagination;
 using MediaLink.Application.Educations.Queries.SearchEducation;
-using MediaLink.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediaLink.WebUI.Controllers;
@@ -20,7 +20,7 @@ public class EducationsController : ApiControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<PaginatedList<Education>>> GetEducationsWithPagination([FromQuery] GetEducationsWithPaginationQuery query)
+    public async Task<ActionResult<PaginatedList<EducationDto>>> GetEducationsWithPagination([FromQuery] GetEducationsWithPaginationQuery query)
     {
         return await Mediator.Send(query);
     }

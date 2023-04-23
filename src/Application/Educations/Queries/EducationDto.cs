@@ -1,18 +1,19 @@
 ﻿using AutoMapper;
-using MediaLink.Application.Comments.Queries.GetCommentsWithPagination;
+using MediaLink.Application.Addresses.Queries;
 using MediaLink.Application.Common.Mappings;
 using MediaLink.Domain.Entities;
 
-namespace MediaLink.Application.Likes.Queries.GetLikesWithPagination;
-public class LikeDto : IMapFrom<Like>
+namespace MediaLink.Application.Educations.Queries;
+public class EducationDto : IMapFrom<Education>
 {
     public int Id { get; set; }
+    public string? Title { get; set; }
+    public string? Level { get; set; }
     public int UserId { get; set; }
-    public int PostId { get; set; }
     public string? UserName { get; set; }
     public void Mapping(Profile profile)
     {
-        profile.CreateMap<Like, LikeDto>()
+        profile.CreateMap<Education, EducationDto>()
             .ForMember(d => d.UserName, opt => opt.MapFrom(s => s.User.UserName));
     }
 }

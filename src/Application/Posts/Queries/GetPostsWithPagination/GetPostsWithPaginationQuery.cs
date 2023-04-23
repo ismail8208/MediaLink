@@ -4,6 +4,7 @@ using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Common.Mappings;
 using MediaLink.Application.Common.Models;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Posts.Queries.GetPostsWithPagination;
 public record GetPostsWithPaginationQuery : IRequest<PaginatedList<PostDto>>
@@ -27,6 +28,7 @@ public class GetPostsWithPaginationQueryHandler : IRequestHandler<GetPostsWithPa
     {
         var posts = await _context.Posts
             .Where(x => x.UserId == request.UserId)
+            .Include(u => u.User)
             .OrderByDescending(x => x.Created)
             .ProjectTo<PostDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);

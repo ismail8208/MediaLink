@@ -30,6 +30,7 @@ public class GetEndorsmentsWithPaginationQueryHandler : IRequestHandler<GetEndor
     {
         return await _context.Endorsements
             .Where(E => E.SkillId == request.SkillId)
+            .Include(u => u.User)
             .OrderBy(E => E.Created)
             .ProjectTo<EndorsmentDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);

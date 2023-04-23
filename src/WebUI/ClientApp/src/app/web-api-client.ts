@@ -17,7 +17,7 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAddressesClient {
     search(address: string | null): Observable<PaginatedListOfAddressDto>;
-    get(id: number): Observable<Address>;
+    get(id: number): Observable<AddressDto>;
     update(id: number, command: UpdateAddressCommand): Observable<FileResponse>;
     delete(id: number): Observable<FileResponse>;
     create(command: CreateAddressCommand): Observable<number>;
@@ -87,7 +87,7 @@ export class AddressesClient implements IAddressesClient {
         return _observableOf(null as any);
     }
 
-    get(id: number): Observable<Address> {
+    get(id: number): Observable<AddressDto> {
         let url_ = this.baseUrl + "/api/Addresses/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -109,14 +109,14 @@ export class AddressesClient implements IAddressesClient {
                 try {
                     return this.processGet(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<Address>;
+                    return _observableThrow(e) as any as Observable<AddressDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<Address>;
+                return _observableThrow(response_) as any as Observable<AddressDto>;
         }));
     }
 
-    protected processGet(response: HttpResponseBase): Observable<Address> {
+    protected processGet(response: HttpResponseBase): Observable<AddressDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -127,7 +127,7 @@ export class AddressesClient implements IAddressesClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = Address.fromJS(resultData200);
+            result200 = AddressDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -556,7 +556,7 @@ export class CommentsClient implements ICommentsClient {
 
 export interface IEducationsClient {
     search(education: string | null): Observable<PaginatedListOfEducationDto>;
-    getEducationsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfEducation>;
+    getEducationsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfEducationDto>;
     create(command: CreateEducationCommand): Observable<number>;
     update(id: number, command: UpdateEducationCommand): Observable<FileResponse>;
     delete(id: number): Observable<FileResponse>;
@@ -626,7 +626,7 @@ export class EducationsClient implements IEducationsClient {
         return _observableOf(null as any);
     }
 
-    getEducationsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfEducation> {
+    getEducationsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfEducationDto> {
         let url_ = this.baseUrl + "/api/Educations?";
         if (userId === null)
             throw new Error("The parameter 'userId' cannot be null.");
@@ -657,14 +657,14 @@ export class EducationsClient implements IEducationsClient {
                 try {
                     return this.processGetEducationsWithPagination(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<PaginatedListOfEducation>;
+                    return _observableThrow(e) as any as Observable<PaginatedListOfEducationDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<PaginatedListOfEducation>;
+                return _observableThrow(response_) as any as Observable<PaginatedListOfEducationDto>;
         }));
     }
 
-    protected processGetEducationsWithPagination(response: HttpResponseBase): Observable<PaginatedListOfEducation> {
+    protected processGetEducationsWithPagination(response: HttpResponseBase): Observable<PaginatedListOfEducationDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -675,7 +675,7 @@ export class EducationsClient implements IEducationsClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PaginatedListOfEducation.fromJS(resultData200);
+            result200 = PaginatedListOfEducationDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1043,7 +1043,7 @@ export class EndorsementsClient implements IEndorsementsClient {
 }
 
 export interface IExperiencesClient {
-    getExperiencesWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfExperience>;
+    getExperiencesWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfExperienceDto>;
     create(command: CreateExperienceCommand): Observable<number>;
     addProjectToExperience(command: AddProjectCommand): Observable<FileResponse>;
     update(id: number, command: UpdateExperienceCommand): Observable<FileResponse>;
@@ -1063,7 +1063,7 @@ export class ExperiencesClient implements IExperiencesClient {
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
 
-    getExperiencesWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfExperience> {
+    getExperiencesWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfExperienceDto> {
         let url_ = this.baseUrl + "/api/Experiences?";
         if (userId === null)
             throw new Error("The parameter 'userId' cannot be null.");
@@ -1094,14 +1094,14 @@ export class ExperiencesClient implements IExperiencesClient {
                 try {
                     return this.processGetExperiencesWithPagination(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<PaginatedListOfExperience>;
+                    return _observableThrow(e) as any as Observable<PaginatedListOfExperienceDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<PaginatedListOfExperience>;
+                return _observableThrow(response_) as any as Observable<PaginatedListOfExperienceDto>;
         }));
     }
 
-    protected processGetExperiencesWithPagination(response: HttpResponseBase): Observable<PaginatedListOfExperience> {
+    protected processGetExperiencesWithPagination(response: HttpResponseBase): Observable<PaginatedListOfExperienceDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1112,7 +1112,7 @@ export class ExperiencesClient implements IExperiencesClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PaginatedListOfExperience.fromJS(resultData200);
+            result200 = PaginatedListOfExperienceDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -3680,12 +3680,104 @@ export interface IPaginatedListOfAddressDto {
 }
 
 export class AddressDto implements IAddressDto {
+    fullAddress?: string | undefined;
+    userId?: number;
+    userName?: string | undefined;
+
+    constructor(data?: IAddressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.fullAddress = _data["fullAddress"];
+            this.userId = _data["userId"];
+            this.userName = _data["userName"];
+        }
+    }
+
+    static fromJS(data: any): AddressDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fullAddress"] = this.fullAddress;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        return data;
+    }
+}
+
+export interface IAddressDto {
+    fullAddress?: string | undefined;
+    userId?: number;
+    userName?: string | undefined;
+}
+
+export class CreateAddressCommand implements ICreateAddressCommand {
+    country?: string | undefined;
+    city?: string | undefined;
+    street?: string | undefined;
+    userId?: number;
+
+    constructor(data?: ICreateAddressCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.country = _data["country"];
+            this.city = _data["city"];
+            this.street = _data["street"];
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): CreateAddressCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateAddressCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["country"] = this.country;
+        data["city"] = this.city;
+        data["street"] = this.street;
+        data["userId"] = this.userId;
+        return data;
+    }
+}
+
+export interface ICreateAddressCommand {
+    country?: string | undefined;
+    city?: string | undefined;
+    street?: string | undefined;
+    userId?: number;
+}
+
+export class UpdateAddressCommand implements IUpdateAddressCommand {
     id?: number;
     country?: string | undefined;
     city?: string | undefined;
     street?: string | undefined;
 
-    constructor(data?: IAddressDto) {
+    constructor(data?: IUpdateAddressCommand) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3703,9 +3795,9 @@ export class AddressDto implements IAddressDto {
         }
     }
 
-    static fromJS(data: any): AddressDto {
+    static fromJS(data: any): UpdateAddressCommand {
         data = typeof data === 'object' ? data : {};
-        let result = new AddressDto();
+        let result = new UpdateAddressCommand();
         result.init(data);
         return result;
     }
@@ -3720,11 +3812,1019 @@ export class AddressDto implements IAddressDto {
     }
 }
 
-export interface IAddressDto {
+export interface IUpdateAddressCommand {
     id?: number;
     country?: string | undefined;
     city?: string | undefined;
     street?: string | undefined;
+}
+
+export class PaginatedListOfCommentDto implements IPaginatedListOfCommentDto {
+    items?: CommentDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+
+    constructor(data?: IPaginatedListOfCommentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(CommentDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            this.hasPreviousPage = _data["hasPreviousPage"];
+            this.hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedListOfCommentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedListOfCommentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export interface IPaginatedListOfCommentDto {
+    items?: CommentDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export class CommentDto implements ICommentDto {
+    id?: number;
+    content?: string | undefined;
+    postId?: number | undefined;
+    userId?: number;
+    userName?: string | undefined;
+
+    constructor(data?: ICommentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.content = _data["content"];
+            this.postId = _data["postId"];
+            this.userId = _data["userId"];
+            this.userName = _data["userName"];
+        }
+    }
+
+    static fromJS(data: any): CommentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CommentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["content"] = this.content;
+        data["postId"] = this.postId;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        return data;
+    }
+}
+
+export interface ICommentDto {
+    id?: number;
+    content?: string | undefined;
+    postId?: number | undefined;
+    userId?: number;
+    userName?: string | undefined;
+}
+
+export class CreateCommentCommand implements ICreateCommentCommand {
+    content?: string | undefined;
+    postId?: number;
+    userId?: number;
+
+    constructor(data?: ICreateCommentCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.content = _data["content"];
+            this.postId = _data["postId"];
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): CreateCommentCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateCommentCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["content"] = this.content;
+        data["postId"] = this.postId;
+        data["userId"] = this.userId;
+        return data;
+    }
+}
+
+export interface ICreateCommentCommand {
+    content?: string | undefined;
+    postId?: number;
+    userId?: number;
+}
+
+export class UpdateCommentCommand implements IUpdateCommentCommand {
+    id?: number;
+    content?: string | undefined;
+
+    constructor(data?: IUpdateCommentCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.content = _data["content"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCommentCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateCommentCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["content"] = this.content;
+        return data;
+    }
+}
+
+export interface IUpdateCommentCommand {
+    id?: number;
+    content?: string | undefined;
+}
+
+export class PaginatedListOfEducationDto implements IPaginatedListOfEducationDto {
+    items?: EducationDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+
+    constructor(data?: IPaginatedListOfEducationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(EducationDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            this.hasPreviousPage = _data["hasPreviousPage"];
+            this.hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedListOfEducationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedListOfEducationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export interface IPaginatedListOfEducationDto {
+    items?: EducationDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export class EducationDto implements IEducationDto {
+    id?: number;
+    title?: string | undefined;
+    level?: string | undefined;
+    userId?: number;
+    userName?: string | undefined;
+
+    constructor(data?: IEducationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.level = _data["level"];
+            this.userId = _data["userId"];
+            this.userName = _data["userName"];
+        }
+    }
+
+    static fromJS(data: any): EducationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EducationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["level"] = this.level;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        return data;
+    }
+}
+
+export interface IEducationDto {
+    id?: number;
+    title?: string | undefined;
+    level?: string | undefined;
+    userId?: number;
+    userName?: string | undefined;
+}
+
+export class CreateEducationCommand implements ICreateEducationCommand {
+    level?: string | undefined;
+    title?: string | undefined;
+    userId?: number;
+
+    constructor(data?: ICreateEducationCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.level = _data["level"];
+            this.title = _data["title"];
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): CreateEducationCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateEducationCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["level"] = this.level;
+        data["title"] = this.title;
+        data["userId"] = this.userId;
+        return data;
+    }
+}
+
+export interface ICreateEducationCommand {
+    level?: string | undefined;
+    title?: string | undefined;
+    userId?: number;
+}
+
+export class UpdateEducationCommand implements IUpdateEducationCommand {
+    id?: number;
+    level?: string | undefined;
+    title?: string | undefined;
+    userId?: number;
+
+    constructor(data?: IUpdateEducationCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.level = _data["level"];
+            this.title = _data["title"];
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateEducationCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateEducationCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["level"] = this.level;
+        data["title"] = this.title;
+        data["userId"] = this.userId;
+        return data;
+    }
+}
+
+export interface IUpdateEducationCommand {
+    id?: number;
+    level?: string | undefined;
+    title?: string | undefined;
+    userId?: number;
+}
+
+export class PaginatedListOfEndorsmentDto implements IPaginatedListOfEndorsmentDto {
+    items?: EndorsmentDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+
+    constructor(data?: IPaginatedListOfEndorsmentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(EndorsmentDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            this.hasPreviousPage = _data["hasPreviousPage"];
+            this.hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedListOfEndorsmentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedListOfEndorsmentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export interface IPaginatedListOfEndorsmentDto {
+    items?: EndorsmentDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export class EndorsmentDto implements IEndorsmentDto {
+    skillId?: number;
+    userId?: number;
+    userName?: string | undefined;
+
+    constructor(data?: IEndorsmentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.skillId = _data["skillId"];
+            this.userId = _data["userId"];
+            this.userName = _data["userName"];
+        }
+    }
+
+    static fromJS(data: any): EndorsmentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EndorsmentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["skillId"] = this.skillId;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        return data;
+    }
+}
+
+export interface IEndorsmentDto {
+    skillId?: number;
+    userId?: number;
+    userName?: string | undefined;
+}
+
+export class CreateEndorsementCommand implements ICreateEndorsementCommand {
+    skillId?: number;
+    userId?: number;
+
+    constructor(data?: ICreateEndorsementCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.skillId = _data["skillId"];
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): CreateEndorsementCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateEndorsementCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["skillId"] = this.skillId;
+        data["userId"] = this.userId;
+        return data;
+    }
+}
+
+export interface ICreateEndorsementCommand {
+    skillId?: number;
+    userId?: number;
+}
+
+export class PaginatedListOfExperienceDto implements IPaginatedListOfExperienceDto {
+    items?: ExperienceDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+
+    constructor(data?: IPaginatedListOfExperienceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(ExperienceDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            this.hasPreviousPage = _data["hasPreviousPage"];
+            this.hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedListOfExperienceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedListOfExperienceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export interface IPaginatedListOfExperienceDto {
+    items?: ExperienceDto[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export class ExperienceDto implements IExperienceDto {
+    id?: number;
+    title?: string | undefined;
+    description?: string | undefined;
+    experienceDate?: Date | undefined;
+    userId?: number;
+    projectId?: number | undefined;
+    projectName?: string | undefined;
+    userName?: string | undefined;
+
+    constructor(data?: IExperienceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.experienceDate = _data["experienceDate"] ? new Date(_data["experienceDate"].toString()) : <any>undefined;
+            this.userId = _data["userId"];
+            this.projectId = _data["projectId"];
+            this.projectName = _data["projectName"];
+            this.userName = _data["userName"];
+        }
+    }
+
+    static fromJS(data: any): ExperienceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExperienceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["experienceDate"] = this.experienceDate ? this.experienceDate.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        data["projectId"] = this.projectId;
+        data["projectName"] = this.projectName;
+        data["userName"] = this.userName;
+        return data;
+    }
+}
+
+export interface IExperienceDto {
+    id?: number;
+    title?: string | undefined;
+    description?: string | undefined;
+    experienceDate?: Date | undefined;
+    userId?: number;
+    projectId?: number | undefined;
+    projectName?: string | undefined;
+    userName?: string | undefined;
+}
+
+export class CreateExperienceCommand implements ICreateExperienceCommand {
+    title?: string | undefined;
+    description?: string | undefined;
+    experienceDate?: Date | undefined;
+    userId?: number;
+
+    constructor(data?: ICreateExperienceCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.experienceDate = _data["experienceDate"] ? new Date(_data["experienceDate"].toString()) : <any>undefined;
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): CreateExperienceCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateExperienceCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["experienceDate"] = this.experienceDate ? this.experienceDate.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        return data;
+    }
+}
+
+export interface ICreateExperienceCommand {
+    title?: string | undefined;
+    description?: string | undefined;
+    experienceDate?: Date | undefined;
+    userId?: number;
+}
+
+export class UpdateExperienceCommand implements IUpdateExperienceCommand {
+    id?: number;
+    title?: string | undefined;
+    description?: string | undefined;
+    experienceDate?: Date | undefined;
+    userId?: number;
+
+    constructor(data?: IUpdateExperienceCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.experienceDate = _data["experienceDate"] ? new Date(_data["experienceDate"].toString()) : <any>undefined;
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateExperienceCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateExperienceCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["experienceDate"] = this.experienceDate ? this.experienceDate.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        return data;
+    }
+}
+
+export interface IUpdateExperienceCommand {
+    id?: number;
+    title?: string | undefined;
+    description?: string | undefined;
+    experienceDate?: Date | undefined;
+    userId?: number;
+}
+
+export class AddProjectCommand implements IAddProjectCommand {
+    projectId?: number;
+    experienceId?: number;
+
+    constructor(data?: IAddProjectCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.projectId = _data["projectId"];
+            this.experienceId = _data["experienceId"];
+        }
+    }
+
+    static fromJS(data: any): AddProjectCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddProjectCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["projectId"] = this.projectId;
+        data["experienceId"] = this.experienceId;
+        return data;
+    }
+}
+
+export interface IAddProjectCommand {
+    projectId?: number;
+    experienceId?: number;
+}
+
+export class FollowCommand implements IFollowCommand {
+    userId?: number;
+    specificUserId?: number;
+
+    constructor(data?: IFollowCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.specificUserId = _data["specificUserId"];
+        }
+    }
+
+    static fromJS(data: any): FollowCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new FollowCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["specificUserId"] = this.specificUserId;
+        return data;
+    }
+}
+
+export interface IFollowCommand {
+    userId?: number;
+    specificUserId?: number;
+}
+
+export class UnFollowCommand implements IUnFollowCommand {
+    userId?: number;
+    specificUserId?: number;
+
+    constructor(data?: IUnFollowCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.specificUserId = _data["specificUserId"];
+        }
+    }
+
+    static fromJS(data: any): UnFollowCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UnFollowCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["specificUserId"] = this.specificUserId;
+        return data;
+    }
+}
+
+export interface IUnFollowCommand {
+    userId?: number;
+    specificUserId?: number;
+}
+
+export class CancelFollowerCommand implements ICancelFollowerCommand {
+    userId?: number;
+    specificUserId?: number;
+
+    constructor(data?: ICancelFollowerCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.specificUserId = _data["specificUserId"];
+        }
+    }
+
+    static fromJS(data: any): CancelFollowerCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelFollowerCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["specificUserId"] = this.specificUserId;
+        return data;
+    }
+}
+
+export interface ICancelFollowerCommand {
+    userId?: number;
+    specificUserId?: number;
+}
+
+export class PaginatedListOfInnerUser implements IPaginatedListOfInnerUser {
+    items?: InnerUser[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+
+    constructor(data?: IPaginatedListOfInnerUser) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(InnerUser.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            this.hasPreviousPage = _data["hasPreviousPage"];
+            this.hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): PaginatedListOfInnerUser {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedListOfInnerUser();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export interface IPaginatedListOfInnerUser {
+    items?: InnerUser[];
+    pageNumber?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
 }
 
 export abstract class BaseEntity implements IBaseEntity {
@@ -3771,55 +4871,6 @@ export abstract class BaseEntity implements IBaseEntity {
 export interface IBaseEntity {
     id?: number;
     domainEvents?: BaseEvent[];
-}
-
-export class Address extends BaseEntity implements IAddress {
-    country?: string | undefined;
-    city?: string | undefined;
-    street?: string | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-
-    constructor(data?: IAddress) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.country = _data["country"];
-            this.city = _data["city"];
-            this.street = _data["street"];
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Address {
-        data = typeof data === 'object' ? data : {};
-        let result = new Address();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["country"] = this.country;
-        data["city"] = this.city;
-        data["street"] = this.street;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IAddress extends IBaseEntity {
-    country?: string | undefined;
-    city?: string | undefined;
-    street?: string | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
 }
 
 export class InnerUser extends BaseEntity implements IInnerUser {
@@ -4019,6 +5070,83 @@ export interface IInnerUser extends IBaseEntity {
     comments?: Comment[] | undefined;
 }
 
+export class Address extends BaseEntity implements IAddress {
+    country?: string | undefined;
+    city?: string | undefined;
+    street?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+
+    constructor(data?: IAddress) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.country = _data["country"];
+            this.city = _data["city"];
+            this.street = _data["street"];
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Address {
+        data = typeof data === 'object' ? data : {};
+        let result = new Address();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["country"] = this.country;
+        data["city"] = this.city;
+        data["street"] = this.street;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IAddress extends IBaseEntity {
+    country?: string | undefined;
+    city?: string | undefined;
+    street?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+}
+
+export abstract class BaseEvent implements IBaseEvent {
+
+    constructor(data?: IBaseEvent) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): BaseEvent {
+        data = typeof data === 'object' ? data : {};
+        throw new Error("The abstract class 'BaseEvent' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        return data;
+    }
+}
+
+export interface IBaseEvent {
+}
+
 export abstract class BaseAuditableEntity extends BaseEntity implements IBaseAuditableEntity {
     created?: Date;
     createdBy?: string | undefined;
@@ -4166,34 +5294,6 @@ export interface IEndorsement extends IBaseAuditableEntity {
     skill?: Skill | undefined;
     userId?: number;
     user?: InnerUser | undefined;
-}
-
-export abstract class BaseEvent implements IBaseEvent {
-
-    constructor(data?: IBaseEvent) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-    }
-
-    static fromJS(data: any): BaseEvent {
-        data = typeof data === 'object' ? data : {};
-        throw new Error("The abstract class 'BaseEvent' cannot be instantiated.");
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        return data;
-    }
-}
-
-export interface IBaseEvent {
 }
 
 export class Job extends BaseAuditableEntity implements IJob {
@@ -4733,1098 +5833,6 @@ export interface IFollow extends IBaseEntity {
     followee?: InnerUser | undefined;
 }
 
-export class CreateAddressCommand implements ICreateAddressCommand {
-    country?: string | undefined;
-    city?: string | undefined;
-    street?: string | undefined;
-    userId?: number;
-
-    constructor(data?: ICreateAddressCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.country = _data["country"];
-            this.city = _data["city"];
-            this.street = _data["street"];
-            this.userId = _data["userId"];
-        }
-    }
-
-    static fromJS(data: any): CreateAddressCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateAddressCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["country"] = this.country;
-        data["city"] = this.city;
-        data["street"] = this.street;
-        data["userId"] = this.userId;
-        return data;
-    }
-}
-
-export interface ICreateAddressCommand {
-    country?: string | undefined;
-    city?: string | undefined;
-    street?: string | undefined;
-    userId?: number;
-}
-
-export class UpdateAddressCommand implements IUpdateAddressCommand {
-    id?: number;
-    country?: string | undefined;
-    city?: string | undefined;
-    street?: string | undefined;
-
-    constructor(data?: IUpdateAddressCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.country = _data["country"];
-            this.city = _data["city"];
-            this.street = _data["street"];
-        }
-    }
-
-    static fromJS(data: any): UpdateAddressCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateAddressCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["country"] = this.country;
-        data["city"] = this.city;
-        data["street"] = this.street;
-        return data;
-    }
-}
-
-export interface IUpdateAddressCommand {
-    id?: number;
-    country?: string | undefined;
-    city?: string | undefined;
-    street?: string | undefined;
-}
-
-export class PaginatedListOfCommentDto implements IPaginatedListOfCommentDto {
-    items?: CommentDto[];
-    pageNumber?: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-
-    constructor(data?: IPaginatedListOfCommentDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data["items"])) {
-                this.items = [] as any;
-                for (let item of _data["items"])
-                    this.items!.push(CommentDto.fromJS(item));
-            }
-            this.pageNumber = _data["pageNumber"];
-            this.totalPages = _data["totalPages"];
-            this.totalCount = _data["totalCount"];
-            this.hasPreviousPage = _data["hasPreviousPage"];
-            this.hasNextPage = _data["hasNextPage"];
-        }
-    }
-
-    static fromJS(data: any): PaginatedListOfCommentDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PaginatedListOfCommentDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.items)) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        data["pageNumber"] = this.pageNumber;
-        data["totalPages"] = this.totalPages;
-        data["totalCount"] = this.totalCount;
-        data["hasPreviousPage"] = this.hasPreviousPage;
-        data["hasNextPage"] = this.hasNextPage;
-        return data;
-    }
-}
-
-export interface IPaginatedListOfCommentDto {
-    items?: CommentDto[];
-    pageNumber?: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-}
-
-export class CommentDto implements ICommentDto {
-    id?: number;
-    content?: string | undefined;
-    postId?: number;
-    userId?: number;
-    user?: InnerUser | undefined;
-
-    constructor(data?: ICommentDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.content = _data["content"];
-            this.postId = _data["postId"];
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): CommentDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CommentDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["content"] = this.content;
-        data["postId"] = this.postId;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        return data;
-    }
-}
-
-export interface ICommentDto {
-    id?: number;
-    content?: string | undefined;
-    postId?: number;
-    userId?: number;
-    user?: InnerUser | undefined;
-}
-
-export class CreateCommentCommand implements ICreateCommentCommand {
-    content?: string | undefined;
-    postId?: number;
-    userId?: number;
-
-    constructor(data?: ICreateCommentCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.content = _data["content"];
-            this.postId = _data["postId"];
-            this.userId = _data["userId"];
-        }
-    }
-
-    static fromJS(data: any): CreateCommentCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateCommentCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["content"] = this.content;
-        data["postId"] = this.postId;
-        data["userId"] = this.userId;
-        return data;
-    }
-}
-
-export interface ICreateCommentCommand {
-    content?: string | undefined;
-    postId?: number;
-    userId?: number;
-}
-
-export class UpdateCommentCommand implements IUpdateCommentCommand {
-    id?: number;
-    content?: string | undefined;
-
-    constructor(data?: IUpdateCommentCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.content = _data["content"];
-        }
-    }
-
-    static fromJS(data: any): UpdateCommentCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateCommentCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["content"] = this.content;
-        return data;
-    }
-}
-
-export interface IUpdateCommentCommand {
-    id?: number;
-    content?: string | undefined;
-}
-
-export class PaginatedListOfEducationDto implements IPaginatedListOfEducationDto {
-    items?: EducationDto[];
-    pageNumber?: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-
-    constructor(data?: IPaginatedListOfEducationDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data["items"])) {
-                this.items = [] as any;
-                for (let item of _data["items"])
-                    this.items!.push(EducationDto.fromJS(item));
-            }
-            this.pageNumber = _data["pageNumber"];
-            this.totalPages = _data["totalPages"];
-            this.totalCount = _data["totalCount"];
-            this.hasPreviousPage = _data["hasPreviousPage"];
-            this.hasNextPage = _data["hasNextPage"];
-        }
-    }
-
-    static fromJS(data: any): PaginatedListOfEducationDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PaginatedListOfEducationDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.items)) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        data["pageNumber"] = this.pageNumber;
-        data["totalPages"] = this.totalPages;
-        data["totalCount"] = this.totalCount;
-        data["hasPreviousPage"] = this.hasPreviousPage;
-        data["hasNextPage"] = this.hasNextPage;
-        return data;
-    }
-}
-
-export interface IPaginatedListOfEducationDto {
-    items?: EducationDto[];
-    pageNumber?: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-}
-
-export class EducationDto implements IEducationDto {
-    id?: number;
-    level?: string | undefined;
-
-    constructor(data?: IEducationDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.level = _data["level"];
-        }
-    }
-
-    static fromJS(data: any): EducationDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new EducationDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["level"] = this.level;
-        return data;
-    }
-}
-
-export interface IEducationDto {
-    id?: number;
-    level?: string | undefined;
-}
-
-export class PaginatedListOfEducation implements IPaginatedListOfEducation {
-    items?: Education[];
-    pageNumber?: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-
-    constructor(data?: IPaginatedListOfEducation) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data["items"])) {
-                this.items = [] as any;
-                for (let item of _data["items"])
-                    this.items!.push(Education.fromJS(item));
-            }
-            this.pageNumber = _data["pageNumber"];
-            this.totalPages = _data["totalPages"];
-            this.totalCount = _data["totalCount"];
-            this.hasPreviousPage = _data["hasPreviousPage"];
-            this.hasNextPage = _data["hasNextPage"];
-        }
-    }
-
-    static fromJS(data: any): PaginatedListOfEducation {
-        data = typeof data === 'object' ? data : {};
-        let result = new PaginatedListOfEducation();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.items)) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        data["pageNumber"] = this.pageNumber;
-        data["totalPages"] = this.totalPages;
-        data["totalCount"] = this.totalCount;
-        data["hasPreviousPage"] = this.hasPreviousPage;
-        data["hasNextPage"] = this.hasNextPage;
-        return data;
-    }
-}
-
-export interface IPaginatedListOfEducation {
-    items?: Education[];
-    pageNumber?: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-}
-
-export class CreateEducationCommand implements ICreateEducationCommand {
-    level?: string | undefined;
-    title?: string | undefined;
-    userId?: number;
-
-    constructor(data?: ICreateEducationCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.level = _data["level"];
-            this.title = _data["title"];
-            this.userId = _data["userId"];
-        }
-    }
-
-    static fromJS(data: any): CreateEducationCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateEducationCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["level"] = this.level;
-        data["title"] = this.title;
-        data["userId"] = this.userId;
-        return data;
-    }
-}
-
-export interface ICreateEducationCommand {
-    level?: string | undefined;
-    title?: string | undefined;
-    userId?: number;
-}
-
-export class UpdateEducationCommand implements IUpdateEducationCommand {
-    id?: number;
-    level?: string | undefined;
-    title?: string | undefined;
-    userId?: number;
-
-    constructor(data?: IUpdateEducationCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.level = _data["level"];
-            this.title = _data["title"];
-            this.userId = _data["userId"];
-        }
-    }
-
-    static fromJS(data: any): UpdateEducationCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateEducationCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["level"] = this.level;
-        data["title"] = this.title;
-        data["userId"] = this.userId;
-        return data;
-    }
-}
-
-export interface IUpdateEducationCommand {
-    id?: number;
-    level?: string | undefined;
-    title?: string | undefined;
-    userId?: number;
-}
-
-export class PaginatedListOfEndorsmentDto implements IPaginatedListOfEndorsmentDto {
-    items?: EndorsmentDto[];
-    pageNumber?: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-
-    constructor(data?: IPaginatedListOfEndorsmentDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data["items"])) {
-                this.items = [] as any;
-                for (let item of _data["items"])
-                    this.items!.push(EndorsmentDto.fromJS(item));
-            }
-            this.pageNumber = _data["pageNumber"];
-            this.totalPages = _data["totalPages"];
-            this.totalCount = _data["totalCount"];
-            this.hasPreviousPage = _data["hasPreviousPage"];
-            this.hasNextPage = _data["hasNextPage"];
-        }
-    }
-
-    static fromJS(data: any): PaginatedListOfEndorsmentDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PaginatedListOfEndorsmentDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.items)) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        data["pageNumber"] = this.pageNumber;
-        data["totalPages"] = this.totalPages;
-        data["totalCount"] = this.totalCount;
-        data["hasPreviousPage"] = this.hasPreviousPage;
-        data["hasNextPage"] = this.hasNextPage;
-        return data;
-    }
-}
-
-export interface IPaginatedListOfEndorsmentDto {
-    items?: EndorsmentDto[];
-    pageNumber?: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-}
-
-export class EndorsmentDto implements IEndorsmentDto {
-    skillId?: number;
-    userId?: number;
-    user?: InnerUser | undefined;
-
-    constructor(data?: IEndorsmentDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.skillId = _data["skillId"];
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): EndorsmentDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new EndorsmentDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["skillId"] = this.skillId;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        return data;
-    }
-}
-
-export interface IEndorsmentDto {
-    skillId?: number;
-    userId?: number;
-    user?: InnerUser | undefined;
-}
-
-export class CreateEndorsementCommand implements ICreateEndorsementCommand {
-    skillId?: number;
-    userId?: number;
-
-    constructor(data?: ICreateEndorsementCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.skillId = _data["skillId"];
-            this.userId = _data["userId"];
-        }
-    }
-
-    static fromJS(data: any): CreateEndorsementCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateEndorsementCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["skillId"] = this.skillId;
-        data["userId"] = this.userId;
-        return data;
-    }
-}
-
-export interface ICreateEndorsementCommand {
-    skillId?: number;
-    userId?: number;
-}
-
-export class PaginatedListOfExperience implements IPaginatedListOfExperience {
-    items?: Experience[];
-    pageNumber?: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-
-    constructor(data?: IPaginatedListOfExperience) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data["items"])) {
-                this.items = [] as any;
-                for (let item of _data["items"])
-                    this.items!.push(Experience.fromJS(item));
-            }
-            this.pageNumber = _data["pageNumber"];
-            this.totalPages = _data["totalPages"];
-            this.totalCount = _data["totalCount"];
-            this.hasPreviousPage = _data["hasPreviousPage"];
-            this.hasNextPage = _data["hasNextPage"];
-        }
-    }
-
-    static fromJS(data: any): PaginatedListOfExperience {
-        data = typeof data === 'object' ? data : {};
-        let result = new PaginatedListOfExperience();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.items)) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        data["pageNumber"] = this.pageNumber;
-        data["totalPages"] = this.totalPages;
-        data["totalCount"] = this.totalCount;
-        data["hasPreviousPage"] = this.hasPreviousPage;
-        data["hasNextPage"] = this.hasNextPage;
-        return data;
-    }
-}
-
-export interface IPaginatedListOfExperience {
-    items?: Experience[];
-    pageNumber?: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-}
-
-export class CreateExperienceCommand implements ICreateExperienceCommand {
-    title?: string | undefined;
-    description?: string | undefined;
-    experienceDate?: Date | undefined;
-    userId?: number;
-
-    constructor(data?: ICreateExperienceCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.title = _data["title"];
-            this.description = _data["description"];
-            this.experienceDate = _data["experienceDate"] ? new Date(_data["experienceDate"].toString()) : <any>undefined;
-            this.userId = _data["userId"];
-        }
-    }
-
-    static fromJS(data: any): CreateExperienceCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateExperienceCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["title"] = this.title;
-        data["description"] = this.description;
-        data["experienceDate"] = this.experienceDate ? this.experienceDate.toISOString() : <any>undefined;
-        data["userId"] = this.userId;
-        return data;
-    }
-}
-
-export interface ICreateExperienceCommand {
-    title?: string | undefined;
-    description?: string | undefined;
-    experienceDate?: Date | undefined;
-    userId?: number;
-}
-
-export class UpdateExperienceCommand implements IUpdateExperienceCommand {
-    id?: number;
-    title?: string | undefined;
-    description?: string | undefined;
-    experienceDate?: Date | undefined;
-    userId?: number;
-
-    constructor(data?: IUpdateExperienceCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.title = _data["title"];
-            this.description = _data["description"];
-            this.experienceDate = _data["experienceDate"] ? new Date(_data["experienceDate"].toString()) : <any>undefined;
-            this.userId = _data["userId"];
-        }
-    }
-
-    static fromJS(data: any): UpdateExperienceCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateExperienceCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["title"] = this.title;
-        data["description"] = this.description;
-        data["experienceDate"] = this.experienceDate ? this.experienceDate.toISOString() : <any>undefined;
-        data["userId"] = this.userId;
-        return data;
-    }
-}
-
-export interface IUpdateExperienceCommand {
-    id?: number;
-    title?: string | undefined;
-    description?: string | undefined;
-    experienceDate?: Date | undefined;
-    userId?: number;
-}
-
-export class AddProjectCommand implements IAddProjectCommand {
-    projectId?: number;
-    experienceId?: number;
-
-    constructor(data?: IAddProjectCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.projectId = _data["projectId"];
-            this.experienceId = _data["experienceId"];
-        }
-    }
-
-    static fromJS(data: any): AddProjectCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new AddProjectCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["projectId"] = this.projectId;
-        data["experienceId"] = this.experienceId;
-        return data;
-    }
-}
-
-export interface IAddProjectCommand {
-    projectId?: number;
-    experienceId?: number;
-}
-
-export class FollowCommand implements IFollowCommand {
-    userId?: number;
-    specificUserId?: number;
-
-    constructor(data?: IFollowCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.userId = _data["userId"];
-            this.specificUserId = _data["specificUserId"];
-        }
-    }
-
-    static fromJS(data: any): FollowCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new FollowCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["specificUserId"] = this.specificUserId;
-        return data;
-    }
-}
-
-export interface IFollowCommand {
-    userId?: number;
-    specificUserId?: number;
-}
-
-export class UnFollowCommand implements IUnFollowCommand {
-    userId?: number;
-    specificUserId?: number;
-
-    constructor(data?: IUnFollowCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.userId = _data["userId"];
-            this.specificUserId = _data["specificUserId"];
-        }
-    }
-
-    static fromJS(data: any): UnFollowCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new UnFollowCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["specificUserId"] = this.specificUserId;
-        return data;
-    }
-}
-
-export interface IUnFollowCommand {
-    userId?: number;
-    specificUserId?: number;
-}
-
-export class CancelFollowerCommand implements ICancelFollowerCommand {
-    userId?: number;
-    specificUserId?: number;
-
-    constructor(data?: ICancelFollowerCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.userId = _data["userId"];
-            this.specificUserId = _data["specificUserId"];
-        }
-    }
-
-    static fromJS(data: any): CancelFollowerCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new CancelFollowerCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["specificUserId"] = this.specificUserId;
-        return data;
-    }
-}
-
-export interface ICancelFollowerCommand {
-    userId?: number;
-    specificUserId?: number;
-}
-
-export class PaginatedListOfInnerUser implements IPaginatedListOfInnerUser {
-    items?: InnerUser[];
-    pageNumber?: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-
-    constructor(data?: IPaginatedListOfInnerUser) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data["items"])) {
-                this.items = [] as any;
-                for (let item of _data["items"])
-                    this.items!.push(InnerUser.fromJS(item));
-            }
-            this.pageNumber = _data["pageNumber"];
-            this.totalPages = _data["totalPages"];
-            this.totalCount = _data["totalCount"];
-            this.hasPreviousPage = _data["hasPreviousPage"];
-            this.hasNextPage = _data["hasNextPage"];
-        }
-    }
-
-    static fromJS(data: any): PaginatedListOfInnerUser {
-        data = typeof data === 'object' ? data : {};
-        let result = new PaginatedListOfInnerUser();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.items)) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        data["pageNumber"] = this.pageNumber;
-        data["totalPages"] = this.totalPages;
-        data["totalCount"] = this.totalCount;
-        data["hasPreviousPage"] = this.hasPreviousPage;
-        data["hasNextPage"] = this.hasNextPage;
-        return data;
-    }
-}
-
-export interface IPaginatedListOfInnerUser {
-    items?: InnerUser[];
-    pageNumber?: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-}
-
 export class PaginatedListOfLikeDto implements IPaginatedListOfLikeDto {
     items?: LikeDto[];
     pageNumber?: number;
@@ -5893,7 +5901,7 @@ export class LikeDto implements ILikeDto {
     id?: number;
     userId?: number;
     postId?: number;
-    user?: InnerUser | undefined;
+    userName?: string | undefined;
 
     constructor(data?: ILikeDto) {
         if (data) {
@@ -5909,7 +5917,7 @@ export class LikeDto implements ILikeDto {
             this.id = _data["id"];
             this.userId = _data["userId"];
             this.postId = _data["postId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            this.userName = _data["userName"];
         }
     }
 
@@ -5925,7 +5933,7 @@ export class LikeDto implements ILikeDto {
         data["id"] = this.id;
         data["userId"] = this.userId;
         data["postId"] = this.postId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["userName"] = this.userName;
         return data;
     }
 }
@@ -5934,7 +5942,7 @@ export interface ILikeDto {
     id?: number;
     userId?: number;
     postId?: number;
-    user?: InnerUser | undefined;
+    userName?: string | undefined;
 }
 
 export class CreateLikeCommand implements ICreateLikeCommand {
@@ -6049,6 +6057,7 @@ export class PostDto implements IPostDto {
     numberOfLikes?: number;
     numberOfComments?: number;
     userId?: number;
+    userName?: string | undefined;
 
     constructor(data?: IPostDto) {
         if (data) {
@@ -6068,6 +6077,7 @@ export class PostDto implements IPostDto {
             this.numberOfLikes = _data["numberOfLikes"];
             this.numberOfComments = _data["numberOfComments"];
             this.userId = _data["userId"];
+            this.userName = _data["userName"];
         }
     }
 
@@ -6087,6 +6097,7 @@ export class PostDto implements IPostDto {
         data["numberOfLikes"] = this.numberOfLikes;
         data["numberOfComments"] = this.numberOfComments;
         data["userId"] = this.userId;
+        data["userName"] = this.userName;
         return data;
     }
 }
@@ -6099,6 +6110,7 @@ export interface IPostDto {
     numberOfLikes?: number;
     numberOfComments?: number;
     userId?: number;
+    userName?: string | undefined;
 }
 
 export class CreatePostCommand implements ICreatePostCommand {
@@ -6284,7 +6296,7 @@ export class ProjectDto implements IProjectDto {
     imageURL?: string | undefined;
     link?: string | undefined;
     userId?: number;
-    user?: InnerUser | undefined;
+    userName?: string | undefined;
 
     constructor(data?: IProjectDto) {
         if (data) {
@@ -6303,7 +6315,7 @@ export class ProjectDto implements IProjectDto {
             this.imageURL = _data["imageURL"];
             this.link = _data["link"];
             this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            this.userName = _data["userName"];
         }
     }
 
@@ -6322,7 +6334,7 @@ export class ProjectDto implements IProjectDto {
         data["imageURL"] = this.imageURL;
         data["link"] = this.link;
         data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["userName"] = this.userName;
         return data;
     }
 }
@@ -6334,7 +6346,7 @@ export interface IProjectDto {
     imageURL?: string | undefined;
     link?: string | undefined;
     userId?: number;
-    user?: InnerUser | undefined;
+    userName?: string | undefined;
 }
 
 export class CreateProjectCommand implements ICreateProjectCommand {
@@ -6509,7 +6521,7 @@ export class ShareDto implements IShareDto {
     id?: number;
     userId?: number;
     postId?: number;
-    user?: InnerUser | undefined;
+    userName?: string | undefined;
 
     constructor(data?: IShareDto) {
         if (data) {
@@ -6525,7 +6537,7 @@ export class ShareDto implements IShareDto {
             this.id = _data["id"];
             this.userId = _data["userId"];
             this.postId = _data["postId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            this.userName = _data["userName"];
         }
     }
 
@@ -6541,7 +6553,7 @@ export class ShareDto implements IShareDto {
         data["id"] = this.id;
         data["userId"] = this.userId;
         data["postId"] = this.postId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["userName"] = this.userName;
         return data;
     }
 }
@@ -6550,7 +6562,7 @@ export interface IShareDto {
     id?: number;
     userId?: number;
     postId?: number;
-    user?: InnerUser | undefined;
+    userName?: string | undefined;
 }
 
 export class CreateShareCommand implements ICreateShareCommand {

@@ -2,6 +2,7 @@
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace MediaLink.Application.Posts.Queries.GetPost;
 public record GetPostQurey(int Id) : IRequest<PostDto>;
@@ -14,7 +15,7 @@ public class GetPostQureyHandler : IRequestHandler<GetPostQurey, PostDto>
     }
     public async Task<PostDto> Handle(GetPostQurey request, CancellationToken cancellationToken)
     {
-        var post =  await _context.Posts.FindAsync(request.Id);
+        var post =  await _context.Posts.Include(u => u.User).FirstOrDefaultAsync(p =>p.Id == request.Id);
         if (post == null)
         {
             throw new NotFoundException(nameof(Post), request.Id);
@@ -28,7 +29,8 @@ public class GetPostQureyHandler : IRequestHandler<GetPostQurey, PostDto>
             NumberOfComments= post.NumberOfComments,
             NumberOfLikes = post.NumberOfLikes,
             UserId= post.UserId,
-            VideoURL = post.VideoURL
+            VideoURL = post.VideoURL,
+            UserName = post.User.UserName
         };
 
         return entity;
