@@ -8,4 +8,5 @@ public class Job : BaseAuditableEntity
     public List<Comment>? Comments { get; set; }
     public List<Like>? Likes { get; set; }
     public List<Skill>? Skills { get; set; }
+    public bool IsDeleted { get; set; } = false;
 }

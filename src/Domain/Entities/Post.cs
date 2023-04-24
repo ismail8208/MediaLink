@@ -15,6 +15,7 @@ public class Post : BaseAuditableEntity
     public List<Like> Likes { get; set; } = new List<Like>();
     public List<Comment> Comments { get; set; } = new List<Comment>();
     public List<Share> Shares { get; set; } = new List<Share>();
+    public bool IsDeleted { get; set; } = false;
 
 }
 

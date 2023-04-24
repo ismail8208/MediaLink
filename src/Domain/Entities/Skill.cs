@@ -9,5 +9,6 @@ public class Skill : BaseAuditableEntity
 
     public int? JobId { get; set; }
     public Job? Job { get; set; }
+    public bool IsDeleted { get; set; } = false;
 }
 

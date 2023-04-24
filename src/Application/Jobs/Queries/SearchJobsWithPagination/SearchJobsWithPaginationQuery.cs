@@ -30,7 +30,7 @@ public class SearchJobsWithPaginationQueryHandler : IRequestHandler<SearchJobsWi
     public async Task<PaginatedList<JobDto>> Handle(SearchJobsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.Jobs
-        .Where(u => u.Title.Contains(request.Query))
+        .Where(u => u.Title.Contains(request.Query) && u.IsDeleted == false)
         .ProjectTo<JobDto>(_mapper.ConfigurationProvider)
         .PaginatedListAsync(request.PageNumber, request.PageSize);
     }

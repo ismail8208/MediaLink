@@ -28,7 +28,7 @@ public class GetSkillsWithPaginationQueryHandler : IRequestHandler<GetSkillsWith
     public async Task<PaginatedList<Skill>> Handle(GetSkillsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.Skills
-              .Where(S => S.UserId == request.UserId)
+              .Where(S => S.UserId == request.UserId && S.IsDeleted == false)
               .OrderBy(S => S.Created)
               .PaginatedListAsync(request.PageNumber, request.PageSize);
     }

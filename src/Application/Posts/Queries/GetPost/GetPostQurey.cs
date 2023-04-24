@@ -19,7 +19,7 @@ public class GetPostQureyHandler : IRequestHandler<GetPostQurey, PostDto>
     }
     public async Task<PostDto> Handle(GetPostQurey request, CancellationToken cancellationToken)
     {
-        var post =  await _context.Posts.Include(u => u.User).FirstOrDefaultAsync(p =>p.Id == request.Id);
+        var post =  await _context.Posts.Include(u => u.User).FirstOrDefaultAsync(p =>p.Id == request.Id && p.IsDeleted == false);
         if (post == null)
         {
             throw new NotFoundException(nameof(Post), request.Id);

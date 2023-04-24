@@ -5636,6 +5636,7 @@ export class InnerUser extends BaseEntity implements IInnerUser {
     sharedPosts?: Share[] | undefined;
     likes?: Like[] | undefined;
     comments?: Comment[] | undefined;
+    isDeleted?: boolean;
 
     constructor(data?: IInnerUser) {
         super(data);
@@ -5708,6 +5709,7 @@ export class InnerUser extends BaseEntity implements IInnerUser {
                 for (let item of _data["comments"])
                     this.comments!.push(Comment.fromJS(item));
             }
+            this.isDeleted = _data["isDeleted"];
         }
     }
 
@@ -5784,6 +5786,7 @@ export class InnerUser extends BaseEntity implements IInnerUser {
             for (let item of this.comments)
                 data["comments"].push(item.toJSON());
         }
+        data["isDeleted"] = this.isDeleted;
         super.toJSON(data);
         return data;
     }
@@ -5810,6 +5813,7 @@ export interface IInnerUser extends IBaseEntity {
     sharedPosts?: Share[] | undefined;
     likes?: Like[] | undefined;
     comments?: Comment[] | undefined;
+    isDeleted?: boolean;
 }
 
 export class Address extends BaseEntity implements IAddress {
@@ -5939,6 +5943,7 @@ export class Skill extends BaseAuditableEntity implements ISkill {
     user?: InnerUser | undefined;
     jobId?: number | undefined;
     job?: Job | undefined;
+    isDeleted?: boolean;
 
     constructor(data?: ISkill) {
         super(data);
@@ -5957,6 +5962,7 @@ export class Skill extends BaseAuditableEntity implements ISkill {
             this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
             this.jobId = _data["jobId"];
             this.job = _data["job"] ? Job.fromJS(_data["job"]) : <any>undefined;
+            this.isDeleted = _data["isDeleted"];
         }
     }
 
@@ -5979,6 +5985,7 @@ export class Skill extends BaseAuditableEntity implements ISkill {
         data["user"] = this.user ? this.user.toJSON() : <any>undefined;
         data["jobId"] = this.jobId;
         data["job"] = this.job ? this.job.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
         super.toJSON(data);
         return data;
     }
@@ -5991,6 +5998,7 @@ export interface ISkill extends IBaseAuditableEntity {
     user?: InnerUser | undefined;
     jobId?: number | undefined;
     job?: Job | undefined;
+    isDeleted?: boolean;
 }
 
 export class Endorsement extends BaseAuditableEntity implements IEndorsement {
@@ -6046,6 +6054,7 @@ export class Job extends BaseAuditableEntity implements IJob {
     comments?: Comment[] | undefined;
     likes?: Like[] | undefined;
     skills?: Skill[] | undefined;
+    isDeleted?: boolean;
 
     constructor(data?: IJob) {
         super(data);
@@ -6073,6 +6082,7 @@ export class Job extends BaseAuditableEntity implements IJob {
                 for (let item of _data["skills"])
                     this.skills!.push(Skill.fromJS(item));
             }
+            this.isDeleted = _data["isDeleted"];
         }
     }
 
@@ -6104,6 +6114,7 @@ export class Job extends BaseAuditableEntity implements IJob {
             for (let item of this.skills)
                 data["skills"].push(item.toJSON());
         }
+        data["isDeleted"] = this.isDeleted;
         super.toJSON(data);
         return data;
     }
@@ -6117,6 +6128,7 @@ export interface IJob extends IBaseAuditableEntity {
     comments?: Comment[] | undefined;
     likes?: Like[] | undefined;
     skills?: Skill[] | undefined;
+    isDeleted?: boolean;
 }
 
 export class Comment extends BaseAuditableEntity implements IComment {
@@ -6187,6 +6199,7 @@ export class Post extends BaseAuditableEntity implements IPost {
     likes?: Like[];
     comments?: Comment[];
     shares?: Share[];
+    isDeleted?: boolean;
 
     constructor(data?: IPost) {
         super(data);
@@ -6217,6 +6230,7 @@ export class Post extends BaseAuditableEntity implements IPost {
                 for (let item of _data["shares"])
                     this.shares!.push(Share.fromJS(item));
             }
+            this.isDeleted = _data["isDeleted"];
         }
     }
 
@@ -6251,6 +6265,7 @@ export class Post extends BaseAuditableEntity implements IPost {
             for (let item of this.shares)
                 data["shares"].push(item.toJSON());
         }
+        data["isDeleted"] = this.isDeleted;
         super.toJSON(data);
         return data;
     }
@@ -6267,6 +6282,7 @@ export interface IPost extends IBaseAuditableEntity {
     likes?: Like[];
     comments?: Comment[];
     shares?: Share[];
+    isDeleted?: boolean;
 }
 
 export class Like extends BaseAuditableEntity implements ILike {
@@ -6379,6 +6395,7 @@ export class Project extends BaseAuditableEntity implements IProject {
     userId?: number;
     user?: InnerUser | undefined;
     experience?: Experience | undefined;
+    isDeleted?: boolean;
 
     constructor(data?: IProject) {
         super(data);
@@ -6394,6 +6411,7 @@ export class Project extends BaseAuditableEntity implements IProject {
             this.userId = _data["userId"];
             this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
             this.experience = _data["experience"] ? Experience.fromJS(_data["experience"]) : <any>undefined;
+            this.isDeleted = _data["isDeleted"];
         }
     }
 
@@ -6413,6 +6431,7 @@ export class Project extends BaseAuditableEntity implements IProject {
         data["userId"] = this.userId;
         data["user"] = this.user ? this.user.toJSON() : <any>undefined;
         data["experience"] = this.experience ? this.experience.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
         super.toJSON(data);
         return data;
     }
@@ -6426,6 +6445,7 @@ export interface IProject extends IBaseAuditableEntity {
     userId?: number;
     user?: InnerUser | undefined;
     experience?: Experience | undefined;
+    isDeleted?: boolean;
 }
 
 export class Experience extends BaseAuditableEntity implements IExperience {

@@ -30,7 +30,7 @@ public class GetPostsWithPaginationQueryHandler : IRequestHandler<GetPostsWithPa
     public async Task<PaginatedList<PostDto>> Handle(GetPostsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         var posts = await _context.Posts
-            .Where(x => x.UserId == request.UserId)
+            .Where(x => x.UserId == request.UserId && x.IsDeleted == false)
             .Include(u => u.User)
             .OrderByDescending(x => x.Created)
             .ProjectTo<PostDto>(_mapper.ConfigurationProvider)

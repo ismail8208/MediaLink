@@ -30,7 +30,7 @@ public class DeleteSkillCommandHandler : IRequestHandler<DeleteSkillCommand>
             throw new NotFoundException(nameof(entity));
         }
 
-        _context.Skills.Remove(entity);
+        entity.IsDeleted = true;
 
         entity.AddDomainEvent(new SkillDeletedEvent(entity));
 

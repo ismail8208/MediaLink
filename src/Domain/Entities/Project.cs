@@ -9,5 +9,6 @@ public class Project : BaseAuditableEntity
     public int UserId { get; set; }
     public InnerUser? User { get; set; }
     public Experience? Experience { get; set; }
+    public bool IsDeleted { get; set; } = false;
 }
 

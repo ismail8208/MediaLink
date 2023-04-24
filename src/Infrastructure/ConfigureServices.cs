@@ -52,6 +52,7 @@ public static class ConfigureServices
         //from me
         services.AddMediatR(Assembly.GetExecutingAssembly());
         services.AddScoped<UserManager<ApplicationUser>, CustomUserManager>();
+        services.AddScoped<SignInManager<ApplicationUser>, CustomSignInManager>();
         //from me
         services.AddAuthorization(options =>
             options.AddPolicy("CanPurge", policy => policy.RequireRole("Administrator")));

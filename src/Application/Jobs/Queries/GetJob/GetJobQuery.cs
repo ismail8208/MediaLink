@@ -19,7 +19,7 @@ public class GetJobQueryHandler : IRequestHandler<GetJobQuery, JobDto>
     }
     public async Task<JobDto> Handle(GetJobQuery request, CancellationToken cancellationToken)
     {
-        var job = await _context.Jobs.Include(u => u.User).FirstOrDefaultAsync(p => p.Id == request.Id);
+        var job = await _context.Jobs.Include(u => u.User).FirstOrDefaultAsync(p => p.Id == request.Id && p.IsDeleted == false);
         if (job == null)
         {
             throw new NotFoundException(nameof(Job), request.Id);

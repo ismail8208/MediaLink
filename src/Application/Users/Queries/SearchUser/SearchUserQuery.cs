@@ -29,7 +29,7 @@ public class SearchUserQueryHandler : IRequestHandler<SearchUserQuery, Paginated
     public async Task<PaginatedList<UserDto>> Handle(SearchUserQuery request, CancellationToken cancellationToken)
     {
         return await _context.InnerUsers
-            .Where(u => (u.FirstName + " " + u.LastName).StartsWith(request.Query))
+            .Where(u => (u.FirstName + " " + u.LastName).StartsWith(request.Query) && u.IsDeleted == false)
             .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }

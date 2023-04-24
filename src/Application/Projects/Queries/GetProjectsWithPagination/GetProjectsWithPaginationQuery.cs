@@ -30,7 +30,7 @@ public class GetProjectsWithPaginationQueryHandler : IRequestHandler<GetProjects
     public async Task<PaginatedList<ProjectDto>> Handle(GetProjectsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.Projects
-           .Where(P => P.UserId == request.UserId)
+           .Where(P => P.UserId == request.UserId && P.IsDeleted == false)
            .OrderBy(P => P.Created)
            .Include(u => u.User)
            .ProjectTo<ProjectDto>(_mapper.ConfigurationProvider)

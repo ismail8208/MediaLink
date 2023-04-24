@@ -28,7 +28,7 @@ public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand>
             throw new NotFoundException(nameof(entity));
         }
 
-        _context.Projects.Remove(entity);
+        entity.IsDeleted = true;
 
         entity.AddDomainEvent(new ProjectDeletedEvent(entity));
 

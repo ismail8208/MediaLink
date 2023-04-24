@@ -26,7 +26,7 @@ public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand>
             throw new NotFoundException(nameof(Post), request.Id);
         }
 
-        _context.Posts.Remove(entity);
+        entity.IsDeleted = true;
 
         await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;

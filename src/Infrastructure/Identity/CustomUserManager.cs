@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
+using IdentityModel;
 using IdentityModel.Client;
+using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Users.Commands.CreateUserCommand;
 using MediatR;
@@ -31,20 +33,19 @@ public class CustomUserManager : UserManager<ApplicationUser>
 
     public override async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
     {
-        // Add your custom logic here
-        //from me
-        CreateUserCommand command = new CreateUserCommand();
-        command.Email = user.Email;
-        command.UserName = user.UserName;
-        command.Password = password;
-        command.FirstName = user.FirstName;
-        command.LastName = user.LastName;
-        user.User = await _mediator.Send(command);
-        //from me
-        // Call the base CreateAsync method to create the user
         var result = await base.CreateAsync(user, password);
 
-       // await AddToRolesAsync(user, new[] { "member" });
+        if (result.Succeeded)
+        {
+            CreateUserCommand command = new CreateUserCommand();
+            command.Email = user.Email;
+            command.UserName = user.UserName;
+            command.Password = password;
+            command.FirstName = user.FirstName;
+            command.LastName = user.LastName;
+            user.User = await _mediator.Send(command);
+            await UpdateAsync(user);
+        }
 
         return result;
     }
@@ -60,23 +61,24 @@ public class CustomUserManager : UserManager<ApplicationUser>
     }
     public override async Task<IdentityResult> DeleteAsync(ApplicationUser user)
     {
-/*        var innerUser = await _context.InnerUsers.FirstOrDefaultAsync(x => x.UserName == user.UserName);
+        var innerUser = await _context.InnerUsers.FirstOrDefaultAsync(x => x.UserName == user.UserName && x.IsDeleted == false);
 
         if (innerUser == null)
         {
-            throw new DirectoryNotFoundException(nameof(user));
+            throw new NotFoundException(nameof(user));
         }
 
-        _context.InnerUsers.Remove(innerUser);
+        innerUser.IsDeleted = true;
+        user.IsDeleted = true;
 
-        await _context.SaveChangesAsync(CancellationToken.None);*/
+        await _context.SaveChangesAsync(CancellationToken.None);
 
-        return await base.DeleteAsync(user);
+        return await base.UpdateAsync(user);
     }
 
     public override async Task<IdentityResult> ChangePasswordAsync(ApplicationUser user, string currentPassword, string newPassword)
     {
-        var innerUser = await _context.InnerUsers.FirstOrDefaultAsync(x => x.UserName == user.UserName);
+        var innerUser = await _context.InnerUsers.FirstOrDefaultAsync(x => x.UserName == user.UserName && x.IsDeleted == false);
 
         if (innerUser == null)
         {

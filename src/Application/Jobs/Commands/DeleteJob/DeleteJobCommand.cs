@@ -26,9 +26,7 @@ public class DeleteJobCommandHandler : IRequestHandler<DeleteJobCommand>
         {
             throw new NotFoundException(nameof(Job), request.Id);
         }
-        
-        _context.Jobs.Remove(entity);
-
+        entity.IsDeleted = true;
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

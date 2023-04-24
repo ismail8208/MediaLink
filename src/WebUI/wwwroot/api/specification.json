@@ -3655,6 +3655,9 @@
                 "items": {
                   "$ref": "#/components/schemas/Comment"
                 }
+              },
+              "isDeleted": {
+                "type": "boolean"
               }
             }
           }
@@ -3764,6 +3767,9 @@
                     "$ref": "#/components/schemas/Job"
                   }
                 ]
+              },
+              "isDeleted": {
+                "type": "boolean"
               }
             }
           }
@@ -3886,6 +3892,9 @@
                 "items": {
                   "$ref": "#/components/schemas/Skill"
                 }
+              },
+              "isDeleted": {
+                "type": "boolean"
               }
             }
           }
@@ -4004,6 +4013,9 @@
                 "items": {
                   "$ref": "#/components/schemas/Share"
                 }
+              },
+              "isDeleted": {
+                "type": "boolean"
               }
             }
           }
@@ -4146,6 +4158,9 @@
                     "$ref": "#/components/schemas/Experience"
                   }
                 ]
+              },
+              "isDeleted": {
+                "type": "boolean"
               }
             }
           }
