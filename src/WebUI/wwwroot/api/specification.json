@@ -1021,6 +1021,38 @@
         ]
       }
     },
+    "/api/ExportCV/{userId}": {
+      "get": {
+        "tags": [
+          "ExportCV"
+        ],
+        "operationId": "ExportCV_ExportCV",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CV"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Follows/Follow": {
       "post": {
         "tags": [
@@ -3455,6 +3487,144 @@
           "experienceId": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "CV": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "user": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UserCV"
+              }
+            ]
+          },
+          "skillCVs": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/SkillCV"
+            }
+          },
+          "experienceCVs": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ExperienceCV"
+            }
+          },
+          "projectCVs": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ProjectCV"
+            }
+          },
+          "educationCVs": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/EducationCV"
+            }
+          }
+        }
+      },
+      "UserCV": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "profileImage": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "SkillCV": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ExperienceCV": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "experienceDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "ProjectCV": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageURL": {
+            "type": "string",
+            "nullable": true
+          },
+          "link": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "EducationCV": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "level": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
           }
         }
       },

@@ -1462,6 +1462,75 @@ export class ExperiencesClient implements IExperiencesClient {
     }
 }
 
+export interface IExportCVClient {
+    exportCV(userId: number): Observable<CV>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class ExportCVClient implements IExportCVClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    exportCV(userId: number): Observable<CV> {
+        let url_ = this.baseUrl + "/api/ExportCV/{userId}";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processExportCV(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processExportCV(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CV>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CV>;
+        }));
+    }
+
+    protected processExportCV(response: HttpResponseBase): Observable<CV> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CV.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface IFollowsClient {
     follow(command: FollowCommand): Observable<number>;
     unFollow(command: UnFollowCommand): Observable<number>;
@@ -5383,6 +5452,314 @@ export class AddProjectCommand implements IAddProjectCommand {
 export interface IAddProjectCommand {
     projectId?: number;
     experienceId?: number;
+}
+
+export class CV implements ICV {
+    user?: UserCV | undefined;
+    skillCVs?: SkillCV[] | undefined;
+    experienceCVs?: ExperienceCV[] | undefined;
+    projectCVs?: ProjectCV[] | undefined;
+    educationCVs?: EducationCV[] | undefined;
+
+    constructor(data?: ICV) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.user = _data["user"] ? UserCV.fromJS(_data["user"]) : <any>undefined;
+            if (Array.isArray(_data["skillCVs"])) {
+                this.skillCVs = [] as any;
+                for (let item of _data["skillCVs"])
+                    this.skillCVs!.push(SkillCV.fromJS(item));
+            }
+            if (Array.isArray(_data["experienceCVs"])) {
+                this.experienceCVs = [] as any;
+                for (let item of _data["experienceCVs"])
+                    this.experienceCVs!.push(ExperienceCV.fromJS(item));
+            }
+            if (Array.isArray(_data["projectCVs"])) {
+                this.projectCVs = [] as any;
+                for (let item of _data["projectCVs"])
+                    this.projectCVs!.push(ProjectCV.fromJS(item));
+            }
+            if (Array.isArray(_data["educationCVs"])) {
+                this.educationCVs = [] as any;
+                for (let item of _data["educationCVs"])
+                    this.educationCVs!.push(EducationCV.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CV {
+        data = typeof data === 'object' ? data : {};
+        let result = new CV();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        if (Array.isArray(this.skillCVs)) {
+            data["skillCVs"] = [];
+            for (let item of this.skillCVs)
+                data["skillCVs"].push(item.toJSON());
+        }
+        if (Array.isArray(this.experienceCVs)) {
+            data["experienceCVs"] = [];
+            for (let item of this.experienceCVs)
+                data["experienceCVs"].push(item.toJSON());
+        }
+        if (Array.isArray(this.projectCVs)) {
+            data["projectCVs"] = [];
+            for (let item of this.projectCVs)
+                data["projectCVs"].push(item.toJSON());
+        }
+        if (Array.isArray(this.educationCVs)) {
+            data["educationCVs"] = [];
+            for (let item of this.educationCVs)
+                data["educationCVs"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ICV {
+    user?: UserCV | undefined;
+    skillCVs?: SkillCV[] | undefined;
+    experienceCVs?: ExperienceCV[] | undefined;
+    projectCVs?: ProjectCV[] | undefined;
+    educationCVs?: EducationCV[] | undefined;
+}
+
+export class UserCV implements IUserCV {
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    email?: string | undefined;
+    address?: string | undefined;
+    dateOfBirth?: Date | undefined;
+    profileImage?: string | undefined;
+
+    constructor(data?: IUserCV) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.email = _data["email"];
+            this.address = _data["address"];
+            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
+            this.profileImage = _data["profileImage"];
+        }
+    }
+
+    static fromJS(data: any): UserCV {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserCV();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
+        data["address"] = this.address;
+        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
+        data["profileImage"] = this.profileImage;
+        return data;
+    }
+}
+
+export interface IUserCV {
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    email?: string | undefined;
+    address?: string | undefined;
+    dateOfBirth?: Date | undefined;
+    profileImage?: string | undefined;
+}
+
+export class SkillCV implements ISkillCV {
+    title?: string | undefined;
+
+    constructor(data?: ISkillCV) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.title = _data["title"];
+        }
+    }
+
+    static fromJS(data: any): SkillCV {
+        data = typeof data === 'object' ? data : {};
+        let result = new SkillCV();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        return data;
+    }
+}
+
+export interface ISkillCV {
+    title?: string | undefined;
+}
+
+export class ExperienceCV implements IExperienceCV {
+    title?: string | undefined;
+    description?: string | undefined;
+    experienceDate?: Date | undefined;
+
+    constructor(data?: IExperienceCV) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.experienceDate = _data["experienceDate"] ? new Date(_data["experienceDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ExperienceCV {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExperienceCV();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["experienceDate"] = this.experienceDate ? this.experienceDate.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IExperienceCV {
+    title?: string | undefined;
+    description?: string | undefined;
+    experienceDate?: Date | undefined;
+}
+
+export class ProjectCV implements IProjectCV {
+    title?: string | undefined;
+    description?: string | undefined;
+    imageURL?: string | undefined;
+    link?: string | undefined;
+
+    constructor(data?: IProjectCV) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.imageURL = _data["imageURL"];
+            this.link = _data["link"];
+        }
+    }
+
+    static fromJS(data: any): ProjectCV {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProjectCV();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["imageURL"] = this.imageURL;
+        data["link"] = this.link;
+        return data;
+    }
+}
+
+export interface IProjectCV {
+    title?: string | undefined;
+    description?: string | undefined;
+    imageURL?: string | undefined;
+    link?: string | undefined;
+}
+
+export class EducationCV implements IEducationCV {
+    level?: string | undefined;
+    title?: string | undefined;
+
+    constructor(data?: IEducationCV) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.level = _data["level"];
+            this.title = _data["title"];
+        }
+    }
+
+    static fromJS(data: any): EducationCV {
+        data = typeof data === 'object' ? data : {};
+        let result = new EducationCV();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["level"] = this.level;
+        data["title"] = this.title;
+        return data;
+    }
+}
+
+export interface IEducationCV {
+    level?: string | undefined;
+    title?: string | undefined;
 }
 
 export class FollowCommand implements IFollowCommand {
