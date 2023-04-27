@@ -16,8 +16,6 @@ public record CreatePostCommand : IRequest<int>
     public string? Content { get; set; }
     public IFormFile? Image { get; set; }
     public IFormFile? Video { get; set; }
-    public int NumberOfLikes { get; set; }
-    public int NumberOfComments { get; set; }
     public int UserId { get; set; }
 }
 
@@ -35,8 +33,6 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, int>
         {
             Content = request.Content,
             VideoURL = await SaveFile.Save(FileType.video, request.Video),
-            NumberOfLikes = request.NumberOfLikes,
-            NumberOfComments = request.NumberOfComments,
             UserId = request.UserId,
             ImageURL = await SaveFile.Save(FileType.image, request.Image)
         };

@@ -2428,8 +2428,8 @@ export class LikesClient implements ILikesClient {
 
 export interface IPostsClient {
     getPostsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfPostDto>;
-    create(content: string | null | undefined, image: FileParameter | null | undefined, video: FileParameter | null | undefined, numberOfLikes: number | undefined, numberOfComments: number | undefined, userId: number | undefined): Observable<number>;
-    update(id: number | undefined, content: string | null | undefined, image: FileParameter | null | undefined, video: FileParameter | null | undefined, numberOfLikes: number | undefined, numberOfComments: number | undefined): Observable<FileResponse>;
+    create(content: string | null | undefined, image: FileParameter | null | undefined, video: FileParameter | null | undefined, userId: number | undefined): Observable<number>;
+    update(id: number | undefined, content: string | null | undefined, image: FileParameter | null | undefined, video: FileParameter | null | undefined): Observable<FileResponse>;
     latestNews(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfPostDto>;
     get(id: number): Observable<PostDto>;
     delete(id: number): Observable<FileResponse>;
@@ -2508,7 +2508,7 @@ export class PostsClient implements IPostsClient {
         return _observableOf(null as any);
     }
 
-    create(content: string | null | undefined, image: FileParameter | null | undefined, video: FileParameter | null | undefined, numberOfLikes: number | undefined, numberOfComments: number | undefined, userId: number | undefined): Observable<number> {
+    create(content: string | null | undefined, image: FileParameter | null | undefined, video: FileParameter | null | undefined, userId: number | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/Posts";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2519,14 +2519,6 @@ export class PostsClient implements IPostsClient {
             content_.append("Image", image.data, image.fileName ? image.fileName : "Image");
         if (video !== null && video !== undefined)
             content_.append("Video", video.data, video.fileName ? video.fileName : "Video");
-        if (numberOfLikes === null || numberOfLikes === undefined)
-            throw new Error("The parameter 'numberOfLikes' cannot be null.");
-        else
-            content_.append("NumberOfLikes", numberOfLikes.toString());
-        if (numberOfComments === null || numberOfComments === undefined)
-            throw new Error("The parameter 'numberOfComments' cannot be null.");
-        else
-            content_.append("NumberOfComments", numberOfComments.toString());
         if (userId === null || userId === undefined)
             throw new Error("The parameter 'userId' cannot be null.");
         else
@@ -2578,7 +2570,7 @@ export class PostsClient implements IPostsClient {
         return _observableOf(null as any);
     }
 
-    update(id: number | undefined, content: string | null | undefined, image: FileParameter | null | undefined, video: FileParameter | null | undefined, numberOfLikes: number | undefined, numberOfComments: number | undefined): Observable<FileResponse> {
+    update(id: number | undefined, content: string | null | undefined, image: FileParameter | null | undefined, video: FileParameter | null | undefined): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/Posts";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2593,14 +2585,6 @@ export class PostsClient implements IPostsClient {
             content_.append("Image", image.data, image.fileName ? image.fileName : "Image");
         if (video !== null && video !== undefined)
             content_.append("Video", video.data, video.fileName ? video.fileName : "Video");
-        if (numberOfLikes === null || numberOfLikes === undefined)
-            throw new Error("The parameter 'numberOfLikes' cannot be null.");
-        else
-            content_.append("NumberOfLikes", numberOfLikes.toString());
-        if (numberOfComments === null || numberOfComments === undefined)
-            throw new Error("The parameter 'numberOfComments' cannot be null.");
-        else
-            content_.append("NumberOfComments", numberOfComments.toString());
 
         let options_ : any = {
             body: content_,

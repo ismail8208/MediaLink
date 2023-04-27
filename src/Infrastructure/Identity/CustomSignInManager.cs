@@ -23,7 +23,7 @@ public class CustomSignInManager : SignInManager<ApplicationUser>
     public override async Task<SignInResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
     {
         // Custom check for username
-        var user = await UserManager.FindByEmailAsync(userName);
+        var user = await UserManager.FindByNameAsync(userName);
         if (user == null)
         {
             return SignInResult.Failed;

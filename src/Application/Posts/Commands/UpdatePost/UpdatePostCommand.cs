@@ -16,8 +16,6 @@ public record UpdatePostCommand : IRequest
     public string? Content { get; set; }
     public IFormFile? Image { get; set; }
     public IFormFile? Video { get; set; }
-    public int NumberOfLikes { get; set; }
-    public int NumberOfComments { get; set; }
 }
 
 
@@ -41,8 +39,6 @@ public class UpdatePostCommandHandler : IRequestHandler<UpdatePostCommand>
         entity.Content= request.Content;
         entity.ImageURL= await SaveFile.Save(FileType.image, request.Image);
         entity.VideoURL= await SaveFile.Save(FileType.video, request.Video);
-        entity.NumberOfComments= request.NumberOfLikes;
-        entity.NumberOfLikes= request.NumberOfComments;
 
         await _context.SaveChangesAsync(cancellationToken);
 

@@ -1767,14 +1767,6 @@
                     "format": "binary",
                     "nullable": true
                   },
-                  "NumberOfLikes": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "NumberOfComments": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
                   "UserId": {
                     "type": "integer",
                     "format": "int32"
@@ -1831,14 +1823,6 @@
                     "type": "string",
                     "format": "binary",
                     "nullable": true
-                  },
-                  "NumberOfLikes": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "NumberOfComments": {
-                    "type": "integer",
-                    "format": "int32"
                   }
                 }
               }
