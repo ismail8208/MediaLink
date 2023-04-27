@@ -2428,11 +2428,11 @@ export class LikesClient implements ILikesClient {
 
 export interface IPostsClient {
     getPostsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfPostDto>;
-    create(command: CreatePostCommand): Observable<number>;
+    create(content: string | null | undefined, image: FileParameter | null | undefined, video: FileParameter | null | undefined, numberOfLikes: number | undefined, numberOfComments: number | undefined, userId: number | undefined): Observable<number>;
+    update(id: number | undefined, content: string | null | undefined, image: FileParameter | null | undefined, video: FileParameter | null | undefined, numberOfLikes: number | undefined, numberOfComments: number | undefined): Observable<FileResponse>;
     latestNews(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfPostDto>;
     get(id: number): Observable<PostDto>;
     delete(id: number): Observable<FileResponse>;
-    update(id: number, command: UpdatePostCommand): Observable<FileResponse>;
 }
 
 @Injectable({
@@ -2508,18 +2508,35 @@ export class PostsClient implements IPostsClient {
         return _observableOf(null as any);
     }
 
-    create(command: CreatePostCommand): Observable<number> {
+    create(content: string | null | undefined, image: FileParameter | null | undefined, video: FileParameter | null | undefined, numberOfLikes: number | undefined, numberOfComments: number | undefined, userId: number | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/Posts";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(command);
+        const content_ = new FormData();
+        if (content !== null && content !== undefined)
+            content_.append("Content", content.toString());
+        if (image !== null && image !== undefined)
+            content_.append("Image", image.data, image.fileName ? image.fileName : "Image");
+        if (video !== null && video !== undefined)
+            content_.append("Video", video.data, video.fileName ? video.fileName : "Video");
+        if (numberOfLikes === null || numberOfLikes === undefined)
+            throw new Error("The parameter 'numberOfLikes' cannot be null.");
+        else
+            content_.append("NumberOfLikes", numberOfLikes.toString());
+        if (numberOfComments === null || numberOfComments === undefined)
+            throw new Error("The parameter 'numberOfComments' cannot be null.");
+        else
+            content_.append("NumberOfComments", numberOfComments.toString());
+        if (userId === null || userId === undefined)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else
+            content_.append("UserId", userId.toString());
 
         let options_ : any = {
             body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json",
                 "Accept": "application/json"
             })
         };
@@ -2553,6 +2570,79 @@ export class PostsClient implements IPostsClient {
     
             return _observableOf(result200);
             }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    update(id: number | undefined, content: string | null | undefined, image: FileParameter | null | undefined, video: FileParameter | null | undefined, numberOfLikes: number | undefined, numberOfComments: number | undefined): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Posts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (id === null || id === undefined)
+            throw new Error("The parameter 'id' cannot be null.");
+        else
+            content_.append("Id", id.toString());
+        if (content !== null && content !== undefined)
+            content_.append("Content", content.toString());
+        if (image !== null && image !== undefined)
+            content_.append("Image", image.data, image.fileName ? image.fileName : "Image");
+        if (video !== null && video !== undefined)
+            content_.append("Video", video.data, video.fileName ? video.fileName : "Video");
+        if (numberOfLikes === null || numberOfLikes === undefined)
+            throw new Error("The parameter 'numberOfLikes' cannot be null.");
+        else
+            content_.append("NumberOfLikes", numberOfLikes.toString());
+        if (numberOfComments === null || numberOfComments === undefined)
+            throw new Error("The parameter 'numberOfComments' cannot be null.");
+        else
+            content_.append("NumberOfComments", numberOfComments.toString());
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -2726,71 +2816,12 @@ export class PostsClient implements IPostsClient {
         }
         return _observableOf(null as any);
     }
-
-    update(id: number, command: UpdatePostCommand): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/Posts/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(command);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdate(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<FileResponse>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<FileResponse>;
-        }));
-    }
-
-    protected processUpdate(response: HttpResponseBase): Observable<FileResponse> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
 }
 
 export interface IProjectsClient {
     getProjectsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfProjectDto>;
-    create(command: CreateProjectCommand): Observable<number>;
-    update(id: number, command: UpdateProjectCommand): Observable<FileResponse>;
+    create(title: string | null | undefined, description: string | null | undefined, image: FileParameter | null | undefined, link: string | null | undefined, userId: number | undefined): Observable<number>;
+    update(id: number | undefined, description: string | null | undefined, image: FileParameter | null | undefined, link: string | null | undefined, userId: number | undefined): Observable<FileResponse>;
     delete(id: number): Observable<FileResponse>;
 }
 
@@ -2867,18 +2898,29 @@ export class ProjectsClient implements IProjectsClient {
         return _observableOf(null as any);
     }
 
-    create(command: CreateProjectCommand): Observable<number> {
+    create(title: string | null | undefined, description: string | null | undefined, image: FileParameter | null | undefined, link: string | null | undefined, userId: number | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/Projects";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(command);
+        const content_ = new FormData();
+        if (title !== null && title !== undefined)
+            content_.append("Title", title.toString());
+        if (description !== null && description !== undefined)
+            content_.append("Description", description.toString());
+        if (image !== null && image !== undefined)
+            content_.append("Image", image.data, image.fileName ? image.fileName : "Image");
+        if (link !== null && link !== undefined)
+            content_.append("Link", link.toString());
+        if (userId === null || userId === undefined)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else
+            content_.append("UserId", userId.toString());
 
         let options_ : any = {
             body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json",
                 "Accept": "application/json"
             })
         };
@@ -2920,21 +2962,31 @@ export class ProjectsClient implements IProjectsClient {
         return _observableOf(null as any);
     }
 
-    update(id: number, command: UpdateProjectCommand): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/Projects/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+    update(id: number | undefined, description: string | null | undefined, image: FileParameter | null | undefined, link: string | null | undefined, userId: number | undefined): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Projects";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(command);
+        const content_ = new FormData();
+        if (id === null || id === undefined)
+            throw new Error("The parameter 'id' cannot be null.");
+        else
+            content_.append("Id", id.toString());
+        if (description !== null && description !== undefined)
+            content_.append("Description", description.toString());
+        if (image !== null && image !== undefined)
+            content_.append("Image", image.data, image.fileName ? image.fileName : "Image");
+        if (link !== null && link !== undefined)
+            content_.append("Link", link.toString());
+        if (userId === null || userId === undefined)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else
+            content_.append("UserId", userId.toString());
 
         let options_ : any = {
             body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json",
                 "Accept": "application/octet-stream"
             })
         };
@@ -5677,7 +5729,6 @@ export interface IExperienceCV {
 export class ProjectCV implements IProjectCV {
     title?: string | undefined;
     description?: string | undefined;
-    imageURL?: string | undefined;
     link?: string | undefined;
 
     constructor(data?: IProjectCV) {
@@ -5693,7 +5744,6 @@ export class ProjectCV implements IProjectCV {
         if (_data) {
             this.title = _data["title"];
             this.description = _data["description"];
-            this.imageURL = _data["imageURL"];
             this.link = _data["link"];
         }
     }
@@ -5709,7 +5759,6 @@ export class ProjectCV implements IProjectCV {
         data = typeof data === 'object' ? data : {};
         data["title"] = this.title;
         data["description"] = this.description;
-        data["imageURL"] = this.imageURL;
         data["link"] = this.link;
         return data;
     }
@@ -5718,7 +5767,6 @@ export class ProjectCV implements IProjectCV {
 export interface IProjectCV {
     title?: string | undefined;
     description?: string | undefined;
-    imageURL?: string | undefined;
     link?: string | undefined;
 }
 
@@ -7612,118 +7660,6 @@ export interface IPostDto {
     userName?: string | undefined;
 }
 
-export class CreatePostCommand implements ICreatePostCommand {
-    content?: string | undefined;
-    imageURL?: string | undefined;
-    videoURL?: string | undefined;
-    numberOfLikes?: number;
-    numberOfComments?: number;
-    userId?: number;
-
-    constructor(data?: ICreatePostCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.content = _data["content"];
-            this.imageURL = _data["imageURL"];
-            this.videoURL = _data["videoURL"];
-            this.numberOfLikes = _data["numberOfLikes"];
-            this.numberOfComments = _data["numberOfComments"];
-            this.userId = _data["userId"];
-        }
-    }
-
-    static fromJS(data: any): CreatePostCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreatePostCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["content"] = this.content;
-        data["imageURL"] = this.imageURL;
-        data["videoURL"] = this.videoURL;
-        data["numberOfLikes"] = this.numberOfLikes;
-        data["numberOfComments"] = this.numberOfComments;
-        data["userId"] = this.userId;
-        return data;
-    }
-}
-
-export interface ICreatePostCommand {
-    content?: string | undefined;
-    imageURL?: string | undefined;
-    videoURL?: string | undefined;
-    numberOfLikes?: number;
-    numberOfComments?: number;
-    userId?: number;
-}
-
-export class UpdatePostCommand implements IUpdatePostCommand {
-    id?: number;
-    content?: string | undefined;
-    imageURL?: string | undefined;
-    videoURL?: string | undefined;
-    numberOfLikes?: number;
-    numberOfComments?: number;
-
-    constructor(data?: IUpdatePostCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.content = _data["content"];
-            this.imageURL = _data["imageURL"];
-            this.videoURL = _data["videoURL"];
-            this.numberOfLikes = _data["numberOfLikes"];
-            this.numberOfComments = _data["numberOfComments"];
-        }
-    }
-
-    static fromJS(data: any): UpdatePostCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdatePostCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["content"] = this.content;
-        data["imageURL"] = this.imageURL;
-        data["videoURL"] = this.videoURL;
-        data["numberOfLikes"] = this.numberOfLikes;
-        data["numberOfComments"] = this.numberOfComments;
-        return data;
-    }
-}
-
-export interface IUpdatePostCommand {
-    id?: number;
-    content?: string | undefined;
-    imageURL?: string | undefined;
-    videoURL?: string | undefined;
-    numberOfLikes?: number;
-    numberOfComments?: number;
-}
-
 export class PaginatedListOfProjectDto implements IPaginatedListOfProjectDto {
     items?: ProjectDto[];
     pageNumber?: number;
@@ -7846,110 +7782,6 @@ export interface IProjectDto {
     link?: string | undefined;
     userId?: number;
     userName?: string | undefined;
-}
-
-export class CreateProjectCommand implements ICreateProjectCommand {
-    title?: string | undefined;
-    description?: string | undefined;
-    imageURL?: string | undefined;
-    link?: string | undefined;
-    userId?: number;
-
-    constructor(data?: ICreateProjectCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.title = _data["title"];
-            this.description = _data["description"];
-            this.imageURL = _data["imageURL"];
-            this.link = _data["link"];
-            this.userId = _data["userId"];
-        }
-    }
-
-    static fromJS(data: any): CreateProjectCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateProjectCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["title"] = this.title;
-        data["description"] = this.description;
-        data["imageURL"] = this.imageURL;
-        data["link"] = this.link;
-        data["userId"] = this.userId;
-        return data;
-    }
-}
-
-export interface ICreateProjectCommand {
-    title?: string | undefined;
-    description?: string | undefined;
-    imageURL?: string | undefined;
-    link?: string | undefined;
-    userId?: number;
-}
-
-export class UpdateProjectCommand implements IUpdateProjectCommand {
-    id?: number;
-    description?: string | undefined;
-    imageURL?: string | undefined;
-    link?: string | undefined;
-    userId?: number;
-
-    constructor(data?: IUpdateProjectCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.description = _data["description"];
-            this.imageURL = _data["imageURL"];
-            this.link = _data["link"];
-            this.userId = _data["userId"];
-        }
-    }
-
-    static fromJS(data: any): UpdateProjectCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateProjectCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["description"] = this.description;
-        data["imageURL"] = this.imageURL;
-        data["link"] = this.link;
-        data["userId"] = this.userId;
-        return data;
-    }
-}
-
-export interface IUpdateProjectCommand {
-    id?: number;
-    description?: string | undefined;
-    imageURL?: string | undefined;
-    link?: string | undefined;
-    userId?: number;
 }
 
 export class PaginatedListOfShareDto implements IPaginatedListOfShareDto {
@@ -9053,6 +8885,11 @@ export interface IWeatherForecast {
     temperatureC?: number;
     temperatureF?: number;
     summary?: string | undefined;
+}
+
+export interface FileParameter {
+    data: any;
+    fileName: string;
 }
 
 export interface FileResponse {

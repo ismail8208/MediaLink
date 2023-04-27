@@ -17,18 +17,14 @@ public class ProjectsController : ApiControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<int>> Create([FromBody] CreateProjectCommand command)
+    public async Task<ActionResult<int>> Create([FromForm] CreateProjectCommand command)
     {
         return await Mediator.Send(command);
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult> Update(int id, UpdateProjectCommand command)
+    [HttpPut]
+    public async Task<ActionResult> Update([FromForm] UpdateProjectCommand command)
     {
-        if (id != command.Id)
-        {
-            return BadRequest();
-        }
 
         await Mediator.Send(command);
 

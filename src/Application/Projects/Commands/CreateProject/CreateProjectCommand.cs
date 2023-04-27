@@ -1,9 +1,12 @@
 ﻿using System.Data;
+using MediaLink.Application.Common.FilesHandling;
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
+using MediaLink.Domain.Enums;
 using MediaLink.Domain.Events.ProjectEvents;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace MediaLink.Application.Projects.Commands.CreateProject;
 [Authorize(Roles = "member")]
@@ -11,7 +14,7 @@ public record CreateProjectCommand : IRequest<int>
 {
     public string? Title { get; set; }
     public string? Description { get; set; }
-    public string? ImageURL { get; set; }
+    public IFormFile? Image { get; set; }
     public string? Link { get; set; }
     public int UserId { get; set; }
 }
@@ -30,7 +33,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
         {
             Title = request.Title,
             Description = request.Description,
-            ImageURL = request.ImageURL,
+            ImageURL = await SaveFile.Save(FileType.image, request.Image),
             Link = request.Link,
             UserId = request.UserId
         };

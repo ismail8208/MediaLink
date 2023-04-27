@@ -33,7 +33,7 @@ public class PostsController : ApiControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<int>> Create(CreatePostCommand command)
+    public async Task<ActionResult<int>> Create([FromForm]CreatePostCommand command)
     {
         return await Mediator.Send(command);
     }
@@ -46,13 +46,9 @@ public class PostsController : ApiControllerBase
         return NoContent();
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult> Update(int id, [FromBody]UpdatePostCommand command)
+    [HttpPut]
+    public async Task<ActionResult> Update([FromForm] UpdatePostCommand command)
     {
-        if (id != command.Id)
-        {
-            return BadRequest();
-        }
         await Mediator.Send(command);
 
         return NoContent();

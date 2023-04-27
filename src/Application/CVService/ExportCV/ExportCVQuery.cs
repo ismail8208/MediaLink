@@ -5,7 +5,6 @@ using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.CVService.DTOs;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MediaLink.Application.CVService.ExportCV;
 public record ExportCVQuery(int UserId) : IRequest<CV>;

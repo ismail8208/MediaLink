@@ -1,17 +1,21 @@
 ﻿using System.Data;
+using MediaLink.Application.Common.FilesHandling;
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
+using MediaLink.Domain.Enums;
 using MediaLink.Domain.Events;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 
 namespace MediaLink.Application.Posts.Commands.CreatePost;
 [Authorize(Roles = "member")]
 public record CreatePostCommand : IRequest<int>
 {
     public string? Content { get; set; }
-    public string? ImageURL { get; set; }
-    public string? VideoURL { get; set; }
+    public IFormFile? Image { get; set; }
+    public IFormFile? Video { get; set; }
     public int NumberOfLikes { get; set; }
     public int NumberOfComments { get; set; }
     public int UserId { get; set; }
@@ -30,12 +34,13 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, int>
         var entity = new Post
         {
             Content = request.Content,
-            ImageURL = request.ImageURL,
-            VideoURL = request.VideoURL,
+            VideoURL = await SaveFile.Save(FileType.video, request.Video),
             NumberOfLikes = request.NumberOfLikes,
             NumberOfComments = request.NumberOfComments,
-            UserId = request.UserId
+            UserId = request.UserId,
+            ImageURL = await SaveFile.Save(FileType.image, request.Image)
         };
+        
 
         entity.AddDomainEvent(new PostCreatedEvent(entity));
       

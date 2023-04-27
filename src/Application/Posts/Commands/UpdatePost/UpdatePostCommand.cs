@@ -1,9 +1,12 @@
 ﻿using System.Data;
 using MediaLink.Application.Common.Exceptions;
+using MediaLink.Application.Common.FilesHandling;
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Common.Security;
 using MediaLink.Domain.Entities;
+using MediaLink.Domain.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace MediaLink.Application.Posts.Commands.UpdatePost;
 [Authorize(Roles = "member")]
@@ -11,8 +14,8 @@ public record UpdatePostCommand : IRequest
 {
     public int Id { get; set; }
     public string? Content { get; set; }
-    public string? ImageURL { get; set; }
-    public string? VideoURL { get; set; }
+    public IFormFile? Image { get; set; }
+    public IFormFile? Video { get; set; }
     public int NumberOfLikes { get; set; }
     public int NumberOfComments { get; set; }
 }
@@ -36,8 +39,8 @@ public class UpdatePostCommandHandler : IRequestHandler<UpdatePostCommand>
         }
 
         entity.Content= request.Content;
-        entity.ImageURL= request.ImageURL;
-        entity.VideoURL= request.VideoURL;
+        entity.ImageURL= await SaveFile.Save(FileType.image, request.Image);
+        entity.VideoURL= await SaveFile.Save(FileType.video, request.Video);
         entity.NumberOfComments= request.NumberOfLikes;
         entity.NumberOfLikes= request.NumberOfComments;
 
