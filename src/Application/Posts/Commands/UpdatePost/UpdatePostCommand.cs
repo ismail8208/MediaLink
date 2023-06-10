@@ -1,5 +1,4 @@
-﻿using System.Data;
-using MediaLink.Application.Common.Exceptions;
+﻿using MediaLink.Application.Common.Exceptions;
 using MediaLink.Application.Common.FilesHandling;
 using MediaLink.Application.Common.Interfaces;
 using MediaLink.Application.Common.Security;
