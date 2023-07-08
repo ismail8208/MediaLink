@@ -56,4 +56,11 @@ app.MapRazorPages();
 
 app.MapFallbackToFile("index.html");
 
-app.Run();
+app.Run(
+/*    async (context) =>
+    {
+        context.Response.ContentType = "image/png";
+        await context.Response.WriteAsync("wwwroot/images");
+        //
+    }*/
+);
