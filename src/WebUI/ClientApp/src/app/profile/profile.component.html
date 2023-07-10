@@ -42,7 +42,7 @@
 	<!-- about -->
 	
 	<!-- educations start-->
-	<div class="group" *ngIf="educations.length">
+	<div class="group">
 		<h6>Educations</h6>
         <app-add-education (selectdEducation)="addEducation($event)" (_listFilter)="searchEducation($event)" [filteredEducations]="filteredEducations"></app-add-education>
 		<ul *ngFor="let education of (showAllEducations ? educations : educations.slice(0, 2))">
@@ -56,7 +56,7 @@
 
     <!-- skills start-->
     <!-- -->
-    <div class="group"  *ngIf="skills.length"> 
+    <div class="group"> 
 		<h6>Skills</h6>
 		<app-add-skill (selectedSKill)="addSkill($event)" (_listFilter)="searchSkills($event)" [filteredSKills]="filteredSKills"></app-add-skill>
 		<ul *ngFor="let skill of (showAllSkills ? skills : skills.slice(0, 2))">
