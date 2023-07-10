@@ -1,0 +1,71 @@
+<div class="profileBody">
+<div class="card-container" *ngIf="isAuthenticated | async">
+	<span class="edit">Edit</span>
+	<img class="round" [src]="user.profileImage" alt="user" />
+	<h3>{{user!.firstName+ " " + user.lastName}}</h3>
+	<h6>Syria</h6>
+	<p> here i will add sumary  <br/> front-end developer</p>
+    <div class="follow">
+        <div>
+            125 followers
+        </div>
+        <div>
+            135 Following
+        </div>
+    </div>
+
+    <div class="buttons">
+		<button class="primary">
+			Message
+		</button>
+		<button class="primary ghost">
+			Following
+	    </button>
+		<div class="dropdown">
+			<button class="primary dropdown-btn" aria-haspopup="menu">
+			  <span>More</span>
+			  <span class="arrow"></span>
+			</button>
+			<ul class="dropdown-content" role="menu">
+			  <li (click)="openDSkill()" style="--delay: 1;">Add Skill</li>
+			  <li (click)="openDEducation()" style="--delay: 2;">Add Education</li>
+			  <li style="--delay: 3;">Add Experience</li>
+			  <li style="--delay: 4;">Add Post</li>
+			</ul>
+		</div>
+	</div>
+
+
+
+	<!-- about -->
+	<!-- <ml-about [content]="personalData!.about"></ml-about> -->
+	<!-- about -->
+	
+	<!-- educations start-->
+	<div class="group" *ngIf="educations.length">
+		<h6>Educations</h6>
+        <app-add-education (selectdEducation)="addEducation($event)" (_listFilter)="searchEducation($event)" [filteredEducations]="filteredEducations"></app-add-education>
+		<ul *ngFor="let education of (showAllEducations ? educations : educations.slice(0, 2))">
+			<app-education [education]="education" (educationForUpdate)="chosenEducation($event)" (educationForDeleted)="deleteEducation($event)"> </app-education>
+            <hr class="separate">
+		</ul>
+        <span class="show-all" (click)="toggleEducations()">{{textEducationbutton}}</span>
+	</div> 
+	<app-update-education [education]="edu" (chosenEducation)="updateEducation($event)"></app-update-education>
+	<!-- educations end-->
+
+    <!-- skills start-->
+    <!-- -->
+    <div class="group"  *ngIf="skills.length"> 
+		<h6>Skills</h6>
+		<app-add-skill (selectedSKill)="addSkill($event)" (_listFilter)="searchSkills($event)" [filteredSKills]="filteredSKills"></app-add-skill>
+		<ul *ngFor="let skill of (showAllSkills ? skills : skills.slice(0, 2))">
+			<app-skill [skill]="skill" (skillForDeleted)="deleteSkill($event)"></app-skill>
+            <hr class="separate">
+		</ul>
+        <span class="show-all" (click)="toggleSkills()">{{textskillbutton}}</span>
+	</div> 
+
+	<!-- skills end -->  
+ <div>
+</div>

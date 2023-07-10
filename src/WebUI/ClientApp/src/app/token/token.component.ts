@@ -4,6 +4,7 @@ import { AuthorizeService } from "../../api-authorization/authorize.service";
 @Component({
   selector: "app-token-component",
   templateUrl: "./token.component.html",
+  styleUrls: ['./token.component.css']
 })
 export class TokenComponent implements OnInit {
   token: string = "";

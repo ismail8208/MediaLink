@@ -3,6 +3,7 @@ import { User, UserManager } from 'oidc-client';
 import { BehaviorSubject, concat, from, Observable } from 'rxjs';
 import { filter, map, mergeMap, take, tap } from 'rxjs/operators';
 import { ApplicationPaths, ApplicationName } from './api-authorization.constants';
+import { UserDto, UsersClient } from 'src/app/web-api-client';
 
 export type IAuthenticationResult =
   SuccessAuthenticationResult |
@@ -40,6 +41,11 @@ export class AuthorizeService {
   // By default pop ups are disabled because they don't work properly on Edge.
   // If you want to enable pop up authentication simply set this flag to false.
 
+  constructor(private userClient: UsersClient)
+  {
+
+  }
+
   private popUpDisabled = true;
   private userManager?: UserManager;
   private userSubject: BehaviorSubject<IUser | null> = new BehaviorSubject<IUser | null>(null);
@@ -53,6 +59,15 @@ export class AuthorizeService {
       this.userSubject.pipe(take(1), filter(u => !!u)),
       this.getUserFromStorage().pipe(filter(u => !!u), tap(u => this.userSubject.next(u))),
       this.userSubject.asObservable());
+  }
+
+  // ismail added this method to get info of user
+  public getUserInfo() : Observable<UserDto> {
+   let username: string;
+   let a  = this.getUser().pipe(map(u => u.name)).subscribe({
+    next: data => username = data
+   });
+   return this.userClient.get(username);
   }
 
   public getAccessToken(): Observable<string | null> {

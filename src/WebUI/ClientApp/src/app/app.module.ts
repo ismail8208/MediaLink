@@ -18,6 +18,15 @@ import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PostComponent } from './post/post.component';
+import { ProfileComponent } from './profile/profile.component';
+import {StoreModule } from '@ngrx/store';
+import { AboutComponent } from './profile/about/about.component';
+import { EducationComponent } from './profile/educations/education.component';
+import { AddEducationComponent } from './profile/educations/addEducation/add-education.component';
+import { UpdateEducationComponent } from './profile/educations/updateEducation/update-education.component';
+import { SkillComponent } from './profile/skills/skill.component';
+import { AddSkillComponent } from './profile/skills/addSkill/add-skill.component';
+import { userReducer } from './stateManagement/user.reducer';
 
 @NgModule({
   declarations: [
@@ -28,7 +37,14 @@ import { PostComponent } from './post/post.component';
     FetchDataComponent,
     TodoComponent,
     TokenComponent,
-    PostComponent
+    PostComponent,
+    ProfileComponent,
+    AboutComponent,
+    EducationComponent,
+    AddEducationComponent,
+    UpdateEducationComponent,
+    SkillComponent,
+    AddSkillComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -37,7 +53,8 @@ import { PostComponent } from './post/post.component';
     ApiAuthorizationModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    StoreModule.forRoot({ user: userReducer })
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }

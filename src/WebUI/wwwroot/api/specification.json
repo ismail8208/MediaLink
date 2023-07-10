@@ -2958,12 +2958,39 @@
               }
             }
           }
-        },
-        "security": [
+        }
+      }
+    },
+    "/api/Users/{username}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "Users_Get",
+        "parameters": [
           {
-            "JWT": []
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 1
           }
-        ]
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/WeatherForecast": {

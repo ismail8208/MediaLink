@@ -1,6 +1,6 @@
-<header>
+<header class="customNav">
   <nav
-    class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
+    class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom"
   >
     <div class="container">
       <a class="navbar-brand" [routerLink]="['/']">MediaLink.WebUI</a>
@@ -25,22 +25,25 @@
             [routerLinkActive]="['link-active']"
             [routerLinkActiveOptions]="{ exact: true }"
           >
-            <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
+            <a class="nav-link" [routerLink]="['/']">Home</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/counter']">Counter</a>
+            <a class="nav-link" [routerLink]="['/counter']">Counter</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/fetch-data']">Fetch data</a>
+            <a class="nav-link" [routerLink]="['/fetch-data']">Fetch data</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/todo']">Todo</a>
+            <a class="nav-link" [routerLink]="['/todo']">Todo</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/token']">JWT</a>
+            <a class="nav-link" [routerLink]="['/profile']">Profile</a>
+          </li>
+          <li class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link" [routerLink]="['/token']">JWT</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-dark" href="/api" target="_blank">API</a>
+            <a class="nav-link" href="/api" target="_blank">API</a>
           </li>
         </ul>
         <app-login-menu></app-login-menu>

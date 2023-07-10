@@ -1,16 +1,19 @@
-import { Component } from '@angular/core';
-import { PaginatedListOfPostDto, Post, PostDto, PostsClient} from '../web-api-client';
-
+import { Component, OnInit } from '@angular/core';
+import { PaginatedListOfPostDto, Post, PostDto, PostsClient, UserDto, UsersClient} from '../web-api-client';
+import { AuthorizeService } from 'src/api-authorization/authorize.service';
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html'
 })
-export class PostComponent {
-  public posts: PostDto [] = [];
+export class PostComponent implements OnInit {
 
-  constructor(private client: PostsClient) {
-    client.getPostsWithPagination(3, 1, 2).subscribe(result => {
-      this.posts = result.items;
-    }, error => console.error(error));
+  user: UserDto;
+  constructor(private authorizeService: AuthorizeService) {
+  }
+
+  ngOnInit(): void {
+    this.authorizeService.getUserInfo().subscribe({
+      next: data => this.user = data
+    })
   }
 }

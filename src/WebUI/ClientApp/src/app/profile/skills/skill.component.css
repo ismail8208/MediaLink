@@ -1,0 +1,41 @@
+.skill ul {
+	list-style-type: none;
+	padding: 0px;
+}
+
+.skill ul li {
+	border: 1px solid #2D2747;
+	border-radius: 2px;
+	display: inline-block;
+	font-size: 12px;
+	margin: 0 7px 7px 0;
+	padding: 7px;
+}
+
+.endorse {
+    display: block;
+	background-color: #03BFCB;
+	border: 1px solid #03BFCB;
+	border-radius: 2px;
+	color: #231E39;
+	font-family: Montserrat, sans-serif;
+	font-size: 12px;
+	padding: 6px;
+    margin: 0 7px 7px 0;
+}
+
+.delete {
+	color: #231E39;
+	background-color: #FEBB0B;
+	border-radius: 3px;
+	font-size: 20px;
+	font-weight: bold;
+	padding: 3px 7px;
+    display: inline;
+	position: absolute;
+	right: 16px;
+}
+
+.delete:hover {
+    color: #03BFCB;
+}
