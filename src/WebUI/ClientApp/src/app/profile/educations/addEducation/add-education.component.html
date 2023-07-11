@@ -4,12 +4,13 @@
       <span (click)="closeD()" title="Close" class="closeAE">X</span>
       <h2>Add <span style="font-weight: bold;">{{chosenEducation}}</span> Education</h2>
       <!-- <p>This modal box is created using the powers of CSS3.</p> -->
-      <input type="text"  placeholder="Search" class="searchbar" [(ngModel)]="listFilter">
+      <input type="text"  placeholder="Title" class="searchbar" [(ngModel)]="listFilter">
+      <input type="text"  placeholder="Level" class="searchbar" [(ngModel)]="level">
       <div *ngFor="let education of filteredEducations" class="existing-education" (click)="chooseEducation(education)">
          {{education.title}}
       </div>
-      <button class="save" (click)="saveEducation()">
-        <span (click)="closeD()" style="text-decoration: none; color: #2D2747;">Save</span>
+      <button class="save" (click)="saveEducation()" (click)="closeD()">
+        <span style="text-decoration: none; color: #2D2747;">Save</span>
       </button>
     </div>
 </div>

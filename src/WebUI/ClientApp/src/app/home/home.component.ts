@@ -7,9 +7,4 @@ import { AuthorizeService } from 'src/api-authorization/authorize.service';
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
-  public isAuthenticated?: Observable<boolean>;
-
-  constructor( private authorizeService: AuthorizeService){
-    this.isAuthenticated = this.authorizeService.isAuthenticated();
-  }
 }

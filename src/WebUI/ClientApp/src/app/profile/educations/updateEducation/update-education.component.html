@@ -4,8 +4,8 @@
       <h2>Edit Education</h2>
       <input type="text" placeholder="title" class="searchbar" [(ngModel)]="education!.title">
       <input type="text" placeholder="level" class="searchbar" [(ngModel)]="education!.level">
-      <button class="save" (click)="updateEducation()">
-        <span (click)="closeD()" style="text-decoration: none; color: #2D2747;">Save</span>
+      <button class="save" (click)="updateEducation()" (click)="closeD()">
+        <span  style="text-decoration: none; color: #2D2747;">Save</span>
       </button>
     </div>
 </div>

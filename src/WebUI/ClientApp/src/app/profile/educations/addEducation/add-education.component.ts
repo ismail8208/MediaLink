@@ -8,19 +8,19 @@ import { IEducation, IEducationDto } from 'src/app/web-api-client';
 })
 export class AddEducationComponent {
 
-  @Output() selectdEducation: EventEmitter<string> = new EventEmitter<string>();
+  @Output() selectdEducation: EventEmitter<IEducationDto> = new EventEmitter<IEducationDto>();
 
   @Output() _listFilter: EventEmitter<string> = new EventEmitter<string>(); //output
   
   @Input() filteredEducations : IEducationDto[] = []; //input
 
   v: string = '';
+  level: string = '';
 
   public set listFilter(v : string) {
       this._listFilter.emit(v);
       this.v = v;
   }
-  
   
   chosenEducation: string ='';
   chooseEducation(education: IEducationDto) {
@@ -31,19 +31,28 @@ export class AddEducationComponent {
     const modal = document.querySelector('.modalDialogAE') as HTMLElement;
     modal.style.opacity = '1';
     modal.style.pointerEvents = 'auto';
-    this.listFilter='';
   }
   
-  closeD(){
+  closeD() { 
     const modal = document.querySelector('.modalDialogAE') as HTMLElement;
     modal.style.opacity = '0';
     modal.style.pointerEvents = 'none';
     this.filteredEducations = [];
+    this.chosenEducation = '';
+    this.level ='';
+    this.listFilter='';
   }
 
   saveEducation()
   {
-      this.v !=' ' &&  this.selectdEducation.emit((this.chosenEducation == '' ? this.v : this.chosenEducation));
-      this.chosenEducation = '';
+    let entity: IEducationDto = {
+      title: this.chosenEducation == '' ? this.v : this.chosenEducation,
+      level: this.level
+    }
+    this.v !='' &&  this.selectdEducation.emit(entity);
+    this.filteredEducations = [];
+    this.chosenEducation = '';
+    this.level ='';
+    this.listFilter='';
   }
 }

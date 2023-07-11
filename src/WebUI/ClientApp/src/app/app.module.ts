@@ -27,6 +27,9 @@ import { UpdateEducationComponent } from './profile/educations/updateEducation/u
 import { SkillComponent } from './profile/skills/skill.component';
 import { AddSkillComponent } from './profile/skills/addSkill/add-skill.component';
 import { userReducer } from './stateManagement/user.reducer';
+import { ExperienceComponent } from './profile/experiences/experience.component';
+import { AddExperienceComponent } from './profile/experiences/addExperience/add-experience.component';
+import { UpdateExperienceComponent } from './profile/experiences/updateExperience/update-experience.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +47,10 @@ import { userReducer } from './stateManagement/user.reducer';
     AddEducationComponent,
     UpdateEducationComponent,
     SkillComponent,
-    AddSkillComponent
+    AddSkillComponent,
+    ExperienceComponent,
+    AddExperienceComponent,
+    UpdateExperienceComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

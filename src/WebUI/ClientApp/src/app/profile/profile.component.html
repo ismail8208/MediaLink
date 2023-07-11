@@ -27,9 +27,9 @@
 			  <span class="arrow"></span>
 			</button>
 			<ul class="dropdown-content" role="menu">
-			  <li (click)="openDSkill()" style="--delay: 1;">Add Skill</li>
-			  <li (click)="openDEducation()" style="--delay: 2;">Add Education</li>
-			  <li style="--delay: 3;">Add Experience</li>
+			  <li (click)="enableSkillsSection()" style="--delay: 1;">Add Skills Section</li>
+			  <li (click)="enableEducationsSection()" style="--delay: 2;">Add Education Section</li>
+			  <li (click)="enableExperiencesSection()" style="--delay: 3;">Add Experience Section</li>
 			  <li style="--delay: 4;">Add Post</li>
 			</ul>
 		</div>
@@ -42,7 +42,7 @@
 	<!-- about -->
 	
 	<!-- educations start-->
-	<div class="group">
+	<div class="group" *ngIf="educations.length || isEducationsEnabled">
 		<h6>Educations</h6>
         <app-add-education (selectdEducation)="addEducation($event)" (_listFilter)="searchEducation($event)" [filteredEducations]="filteredEducations"></app-add-education>
 		<ul *ngFor="let education of (showAllEducations ? educations : educations.slice(0, 2))">
@@ -54,9 +54,21 @@
 	<app-update-education [education]="edu" (chosenEducation)="updateEducation($event)"></app-update-education>
 	<!-- educations end-->
 
+	<!-- experience start -->
+	<div class="group" *ngIf="experiences.length || isExperiencesEnabled">
+		<h6>Experiences</h6>
+        <app-add-experience (selectdExperience)="addExperience($event)" (_listFilter)="searchExperience($event)" [filteredExperiences]="filteredExperiences"></app-add-experience>
+		<ul *ngFor="let experience of (showAllExperiences ? experiences : experiences.slice(0, 2))">
+			<app-experience [experience]="experience" (experienceForUpdate)="chosenExperience($event)" (experienceForDeleted)="deleteExperience($event)"> </app-experience>
+            <hr class="separate">
+		</ul>
+        <span class="show-all" (click)="toggleExperiences()">{{textExperiencebutton}}</span>
+	</div> 
+	<app-update-experience [experience]="exper" (chosenExperience)="updateExperience($event)"></app-update-experience>
+	<!-- experience end -->
+
     <!-- skills start-->
-    <!-- -->
-    <div class="group"> 
+    <div class="group" *ngIf="skills.length || isSkillsEnabled"> 
 		<h6>Skills</h6>
 		<app-add-skill (selectedSKill)="addSkill($event)" (_listFilter)="searchSkills($event)" [filteredSKills]="filteredSKills"></app-add-skill>
 		<ul *ngFor="let skill of (showAllSkills ? skills : skills.slice(0, 2))">
@@ -65,7 +77,7 @@
 		</ul>
         <span class="show-all" (click)="toggleSkills()">{{textskillbutton}}</span>
 	</div> 
-
 	<!-- skills end -->  
+
  <div>
 </div>
