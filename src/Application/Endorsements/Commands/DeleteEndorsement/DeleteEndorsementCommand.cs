@@ -21,9 +21,10 @@ public class DeleteEndorsementCommandHandler : IRequestHandler<DeleteEndorsement
 
     public async Task<Unit> Handle(DeleteEndorsementCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Endorsements
+/*        var entity = await _context.Endorsements
             .Where(E => E.Id == request.Id)
-            .SingleOrDefaultAsync(cancellationToken);
+            .SingleOrDefaultAsync(cancellationToken);*/
+        var entity = await _context.Endorsements.FirstOrDefaultAsync(e => e.Id == request.Id);
 
         if (entity == null)
         {

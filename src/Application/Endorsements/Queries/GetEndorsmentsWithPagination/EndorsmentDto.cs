@@ -7,6 +7,7 @@ namespace MediaLink.Application.Endorsements.Queries.GetEndorsmentsWithPaginatio
 
 public class EndorsmentDto : IMapFrom<Endorsement>
 {
+    public int Id { get; set; }
     public int SkillId { get; set; }
     public int UserId { get; set; }
     public string? UserName { get; set; }

@@ -1,12 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, combineLatest, combineLatestWith, map, tap } from 'rxjs';
 import { CreateEducationCommand, CreateExperienceCommand, CreateSkillCommand, 
          EducationsClient, ExperiencesClient, SkillsClient,
          ICreateEducationCommand, ICreateExperienceCommand, ICreateSkillCommand,
          IEducationDto, IExperienceDto, ISkillDto, 
          IUpdateEducationCommand, IUpdateExperienceCommand, IUpdateSkillCommand,
          UpdateEducationCommand, UpdateExperienceCommand, UpdateSkillCommand,
-         IUserDto } from '../web-api-client';
+         IUserDto, 
+         EndorsementsClient,
+         IEndorsmentDto} from '../web-api-client';
 import { AuthorizeService } from 'src/api-authorization/authorize.service';
 import { Store, select } from '@ngrx/store';
 import { setUser } from '../stateManagement/user.actions';
@@ -15,7 +17,8 @@ import { selectUser } from '../stateManagement/user.selectors';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class ProfileComponent implements OnInit
 {
@@ -47,6 +50,8 @@ export class ProfileComponent implements OnInit
   isEducationsEnabled: boolean = false;
   isExperiencesEnabled: boolean = false;
 
+
+
   
 
   constructor(
@@ -54,7 +59,7 @@ export class ProfileComponent implements OnInit
     private skillsClinet: SkillsClient, 
     private educationsClient: EducationsClient,
     private authorizeService: AuthorizeService, 
-    private experiencesClient : ExperiencesClient
+    private experiencesClient : ExperiencesClient,
   )
   {
     this.isAuthenticated = this.authorizeService.isAuthenticated();
@@ -81,6 +86,27 @@ export class ProfileComponent implements OnInit
         }
       },
     });
+
+    // setTimeout(() => {
+
+    // this.endorsementsClient.getEndorsmentsWithPagination(1016, 1, 40).pipe(
+
+    //   combineLatestWith(
+    //     this.skillsClinet.getSkillsWithPagination(this.user.id, 1, 40).pipe(
+    //     tap(data => {
+    //       this.lenOfSkills = data.totalCount;
+    //       this.textskillbutton =  `Show all ${this.lenOfSkills} skills`
+    //     }))),
+
+    //   map(([CLendorsements, CLskills]) =>  CLskills.items.map(skill => ({
+    //     ...skill,
+    //     listOfEndorsements: CLendorsements.items.filter(e => skill.id == e.skillId)
+    //   } as ISkill)))).subscribe({
+    //     next: data =>  {
+    //       this.skills = data;
+    //     }
+    //   });
+    // }, 500);
 
     setTimeout(() => {
       this.skillsClinet.getSkillsWithPagination(this.user.id, 1, 40).subscribe({

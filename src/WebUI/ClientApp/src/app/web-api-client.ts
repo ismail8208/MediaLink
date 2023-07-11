@@ -5264,6 +5264,7 @@ export interface IPaginatedListOfEndorsmentDto {
 }
 
 export class EndorsmentDto implements IEndorsmentDto {
+    id?: number;
     skillId?: number;
     userId?: number;
     userName?: string | undefined;
@@ -5279,6 +5280,7 @@ export class EndorsmentDto implements IEndorsmentDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.skillId = _data["skillId"];
             this.userId = _data["userId"];
             this.userName = _data["userName"];
@@ -5294,6 +5296,7 @@ export class EndorsmentDto implements IEndorsmentDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["skillId"] = this.skillId;
         data["userId"] = this.userId;
         data["userName"] = this.userName;
@@ -5302,6 +5305,7 @@ export class EndorsmentDto implements IEndorsmentDto {
 }
 
 export interface IEndorsmentDto {
+    id?: number;
     skillId?: number;
     userId?: number;
     userName?: string | undefined;
