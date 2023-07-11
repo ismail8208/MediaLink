@@ -17,7 +17,6 @@ import { TokenComponent } from './token/token.component';
 import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PostComponent } from './post/post.component';
 import { ProfileComponent } from './profile/profile.component';
 import {StoreModule } from '@ngrx/store';
 import { AboutComponent } from './profile/about/about.component';
@@ -30,6 +29,10 @@ import { userReducer } from './stateManagement/user.reducer';
 import { ExperienceComponent } from './profile/experiences/experience.component';
 import { AddExperienceComponent } from './profile/experiences/addExperience/add-experience.component';
 import { UpdateExperienceComponent } from './profile/experiences/updateExperience/update-experience.component';
+import { converToRoot } from './sheard/conver-to-root.pip';
+import { PostComponent } from './home/post/post.component';
+import { AddPostCardComponent } from './home/addPostCard/addPostCard.component';
+import { DialogComponent } from './home/post/DialogComponent/dialog.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +43,6 @@ import { UpdateExperienceComponent } from './profile/experiences/updateExperienc
     FetchDataComponent,
     TodoComponent,
     TokenComponent,
-    PostComponent,
     ProfileComponent,
     AboutComponent,
     EducationComponent,
@@ -50,7 +52,11 @@ import { UpdateExperienceComponent } from './profile/experiences/updateExperienc
     AddSkillComponent,
     ExperienceComponent,
     AddExperienceComponent,
-    UpdateExperienceComponent
+    UpdateExperienceComponent,
+    converToRoot,
+    PostComponent,
+    AddPostCardComponent,
+    DialogComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

@@ -1,0 +1,16 @@
+<div class="card dialog-content ">
+  <div class="card-body">
+    <h5 class="card-title">Add comment</h5>
+    <span><button  >
+      <i class="bi bi-close"></i>
+      <span class="reactspan" onclick="closed()">close</span>
+    </button></span>
+    <form #commentForm="ngForm" (ngSubmit)="sendFormdata(commentForm)">
+      <div class="form-group">
+        <label for="comment">Comment:</label>
+        <textarea ngModel name="content" class="form-control" id="comment" rows="3" placeholder="Enter your comment"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" onclick="closed()">Submit</button>
+    </form>
+  </div>
+</div>

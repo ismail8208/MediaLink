@@ -1,0 +1,6 @@
+.dialog-content {
+  background-color: #fff; /* لون خلفية الدايلوج */
+  padding: 20px; /* هوامش داخلية للمحتوى */
+  border-radius: 5px; /* نصف قطر الحواف */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* ظل للدايلوج */
+}
