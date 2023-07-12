@@ -68,7 +68,7 @@ justify-content: left;
 .likehover:hover{
   animation: 50ms;
   color: #068FFF ;
-  font-size: 1.3rem;
+
 
 
 }
@@ -130,4 +130,13 @@ justify-content: left;
   border-radius: 12px;
   box-shadow: 1px 1px 3px #000;
   box-shadow: 1px 1px 3px #000;
+  }
+  a{
+    text-decoration: none;
+  }
+  .text-body{
+    text-align: left;
+    margin-top: 18px;
+
+
   }

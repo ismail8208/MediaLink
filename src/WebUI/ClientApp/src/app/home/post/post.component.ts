@@ -3,6 +3,7 @@ import { PostDto, PostsClient, LikesClient, CreateLikeCommand, IUserDto, IPostDt
 import { mergeMap, of } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { selectUser } from 'src/app/stateManagement/user.selectors';
+import * as moment from 'moment';
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
@@ -159,6 +160,20 @@ export class PostComponent implements OnInit {
 
   mypost: Postsw;
   send(){
+  }
+  getFormattedDate(created: Date): string {
+    const currentDate = moment();
+    const postDate = moment(created);
+    const diffMinutes = currentDate.diff(postDate, 'minutes');
+    const diffHours = Math.floor(diffMinutes / 60);
+  
+    if (diffMinutes < 60) {
+      return `${diffMinutes} minutes ago`;
+    } else if (diffHours < 24) {
+      return `${diffHours} hours ago`;
+    } else {
+      return moment(created).format('MMM DD, YYYY');
+    }
   }
 
 

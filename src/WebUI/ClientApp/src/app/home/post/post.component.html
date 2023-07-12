@@ -7,9 +7,15 @@
     <div class="card-body" style="padding: 12px 0 4px 0;">
       <div class="textbox">
         <span>
-            <img [src]="user.profileImage" class="userImg">
+          <a href=""[routerLink]="['/profile']">  <img [src]="user.profileImage" class="userImg"></a>
         </span>
-        lore
+        <a href=""[routerLink]="['/profile']">
+          <h6 class="text-body">
+            <span class="big text-muted font-weight">{{post.userName}}</span>
+            <br>
+            <span class="small text-muted font-weight-normal">  {{getFormattedDate(post.created) }}</span>
+          </h6>
+        </a>
     </div>
       <p class="caption-text" style="margin: 0 24px 12px ;"> {{post.content}}</p>
       <h5 class="card-title" >
