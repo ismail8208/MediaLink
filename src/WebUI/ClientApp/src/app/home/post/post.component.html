@@ -2,6 +2,7 @@
 
 
 <div *ngFor="let post of posts">
+
   <div class="card postContainer" >
     <div class="card-body" style="padding: 12px 0 4px 0;">
       <div class="textbox">
@@ -25,17 +26,17 @@
           <i class="bi bi-hand-thumbs-up-fill"  [ngClass]="{ 'liked':post.Liked  }" ></i>
           <span class="reactspan likehover "  [ngClass]="{ 'liked':post.Liked  }">Like</span>
         </button></span>
-      <span><button class="reacts" >
+      <span><button class="reacts" (click)="openD()" (click)="send()" >
           <i class="bi bi-chat-text-fill"></i>
           <span class="reactspan">Comment</span>
         </button></span>
+        <app-dialog [post]="post"></app-dialog>
         <!-- (click)="openDialog() "-->
       <span><button class="reacts"  >
           <i class="bi bi-arrow-repeat"></i>
           <span class="reactspan">Repost</span>
         </button></span>
     </div>
-
   </div>
 </div>
-(click)="showdialog(post.id)" <app-dialog (close)="addComment($event)" class="dialog " [ngClass]="{ 'showDialog':showDialog}"></app-dialog>
+

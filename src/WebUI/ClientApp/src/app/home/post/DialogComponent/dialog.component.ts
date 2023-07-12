@@ -1,35 +1,69 @@
-import { Component, Output,EventEmitter, Input } from '@angular/core';
+import { Component, Output,EventEmitter, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { CommentsClient, CreateCommentCommand } from 'src/app/web-api-client';
+import { CommentsClient, CreateCommentCommand, ICommentDto, ICreateCommentCommand, IPostDto } from 'src/app/web-api-client';
+import { Postsw } from '../post.component';
+import { Store, select } from '@ngrx/store';
+import { selectUser } from 'src/app/stateManagement/user.selectors';
 
 @Component({
   selector: 'app-dialog',
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.css']
 })
-export class DialogComponent {
-  @Input() postId: number;
-  @Output() close: EventEmitter<boolean> = new EventEmitter<boolean>();
-  comment:{
-    content: "string",
-    postId: 5,
-    userId:5,
-  }
-  
-  constructor(private commentClient: CommentsClient){}
-    closed():void{
-      this.close.emit(true);
+export class DialogComponent implements OnInit{
 
-    }
-    sendFormdata(form: NgForm):void{
-      console.log(form.value.content.length)
-    if(form.value.content.length>0){
-    this.comment.content=form.value.content;
-    this.commentClient.create(this.comment as CreateCommentCommand).subscribe(error => console.error(error));
-    console.log("comment creted");
-    this.close.emit(true);
-    }
-
+  comments: ICommentDto[];
+  comment: string;
+  userId: number;
+  constructor(private commentClient: CommentsClient, private store: Store)
+  {
   }
-  
+  ngOnInit(): void {
+    
+    this.store.pipe(select(selectUser)).subscribe({
+      next: (data) => {
+        if (data) {
+          this.userId = data.id;
+        }
+      },
+    });
+    this.commentClient.getCommentsWithPagination(this.post.id, 1, 10).subscribe(
+      {
+        next: data => this.comments = data.items
+      }
+    );
+  }
+
+  @Input() post?: Postsw;
+  @Output() chosenPost: EventEmitter<IPostDto> = new EventEmitter<IPostDto>();
+
+  closeD(){
+    console.log("from close D ")
+    const modal = document.querySelector('.modalDialogP') as HTMLElement;
+    modal.style.opacity = '0';
+    modal.style.pointerEvents = 'none';
+  }
+
+  openD() {
+    const modal = document.querySelector('.modalDialogP') as HTMLElement;
+    modal.style.opacity = '1';
+    modal.style.pointerEvents = 'auto';
+  }
+
+  addComment()
+  {
+    let entity: ICreateCommentCommand = {
+      postId: this.post.id,
+      userId: this.userId,
+      content: this.comment
+    };
+
+    this.commentClient.create(entity as CreateCommentCommand).subscribe();
+
+    this.commentClient.getCommentsWithPagination(this.post.id, 1, 50).subscribe(
+      {
+        next: data => this.comments = data.items
+      }
+    );
+  }
 }

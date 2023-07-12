@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PostDto, PostsClient, LikesClient, CreateLikeCommand, IUserDto } from '../../web-api-client';
+import { PostDto, PostsClient, LikesClient, CreateLikeCommand, IUserDto, IPostDto } from '../../web-api-client';
 import { mergeMap, of } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { selectUser } from 'src/app/stateManagement/user.selectors';
@@ -145,8 +145,25 @@ export class PostComponent implements OnInit {
     this.showDialog = false;
   }
 
+  openD() {
+    const modal = document.querySelector('.modalDialogP') as HTMLElement;
+    modal.style.opacity = '1';
+    modal.style.pointerEvents = 'auto';
+  }
+
+  closeD() {
+    const modal = document.querySelector('.modalDialogP') as HTMLElement;
+    modal.style.opacity = '0';
+    modal.style.pointerEvents = 'none';
+  }
+
+  mypost: Postsw;
+  send(){
+  }
+
+
 }
 
-class Postsw extends PostDto {
+export class Postsw extends PostDto {
   public Liked: boolean;
 }

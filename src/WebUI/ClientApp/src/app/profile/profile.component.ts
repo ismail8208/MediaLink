@@ -63,18 +63,18 @@ export class ProfileComponent implements OnInit
   )
   {
     this.isAuthenticated = this.authorizeService.isAuthenticated();
-    this.authorizeService.getUserInfo().subscribe({
-      next: data => {
-        this.user = data;
-        if(data.profileImage)
-        {
-          this.user.profileImage = `https://localhost:44447/api/Images/${data.profileImage}`;
-        } else {
-        this.user.profileImage = 'https://localhost:44447/api/Images/f08c0eb9-cdde-471c-af59-a83005ea784f_Screenshot_٢٠٢٠-٠٩-٢٠-١٦-٤٤-١١.png';
-        }
-        this.store.dispatch(setUser({ user: this.user }));
-      } 
-    });
+    // this.authorizeService.getUserInfo().subscribe({
+    //   next: data => {
+    //     this.user = data;
+    //     if(data.profileImage)
+    //     {
+    //       this.user.profileImage = `https://localhost:44447/api/Images/${data.profileImage}`;
+    //     } else {
+    //     this.user.profileImage = 'https://localhost:44447/api/Images/f08c0eb9-cdde-471c-af59-a83005ea784f_Screenshot_٢٠٢٠-٠٩-٢٠-١٦-٤٤-١١.png';
+    //     }
+    //     this.store.dispatch(setUser({ user: this.user }));
+    //   } 
+    // });
   }
     
   ngOnInit() :void {    
