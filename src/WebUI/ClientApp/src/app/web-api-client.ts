@@ -1535,8 +1535,8 @@ export interface IFollowsClient {
     follow(command: FollowCommand): Observable<number>;
     unFollow(command: UnFollowCommand): Observable<number>;
     cancelFollower(command: CancelFollowerCommand): Observable<number>;
-    getFollowingsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfInnerUser>;
-    getFollowersWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfInnerUser>;
+    getFollowingsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfBriefUserDto>;
+    getFollowersWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfBriefUserDto>;
 }
 
 @Injectable({
@@ -1711,7 +1711,7 @@ export class FollowsClient implements IFollowsClient {
         return _observableOf(null as any);
     }
 
-    getFollowingsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfInnerUser> {
+    getFollowingsWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfBriefUserDto> {
         let url_ = this.baseUrl + "/api/Follows/Followings?";
         if (userId === null)
             throw new Error("The parameter 'userId' cannot be null.");
@@ -1742,14 +1742,14 @@ export class FollowsClient implements IFollowsClient {
                 try {
                     return this.processGetFollowingsWithPagination(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<PaginatedListOfInnerUser>;
+                    return _observableThrow(e) as any as Observable<PaginatedListOfBriefUserDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<PaginatedListOfInnerUser>;
+                return _observableThrow(response_) as any as Observable<PaginatedListOfBriefUserDto>;
         }));
     }
 
-    protected processGetFollowingsWithPagination(response: HttpResponseBase): Observable<PaginatedListOfInnerUser> {
+    protected processGetFollowingsWithPagination(response: HttpResponseBase): Observable<PaginatedListOfBriefUserDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1760,7 +1760,7 @@ export class FollowsClient implements IFollowsClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PaginatedListOfInnerUser.fromJS(resultData200);
+            result200 = PaginatedListOfBriefUserDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1771,7 +1771,7 @@ export class FollowsClient implements IFollowsClient {
         return _observableOf(null as any);
     }
 
-    getFollowersWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfInnerUser> {
+    getFollowersWithPagination(userId: number | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginatedListOfBriefUserDto> {
         let url_ = this.baseUrl + "/api/Follows/Followers?";
         if (userId === null)
             throw new Error("The parameter 'userId' cannot be null.");
@@ -1802,14 +1802,14 @@ export class FollowsClient implements IFollowsClient {
                 try {
                     return this.processGetFollowersWithPagination(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<PaginatedListOfInnerUser>;
+                    return _observableThrow(e) as any as Observable<PaginatedListOfBriefUserDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<PaginatedListOfInnerUser>;
+                return _observableThrow(response_) as any as Observable<PaginatedListOfBriefUserDto>;
         }));
     }
 
-    protected processGetFollowersWithPagination(response: HttpResponseBase): Observable<PaginatedListOfInnerUser> {
+    protected processGetFollowersWithPagination(response: HttpResponseBase): Observable<PaginatedListOfBriefUserDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1820,7 +1820,7 @@ export class FollowsClient implements IFollowsClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PaginatedListOfInnerUser.fromJS(resultData200);
+            result200 = PaginatedListOfBriefUserDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -6043,15 +6043,15 @@ export interface ICancelFollowerCommand {
     specificUserId?: number;
 }
 
-export class PaginatedListOfInnerUser implements IPaginatedListOfInnerUser {
-    items?: InnerUser[];
+export class PaginatedListOfBriefUserDto implements IPaginatedListOfBriefUserDto {
+    items?: BriefUserDto[];
     pageNumber?: number;
     totalPages?: number;
     totalCount?: number;
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
 
-    constructor(data?: IPaginatedListOfInnerUser) {
+    constructor(data?: IPaginatedListOfBriefUserDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6065,7 +6065,7 @@ export class PaginatedListOfInnerUser implements IPaginatedListOfInnerUser {
             if (Array.isArray(_data["items"])) {
                 this.items = [] as any;
                 for (let item of _data["items"])
-                    this.items!.push(InnerUser.fromJS(item));
+                    this.items!.push(BriefUserDto.fromJS(item));
             }
             this.pageNumber = _data["pageNumber"];
             this.totalPages = _data["totalPages"];
@@ -6075,9 +6075,9 @@ export class PaginatedListOfInnerUser implements IPaginatedListOfInnerUser {
         }
     }
 
-    static fromJS(data: any): PaginatedListOfInnerUser {
+    static fromJS(data: any): PaginatedListOfBriefUserDto {
         data = typeof data === 'object' ? data : {};
-        let result = new PaginatedListOfInnerUser();
+        let result = new PaginatedListOfBriefUserDto();
         result.init(data);
         return result;
     }
@@ -6098,8 +6098,8 @@ export class PaginatedListOfInnerUser implements IPaginatedListOfInnerUser {
     }
 }
 
-export interface IPaginatedListOfInnerUser {
-    items?: InnerUser[];
+export interface IPaginatedListOfBriefUserDto {
+    items?: BriefUserDto[];
     pageNumber?: number;
     totalPages?: number;
     totalCount?: number;
@@ -6107,11 +6107,13 @@ export interface IPaginatedListOfInnerUser {
     hasNextPage?: boolean;
 }
 
-export abstract class BaseEntity implements IBaseEntity {
-    id?: number;
-    domainEvents?: BaseEvent[];
+export class BriefUserDto implements IBriefUserDto {
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    userName?: string | undefined;
+    profileImage?: string | undefined;
 
-    constructor(data?: IBaseEntity) {
+    constructor(data?: IBriefUserDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6121,1016 +6123,36 @@ export abstract class BaseEntity implements IBaseEntity {
     }
 
     init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            if (Array.isArray(_data["domainEvents"])) {
-                this.domainEvents = [] as any;
-                for (let item of _data["domainEvents"])
-                    this.domainEvents!.push(BaseEvent.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): BaseEntity {
-        data = typeof data === 'object' ? data : {};
-        throw new Error("The abstract class 'BaseEntity' cannot be instantiated.");
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        if (Array.isArray(this.domainEvents)) {
-            data["domainEvents"] = [];
-            for (let item of this.domainEvents)
-                data["domainEvents"].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface IBaseEntity {
-    id?: number;
-    domainEvents?: BaseEvent[];
-}
-
-export class InnerUser extends BaseEntity implements IInnerUser {
-    firstName?: string | undefined;
-    lastName?: string | undefined;
-    userName?: string | undefined;
-    email?: string | undefined;
-    password?: string | undefined;
-    address?: Address | undefined;
-    dateOfBirth?: Date;
-    gender?: string | undefined;
-    profileImage?: string | undefined;
-    skills?: Skill[] | undefined;
-    projects?: Project[] | undefined;
-    experiences?: Experience[] | undefined;
-    endorsements?: Endorsement[] | undefined;
-    educations?: Education[] | undefined;
-    posts?: Post[] | undefined;
-    followers?: Follow[] | undefined;
-    followings?: Follow[] | undefined;
-    sharedPosts?: Share[] | undefined;
-    likes?: Like[] | undefined;
-    comments?: Comment[] | undefined;
-    isDeleted?: boolean;
-
-    constructor(data?: IInnerUser) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
         if (_data) {
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.userName = _data["userName"];
-            this.email = _data["email"];
-            this.password = _data["password"];
-            this.address = _data["address"] ? Address.fromJS(_data["address"]) : <any>undefined;
-            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
-            this.gender = _data["gender"];
             this.profileImage = _data["profileImage"];
-            if (Array.isArray(_data["skills"])) {
-                this.skills = [] as any;
-                for (let item of _data["skills"])
-                    this.skills!.push(Skill.fromJS(item));
-            }
-            if (Array.isArray(_data["projects"])) {
-                this.projects = [] as any;
-                for (let item of _data["projects"])
-                    this.projects!.push(Project.fromJS(item));
-            }
-            if (Array.isArray(_data["experiences"])) {
-                this.experiences = [] as any;
-                for (let item of _data["experiences"])
-                    this.experiences!.push(Experience.fromJS(item));
-            }
-            if (Array.isArray(_data["endorsements"])) {
-                this.endorsements = [] as any;
-                for (let item of _data["endorsements"])
-                    this.endorsements!.push(Endorsement.fromJS(item));
-            }
-            if (Array.isArray(_data["educations"])) {
-                this.educations = [] as any;
-                for (let item of _data["educations"])
-                    this.educations!.push(Education.fromJS(item));
-            }
-            if (Array.isArray(_data["posts"])) {
-                this.posts = [] as any;
-                for (let item of _data["posts"])
-                    this.posts!.push(Post.fromJS(item));
-            }
-            if (Array.isArray(_data["followers"])) {
-                this.followers = [] as any;
-                for (let item of _data["followers"])
-                    this.followers!.push(Follow.fromJS(item));
-            }
-            if (Array.isArray(_data["followings"])) {
-                this.followings = [] as any;
-                for (let item of _data["followings"])
-                    this.followings!.push(Follow.fromJS(item));
-            }
-            if (Array.isArray(_data["sharedPosts"])) {
-                this.sharedPosts = [] as any;
-                for (let item of _data["sharedPosts"])
-                    this.sharedPosts!.push(Share.fromJS(item));
-            }
-            if (Array.isArray(_data["likes"])) {
-                this.likes = [] as any;
-                for (let item of _data["likes"])
-                    this.likes!.push(Like.fromJS(item));
-            }
-            if (Array.isArray(_data["comments"])) {
-                this.comments = [] as any;
-                for (let item of _data["comments"])
-                    this.comments!.push(Comment.fromJS(item));
-            }
-            this.isDeleted = _data["isDeleted"];
         }
     }
 
-    static override fromJS(data: any): InnerUser {
+    static fromJS(data: any): BriefUserDto {
         data = typeof data === 'object' ? data : {};
-        let result = new InnerUser();
+        let result = new BriefUserDto();
         result.init(data);
         return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["userName"] = this.userName;
-        data["email"] = this.email;
-        data["password"] = this.password;
-        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
-        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
-        data["gender"] = this.gender;
-        data["profileImage"] = this.profileImage;
-        if (Array.isArray(this.skills)) {
-            data["skills"] = [];
-            for (let item of this.skills)
-                data["skills"].push(item.toJSON());
-        }
-        if (Array.isArray(this.projects)) {
-            data["projects"] = [];
-            for (let item of this.projects)
-                data["projects"].push(item.toJSON());
-        }
-        if (Array.isArray(this.experiences)) {
-            data["experiences"] = [];
-            for (let item of this.experiences)
-                data["experiences"].push(item.toJSON());
-        }
-        if (Array.isArray(this.endorsements)) {
-            data["endorsements"] = [];
-            for (let item of this.endorsements)
-                data["endorsements"].push(item.toJSON());
-        }
-        if (Array.isArray(this.educations)) {
-            data["educations"] = [];
-            for (let item of this.educations)
-                data["educations"].push(item.toJSON());
-        }
-        if (Array.isArray(this.posts)) {
-            data["posts"] = [];
-            for (let item of this.posts)
-                data["posts"].push(item.toJSON());
-        }
-        if (Array.isArray(this.followers)) {
-            data["followers"] = [];
-            for (let item of this.followers)
-                data["followers"].push(item.toJSON());
-        }
-        if (Array.isArray(this.followings)) {
-            data["followings"] = [];
-            for (let item of this.followings)
-                data["followings"].push(item.toJSON());
-        }
-        if (Array.isArray(this.sharedPosts)) {
-            data["sharedPosts"] = [];
-            for (let item of this.sharedPosts)
-                data["sharedPosts"].push(item.toJSON());
-        }
-        if (Array.isArray(this.likes)) {
-            data["likes"] = [];
-            for (let item of this.likes)
-                data["likes"].push(item.toJSON());
-        }
-        if (Array.isArray(this.comments)) {
-            data["comments"] = [];
-            for (let item of this.comments)
-                data["comments"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IInnerUser extends IBaseEntity {
-    firstName?: string | undefined;
-    lastName?: string | undefined;
-    userName?: string | undefined;
-    email?: string | undefined;
-    password?: string | undefined;
-    address?: Address | undefined;
-    dateOfBirth?: Date;
-    gender?: string | undefined;
-    profileImage?: string | undefined;
-    skills?: Skill[] | undefined;
-    projects?: Project[] | undefined;
-    experiences?: Experience[] | undefined;
-    endorsements?: Endorsement[] | undefined;
-    educations?: Education[] | undefined;
-    posts?: Post[] | undefined;
-    followers?: Follow[] | undefined;
-    followings?: Follow[] | undefined;
-    sharedPosts?: Share[] | undefined;
-    likes?: Like[] | undefined;
-    comments?: Comment[] | undefined;
-    isDeleted?: boolean;
-}
-
-export class Address extends BaseEntity implements IAddress {
-    country?: string | undefined;
-    city?: string | undefined;
-    street?: string | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-
-    constructor(data?: IAddress) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.country = _data["country"];
-            this.city = _data["city"];
-            this.street = _data["street"];
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Address {
-        data = typeof data === 'object' ? data : {};
-        let result = new Address();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["country"] = this.country;
-        data["city"] = this.city;
-        data["street"] = this.street;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IAddress extends IBaseEntity {
-    country?: string | undefined;
-    city?: string | undefined;
-    street?: string | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-}
-
-export abstract class BaseEvent implements IBaseEvent {
-
-    constructor(data?: IBaseEvent) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-    }
-
-    static fromJS(data: any): BaseEvent {
-        data = typeof data === 'object' ? data : {};
-        throw new Error("The abstract class 'BaseEvent' cannot be instantiated.");
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["userName"] = this.userName;
+        data["profileImage"] = this.profileImage;
         return data;
     }
 }
 
-export interface IBaseEvent {
-}
-
-export abstract class BaseAuditableEntity extends BaseEntity implements IBaseAuditableEntity {
-    created?: Date;
-    createdBy?: string | undefined;
-    lastModified?: Date | undefined;
-    lastModifiedBy?: string | undefined;
-
-    constructor(data?: IBaseAuditableEntity) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.created = _data["created"] ? new Date(_data["created"].toString()) : <any>undefined;
-            this.createdBy = _data["createdBy"];
-            this.lastModified = _data["lastModified"] ? new Date(_data["lastModified"].toString()) : <any>undefined;
-            this.lastModifiedBy = _data["lastModifiedBy"];
-        }
-    }
-
-    static override fromJS(data: any): BaseAuditableEntity {
-        data = typeof data === 'object' ? data : {};
-        throw new Error("The abstract class 'BaseAuditableEntity' cannot be instantiated.");
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
-        data["createdBy"] = this.createdBy;
-        data["lastModified"] = this.lastModified ? this.lastModified.toISOString() : <any>undefined;
-        data["lastModifiedBy"] = this.lastModifiedBy;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IBaseAuditableEntity extends IBaseEntity {
-    created?: Date;
-    createdBy?: string | undefined;
-    lastModified?: Date | undefined;
-    lastModifiedBy?: string | undefined;
-}
-
-export class Skill extends BaseAuditableEntity implements ISkill {
-    title?: string | undefined;
-    endorsements?: Endorsement[] | undefined;
-    userId?: number | undefined;
-    user?: InnerUser | undefined;
-    jobId?: number | undefined;
-    job?: Job | undefined;
-    isDeleted?: boolean;
-
-    constructor(data?: ISkill) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.title = _data["title"];
-            if (Array.isArray(_data["endorsements"])) {
-                this.endorsements = [] as any;
-                for (let item of _data["endorsements"])
-                    this.endorsements!.push(Endorsement.fromJS(item));
-            }
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-            this.jobId = _data["jobId"];
-            this.job = _data["job"] ? Job.fromJS(_data["job"]) : <any>undefined;
-            this.isDeleted = _data["isDeleted"];
-        }
-    }
-
-    static override fromJS(data: any): Skill {
-        data = typeof data === 'object' ? data : {};
-        let result = new Skill();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["title"] = this.title;
-        if (Array.isArray(this.endorsements)) {
-            data["endorsements"] = [];
-            for (let item of this.endorsements)
-                data["endorsements"].push(item.toJSON());
-        }
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        data["jobId"] = this.jobId;
-        data["job"] = this.job ? this.job.toJSON() : <any>undefined;
-        data["isDeleted"] = this.isDeleted;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface ISkill extends IBaseAuditableEntity {
-    title?: string | undefined;
-    endorsements?: Endorsement[] | undefined;
-    userId?: number | undefined;
-    user?: InnerUser | undefined;
-    jobId?: number | undefined;
-    job?: Job | undefined;
-    isDeleted?: boolean;
-}
-
-export class Endorsement extends BaseAuditableEntity implements IEndorsement {
-    skillId?: number;
-    skill?: Skill | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-
-    constructor(data?: IEndorsement) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.skillId = _data["skillId"];
-            this.skill = _data["skill"] ? Skill.fromJS(_data["skill"]) : <any>undefined;
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Endorsement {
-        data = typeof data === 'object' ? data : {};
-        let result = new Endorsement();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["skillId"] = this.skillId;
-        data["skill"] = this.skill ? this.skill.toJSON() : <any>undefined;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IEndorsement extends IBaseAuditableEntity {
-    skillId?: number;
-    skill?: Skill | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-}
-
-export class Job extends BaseAuditableEntity implements IJob {
-    title?: string | undefined;
-    description?: string | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-    comments?: Comment[] | undefined;
-    likes?: Like[] | undefined;
-    skills?: Skill[] | undefined;
-    isDeleted?: boolean;
-
-    constructor(data?: IJob) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.title = _data["title"];
-            this.description = _data["description"];
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-            if (Array.isArray(_data["comments"])) {
-                this.comments = [] as any;
-                for (let item of _data["comments"])
-                    this.comments!.push(Comment.fromJS(item));
-            }
-            if (Array.isArray(_data["likes"])) {
-                this.likes = [] as any;
-                for (let item of _data["likes"])
-                    this.likes!.push(Like.fromJS(item));
-            }
-            if (Array.isArray(_data["skills"])) {
-                this.skills = [] as any;
-                for (let item of _data["skills"])
-                    this.skills!.push(Skill.fromJS(item));
-            }
-            this.isDeleted = _data["isDeleted"];
-        }
-    }
-
-    static override fromJS(data: any): Job {
-        data = typeof data === 'object' ? data : {};
-        let result = new Job();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["title"] = this.title;
-        data["description"] = this.description;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        if (Array.isArray(this.comments)) {
-            data["comments"] = [];
-            for (let item of this.comments)
-                data["comments"].push(item.toJSON());
-        }
-        if (Array.isArray(this.likes)) {
-            data["likes"] = [];
-            for (let item of this.likes)
-                data["likes"].push(item.toJSON());
-        }
-        if (Array.isArray(this.skills)) {
-            data["skills"] = [];
-            for (let item of this.skills)
-                data["skills"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IJob extends IBaseAuditableEntity {
-    title?: string | undefined;
-    description?: string | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-    comments?: Comment[] | undefined;
-    likes?: Like[] | undefined;
-    skills?: Skill[] | undefined;
-    isDeleted?: boolean;
-}
-
-export class Comment extends BaseAuditableEntity implements IComment {
-    content?: string | undefined;
-    postId?: number | undefined;
-    post?: Post | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-    jobId?: number | undefined;
-    job?: Job | undefined;
-
-    constructor(data?: IComment) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.content = _data["content"];
-            this.postId = _data["postId"];
-            this.post = _data["post"] ? Post.fromJS(_data["post"]) : <any>undefined;
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-            this.jobId = _data["jobId"];
-            this.job = _data["job"] ? Job.fromJS(_data["job"]) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Comment {
-        data = typeof data === 'object' ? data : {};
-        let result = new Comment();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["content"] = this.content;
-        data["postId"] = this.postId;
-        data["post"] = this.post ? this.post.toJSON() : <any>undefined;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        data["jobId"] = this.jobId;
-        data["job"] = this.job ? this.job.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IComment extends IBaseAuditableEntity {
-    content?: string | undefined;
-    postId?: number | undefined;
-    post?: Post | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-    jobId?: number | undefined;
-    job?: Job | undefined;
-}
-
-export class Post extends BaseAuditableEntity implements IPost {
-    content?: string | undefined;
-    imageURL?: string | undefined;
-    videoURL?: string | undefined;
-    numberOfLikes?: number;
-    numberOfComments?: number;
-    userId?: number;
-    user?: InnerUser | undefined;
-    likes?: Like[];
-    comments?: Comment[];
-    shares?: Share[];
-    isDeleted?: boolean;
-
-    constructor(data?: IPost) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.content = _data["content"];
-            this.imageURL = _data["imageURL"];
-            this.videoURL = _data["videoURL"];
-            this.numberOfLikes = _data["numberOfLikes"];
-            this.numberOfComments = _data["numberOfComments"];
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-            if (Array.isArray(_data["likes"])) {
-                this.likes = [] as any;
-                for (let item of _data["likes"])
-                    this.likes!.push(Like.fromJS(item));
-            }
-            if (Array.isArray(_data["comments"])) {
-                this.comments = [] as any;
-                for (let item of _data["comments"])
-                    this.comments!.push(Comment.fromJS(item));
-            }
-            if (Array.isArray(_data["shares"])) {
-                this.shares = [] as any;
-                for (let item of _data["shares"])
-                    this.shares!.push(Share.fromJS(item));
-            }
-            this.isDeleted = _data["isDeleted"];
-        }
-    }
-
-    static override fromJS(data: any): Post {
-        data = typeof data === 'object' ? data : {};
-        let result = new Post();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["content"] = this.content;
-        data["imageURL"] = this.imageURL;
-        data["videoURL"] = this.videoURL;
-        data["numberOfLikes"] = this.numberOfLikes;
-        data["numberOfComments"] = this.numberOfComments;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        if (Array.isArray(this.likes)) {
-            data["likes"] = [];
-            for (let item of this.likes)
-                data["likes"].push(item.toJSON());
-        }
-        if (Array.isArray(this.comments)) {
-            data["comments"] = [];
-            for (let item of this.comments)
-                data["comments"].push(item.toJSON());
-        }
-        if (Array.isArray(this.shares)) {
-            data["shares"] = [];
-            for (let item of this.shares)
-                data["shares"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IPost extends IBaseAuditableEntity {
-    content?: string | undefined;
-    imageURL?: string | undefined;
-    videoURL?: string | undefined;
-    numberOfLikes?: number;
-    numberOfComments?: number;
-    userId?: number;
-    user?: InnerUser | undefined;
-    likes?: Like[];
-    comments?: Comment[];
-    shares?: Share[];
-    isDeleted?: boolean;
-}
-
-export class Like extends BaseAuditableEntity implements ILike {
-    userId?: number | undefined;
-    user?: InnerUser | undefined;
-    postId?: number | undefined;
-    post?: Post | undefined;
-    jobId?: number | undefined;
-    job?: Job | undefined;
-
-    constructor(data?: ILike) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-            this.postId = _data["postId"];
-            this.post = _data["post"] ? Post.fromJS(_data["post"]) : <any>undefined;
-            this.jobId = _data["jobId"];
-            this.job = _data["job"] ? Job.fromJS(_data["job"]) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Like {
-        data = typeof data === 'object' ? data : {};
-        let result = new Like();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        data["postId"] = this.postId;
-        data["post"] = this.post ? this.post.toJSON() : <any>undefined;
-        data["jobId"] = this.jobId;
-        data["job"] = this.job ? this.job.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface ILike extends IBaseAuditableEntity {
-    userId?: number | undefined;
-    user?: InnerUser | undefined;
-    postId?: number | undefined;
-    post?: Post | undefined;
-    jobId?: number | undefined;
-    job?: Job | undefined;
-}
-
-export class Share extends BaseAuditableEntity implements IShare {
-    title?: string | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-    postId?: number;
-    post?: Post | undefined;
-
-    constructor(data?: IShare) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.title = _data["title"];
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-            this.postId = _data["postId"];
-            this.post = _data["post"] ? Post.fromJS(_data["post"]) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Share {
-        data = typeof data === 'object' ? data : {};
-        let result = new Share();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["title"] = this.title;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        data["postId"] = this.postId;
-        data["post"] = this.post ? this.post.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IShare extends IBaseAuditableEntity {
-    title?: string | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-    postId?: number;
-    post?: Post | undefined;
-}
-
-export class Project extends BaseAuditableEntity implements IProject {
-    title?: string | undefined;
-    description?: string | undefined;
-    imageURL?: string | undefined;
-    link?: string | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-    experience?: Experience | undefined;
-    isDeleted?: boolean;
-
-    constructor(data?: IProject) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.title = _data["title"];
-            this.description = _data["description"];
-            this.imageURL = _data["imageURL"];
-            this.link = _data["link"];
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-            this.experience = _data["experience"] ? Experience.fromJS(_data["experience"]) : <any>undefined;
-            this.isDeleted = _data["isDeleted"];
-        }
-    }
-
-    static override fromJS(data: any): Project {
-        data = typeof data === 'object' ? data : {};
-        let result = new Project();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["title"] = this.title;
-        data["description"] = this.description;
-        data["imageURL"] = this.imageURL;
-        data["link"] = this.link;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        data["experience"] = this.experience ? this.experience.toJSON() : <any>undefined;
-        data["isDeleted"] = this.isDeleted;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IProject extends IBaseAuditableEntity {
-    title?: string | undefined;
-    description?: string | undefined;
-    imageURL?: string | undefined;
-    link?: string | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-    experience?: Experience | undefined;
-    isDeleted?: boolean;
-}
-
-export class Experience extends BaseAuditableEntity implements IExperience {
-    projectId?: number | undefined;
-    project?: Project | undefined;
-    title?: string | undefined;
-    description?: string | undefined;
-    experienceDate?: Date | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-
-    constructor(data?: IExperience) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.projectId = _data["projectId"];
-            this.project = _data["project"] ? Project.fromJS(_data["project"]) : <any>undefined;
-            this.title = _data["title"];
-            this.description = _data["description"];
-            this.experienceDate = _data["experienceDate"] ? new Date(_data["experienceDate"].toString()) : <any>undefined;
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Experience {
-        data = typeof data === 'object' ? data : {};
-        let result = new Experience();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["projectId"] = this.projectId;
-        data["project"] = this.project ? this.project.toJSON() : <any>undefined;
-        data["title"] = this.title;
-        data["description"] = this.description;
-        data["experienceDate"] = this.experienceDate ? this.experienceDate.toISOString() : <any>undefined;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IExperience extends IBaseAuditableEntity {
-    projectId?: number | undefined;
-    project?: Project | undefined;
-    title?: string | undefined;
-    description?: string | undefined;
-    experienceDate?: Date | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-}
-
-export class Education extends BaseAuditableEntity implements IEducation {
-    level?: string | undefined;
-    title?: string | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-
-    constructor(data?: IEducation) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.level = _data["level"];
-            this.title = _data["title"];
-            this.userId = _data["userId"];
-            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Education {
-        data = typeof data === 'object' ? data : {};
-        let result = new Education();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["level"] = this.level;
-        data["title"] = this.title;
-        data["userId"] = this.userId;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IEducation extends IBaseAuditableEntity {
-    level?: string | undefined;
-    title?: string | undefined;
-    userId?: number;
-    user?: InnerUser | undefined;
-}
-
-export class Follow extends BaseEntity implements IFollow {
-    followerID?: number;
-    followingID?: number;
-    follower?: InnerUser | undefined;
-    followee?: InnerUser | undefined;
-
-    constructor(data?: IFollow) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.followerID = _data["followerID"];
-            this.followingID = _data["followingID"];
-            this.follower = _data["follower"] ? InnerUser.fromJS(_data["follower"]) : <any>undefined;
-            this.followee = _data["followee"] ? InnerUser.fromJS(_data["followee"]) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Follow {
-        data = typeof data === 'object' ? data : {};
-        let result = new Follow();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["followerID"] = this.followerID;
-        data["followingID"] = this.followingID;
-        data["follower"] = this.follower ? this.follower.toJSON() : <any>undefined;
-        data["followee"] = this.followee ? this.followee.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IFollow extends IBaseEntity {
-    followerID?: number;
-    followingID?: number;
-    follower?: InnerUser | undefined;
-    followee?: InnerUser | undefined;
+export interface IBriefUserDto {
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    userName?: string | undefined;
+    profileImage?: string | undefined;
 }
 
 export class PaginatedListOfJobDto implements IPaginatedListOfJobDto {
@@ -8217,6 +7239,1032 @@ export interface IPaginatedListOfSkill {
     hasNextPage?: boolean;
 }
 
+export abstract class BaseEntity implements IBaseEntity {
+    id?: number;
+    domainEvents?: BaseEvent[];
+
+    constructor(data?: IBaseEntity) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            if (Array.isArray(_data["domainEvents"])) {
+                this.domainEvents = [] as any;
+                for (let item of _data["domainEvents"])
+                    this.domainEvents!.push(BaseEvent.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BaseEntity {
+        data = typeof data === 'object' ? data : {};
+        throw new Error("The abstract class 'BaseEntity' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        if (Array.isArray(this.domainEvents)) {
+            data["domainEvents"] = [];
+            for (let item of this.domainEvents)
+                data["domainEvents"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IBaseEntity {
+    id?: number;
+    domainEvents?: BaseEvent[];
+}
+
+export abstract class BaseAuditableEntity extends BaseEntity implements IBaseAuditableEntity {
+    created?: Date;
+    createdBy?: string | undefined;
+    lastModified?: Date | undefined;
+    lastModifiedBy?: string | undefined;
+
+    constructor(data?: IBaseAuditableEntity) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.created = _data["created"] ? new Date(_data["created"].toString()) : <any>undefined;
+            this.createdBy = _data["createdBy"];
+            this.lastModified = _data["lastModified"] ? new Date(_data["lastModified"].toString()) : <any>undefined;
+            this.lastModifiedBy = _data["lastModifiedBy"];
+        }
+    }
+
+    static override fromJS(data: any): BaseAuditableEntity {
+        data = typeof data === 'object' ? data : {};
+        throw new Error("The abstract class 'BaseAuditableEntity' cannot be instantiated.");
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
+        data["createdBy"] = this.createdBy;
+        data["lastModified"] = this.lastModified ? this.lastModified.toISOString() : <any>undefined;
+        data["lastModifiedBy"] = this.lastModifiedBy;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IBaseAuditableEntity extends IBaseEntity {
+    created?: Date;
+    createdBy?: string | undefined;
+    lastModified?: Date | undefined;
+    lastModifiedBy?: string | undefined;
+}
+
+export class Skill extends BaseAuditableEntity implements ISkill {
+    title?: string | undefined;
+    endorsements?: Endorsement[] | undefined;
+    userId?: number | undefined;
+    user?: InnerUser | undefined;
+    jobId?: number | undefined;
+    job?: Job | undefined;
+    isDeleted?: boolean;
+
+    constructor(data?: ISkill) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.title = _data["title"];
+            if (Array.isArray(_data["endorsements"])) {
+                this.endorsements = [] as any;
+                for (let item of _data["endorsements"])
+                    this.endorsements!.push(Endorsement.fromJS(item));
+            }
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            this.jobId = _data["jobId"];
+            this.job = _data["job"] ? Job.fromJS(_data["job"]) : <any>undefined;
+            this.isDeleted = _data["isDeleted"];
+        }
+    }
+
+    static override fromJS(data: any): Skill {
+        data = typeof data === 'object' ? data : {};
+        let result = new Skill();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        if (Array.isArray(this.endorsements)) {
+            data["endorsements"] = [];
+            for (let item of this.endorsements)
+                data["endorsements"].push(item.toJSON());
+        }
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["jobId"] = this.jobId;
+        data["job"] = this.job ? this.job.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ISkill extends IBaseAuditableEntity {
+    title?: string | undefined;
+    endorsements?: Endorsement[] | undefined;
+    userId?: number | undefined;
+    user?: InnerUser | undefined;
+    jobId?: number | undefined;
+    job?: Job | undefined;
+    isDeleted?: boolean;
+}
+
+export class Endorsement extends BaseAuditableEntity implements IEndorsement {
+    skillId?: number;
+    skill?: Skill | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+
+    constructor(data?: IEndorsement) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.skillId = _data["skillId"];
+            this.skill = _data["skill"] ? Skill.fromJS(_data["skill"]) : <any>undefined;
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Endorsement {
+        data = typeof data === 'object' ? data : {};
+        let result = new Endorsement();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["skillId"] = this.skillId;
+        data["skill"] = this.skill ? this.skill.toJSON() : <any>undefined;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IEndorsement extends IBaseAuditableEntity {
+    skillId?: number;
+    skill?: Skill | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+}
+
+export class InnerUser extends BaseEntity implements IInnerUser {
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    userName?: string | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    address?: Address | undefined;
+    dateOfBirth?: Date;
+    gender?: string | undefined;
+    profileImage?: string | undefined;
+    skills?: Skill[] | undefined;
+    projects?: Project[] | undefined;
+    experiences?: Experience[] | undefined;
+    endorsements?: Endorsement[] | undefined;
+    educations?: Education[] | undefined;
+    posts?: Post[] | undefined;
+    followers?: Follow[] | undefined;
+    followings?: Follow[] | undefined;
+    sharedPosts?: Share[] | undefined;
+    likes?: Like[] | undefined;
+    comments?: Comment[] | undefined;
+    isDeleted?: boolean;
+
+    constructor(data?: IInnerUser) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.userName = _data["userName"];
+            this.email = _data["email"];
+            this.password = _data["password"];
+            this.address = _data["address"] ? Address.fromJS(_data["address"]) : <any>undefined;
+            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
+            this.gender = _data["gender"];
+            this.profileImage = _data["profileImage"];
+            if (Array.isArray(_data["skills"])) {
+                this.skills = [] as any;
+                for (let item of _data["skills"])
+                    this.skills!.push(Skill.fromJS(item));
+            }
+            if (Array.isArray(_data["projects"])) {
+                this.projects = [] as any;
+                for (let item of _data["projects"])
+                    this.projects!.push(Project.fromJS(item));
+            }
+            if (Array.isArray(_data["experiences"])) {
+                this.experiences = [] as any;
+                for (let item of _data["experiences"])
+                    this.experiences!.push(Experience.fromJS(item));
+            }
+            if (Array.isArray(_data["endorsements"])) {
+                this.endorsements = [] as any;
+                for (let item of _data["endorsements"])
+                    this.endorsements!.push(Endorsement.fromJS(item));
+            }
+            if (Array.isArray(_data["educations"])) {
+                this.educations = [] as any;
+                for (let item of _data["educations"])
+                    this.educations!.push(Education.fromJS(item));
+            }
+            if (Array.isArray(_data["posts"])) {
+                this.posts = [] as any;
+                for (let item of _data["posts"])
+                    this.posts!.push(Post.fromJS(item));
+            }
+            if (Array.isArray(_data["followers"])) {
+                this.followers = [] as any;
+                for (let item of _data["followers"])
+                    this.followers!.push(Follow.fromJS(item));
+            }
+            if (Array.isArray(_data["followings"])) {
+                this.followings = [] as any;
+                for (let item of _data["followings"])
+                    this.followings!.push(Follow.fromJS(item));
+            }
+            if (Array.isArray(_data["sharedPosts"])) {
+                this.sharedPosts = [] as any;
+                for (let item of _data["sharedPosts"])
+                    this.sharedPosts!.push(Share.fromJS(item));
+            }
+            if (Array.isArray(_data["likes"])) {
+                this.likes = [] as any;
+                for (let item of _data["likes"])
+                    this.likes!.push(Like.fromJS(item));
+            }
+            if (Array.isArray(_data["comments"])) {
+                this.comments = [] as any;
+                for (let item of _data["comments"])
+                    this.comments!.push(Comment.fromJS(item));
+            }
+            this.isDeleted = _data["isDeleted"];
+        }
+    }
+
+    static override fromJS(data: any): InnerUser {
+        data = typeof data === 'object' ? data : {};
+        let result = new InnerUser();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["userName"] = this.userName;
+        data["email"] = this.email;
+        data["password"] = this.password;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
+        data["gender"] = this.gender;
+        data["profileImage"] = this.profileImage;
+        if (Array.isArray(this.skills)) {
+            data["skills"] = [];
+            for (let item of this.skills)
+                data["skills"].push(item.toJSON());
+        }
+        if (Array.isArray(this.projects)) {
+            data["projects"] = [];
+            for (let item of this.projects)
+                data["projects"].push(item.toJSON());
+        }
+        if (Array.isArray(this.experiences)) {
+            data["experiences"] = [];
+            for (let item of this.experiences)
+                data["experiences"].push(item.toJSON());
+        }
+        if (Array.isArray(this.endorsements)) {
+            data["endorsements"] = [];
+            for (let item of this.endorsements)
+                data["endorsements"].push(item.toJSON());
+        }
+        if (Array.isArray(this.educations)) {
+            data["educations"] = [];
+            for (let item of this.educations)
+                data["educations"].push(item.toJSON());
+        }
+        if (Array.isArray(this.posts)) {
+            data["posts"] = [];
+            for (let item of this.posts)
+                data["posts"].push(item.toJSON());
+        }
+        if (Array.isArray(this.followers)) {
+            data["followers"] = [];
+            for (let item of this.followers)
+                data["followers"].push(item.toJSON());
+        }
+        if (Array.isArray(this.followings)) {
+            data["followings"] = [];
+            for (let item of this.followings)
+                data["followings"].push(item.toJSON());
+        }
+        if (Array.isArray(this.sharedPosts)) {
+            data["sharedPosts"] = [];
+            for (let item of this.sharedPosts)
+                data["sharedPosts"].push(item.toJSON());
+        }
+        if (Array.isArray(this.likes)) {
+            data["likes"] = [];
+            for (let item of this.likes)
+                data["likes"].push(item.toJSON());
+        }
+        if (Array.isArray(this.comments)) {
+            data["comments"] = [];
+            for (let item of this.comments)
+                data["comments"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IInnerUser extends IBaseEntity {
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    userName?: string | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    address?: Address | undefined;
+    dateOfBirth?: Date;
+    gender?: string | undefined;
+    profileImage?: string | undefined;
+    skills?: Skill[] | undefined;
+    projects?: Project[] | undefined;
+    experiences?: Experience[] | undefined;
+    endorsements?: Endorsement[] | undefined;
+    educations?: Education[] | undefined;
+    posts?: Post[] | undefined;
+    followers?: Follow[] | undefined;
+    followings?: Follow[] | undefined;
+    sharedPosts?: Share[] | undefined;
+    likes?: Like[] | undefined;
+    comments?: Comment[] | undefined;
+    isDeleted?: boolean;
+}
+
+export class Address extends BaseEntity implements IAddress {
+    country?: string | undefined;
+    city?: string | undefined;
+    street?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+
+    constructor(data?: IAddress) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.country = _data["country"];
+            this.city = _data["city"];
+            this.street = _data["street"];
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Address {
+        data = typeof data === 'object' ? data : {};
+        let result = new Address();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["country"] = this.country;
+        data["city"] = this.city;
+        data["street"] = this.street;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IAddress extends IBaseEntity {
+    country?: string | undefined;
+    city?: string | undefined;
+    street?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+}
+
+export abstract class BaseEvent implements IBaseEvent {
+
+    constructor(data?: IBaseEvent) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): BaseEvent {
+        data = typeof data === 'object' ? data : {};
+        throw new Error("The abstract class 'BaseEvent' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        return data;
+    }
+}
+
+export interface IBaseEvent {
+}
+
+export class Project extends BaseAuditableEntity implements IProject {
+    title?: string | undefined;
+    description?: string | undefined;
+    imageURL?: string | undefined;
+    link?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    experience?: Experience | undefined;
+    isDeleted?: boolean;
+
+    constructor(data?: IProject) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.imageURL = _data["imageURL"];
+            this.link = _data["link"];
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            this.experience = _data["experience"] ? Experience.fromJS(_data["experience"]) : <any>undefined;
+            this.isDeleted = _data["isDeleted"];
+        }
+    }
+
+    static override fromJS(data: any): Project {
+        data = typeof data === 'object' ? data : {};
+        let result = new Project();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["imageURL"] = this.imageURL;
+        data["link"] = this.link;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["experience"] = this.experience ? this.experience.toJSON() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IProject extends IBaseAuditableEntity {
+    title?: string | undefined;
+    description?: string | undefined;
+    imageURL?: string | undefined;
+    link?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    experience?: Experience | undefined;
+    isDeleted?: boolean;
+}
+
+export class Experience extends BaseAuditableEntity implements IExperience {
+    projectId?: number | undefined;
+    project?: Project | undefined;
+    title?: string | undefined;
+    description?: string | undefined;
+    experienceDate?: Date | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+
+    constructor(data?: IExperience) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.projectId = _data["projectId"];
+            this.project = _data["project"] ? Project.fromJS(_data["project"]) : <any>undefined;
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.experienceDate = _data["experienceDate"] ? new Date(_data["experienceDate"].toString()) : <any>undefined;
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Experience {
+        data = typeof data === 'object' ? data : {};
+        let result = new Experience();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["projectId"] = this.projectId;
+        data["project"] = this.project ? this.project.toJSON() : <any>undefined;
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["experienceDate"] = this.experienceDate ? this.experienceDate.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IExperience extends IBaseAuditableEntity {
+    projectId?: number | undefined;
+    project?: Project | undefined;
+    title?: string | undefined;
+    description?: string | undefined;
+    experienceDate?: Date | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+}
+
+export class Education extends BaseAuditableEntity implements IEducation {
+    level?: string | undefined;
+    title?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+
+    constructor(data?: IEducation) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.level = _data["level"];
+            this.title = _data["title"];
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Education {
+        data = typeof data === 'object' ? data : {};
+        let result = new Education();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["level"] = this.level;
+        data["title"] = this.title;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IEducation extends IBaseAuditableEntity {
+    level?: string | undefined;
+    title?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+}
+
+export class Post extends BaseAuditableEntity implements IPost {
+    content?: string | undefined;
+    imageURL?: string | undefined;
+    videoURL?: string | undefined;
+    numberOfLikes?: number;
+    numberOfComments?: number;
+    userId?: number;
+    user?: InnerUser | undefined;
+    likes?: Like[];
+    comments?: Comment[];
+    shares?: Share[];
+    isDeleted?: boolean;
+
+    constructor(data?: IPost) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.content = _data["content"];
+            this.imageURL = _data["imageURL"];
+            this.videoURL = _data["videoURL"];
+            this.numberOfLikes = _data["numberOfLikes"];
+            this.numberOfComments = _data["numberOfComments"];
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            if (Array.isArray(_data["likes"])) {
+                this.likes = [] as any;
+                for (let item of _data["likes"])
+                    this.likes!.push(Like.fromJS(item));
+            }
+            if (Array.isArray(_data["comments"])) {
+                this.comments = [] as any;
+                for (let item of _data["comments"])
+                    this.comments!.push(Comment.fromJS(item));
+            }
+            if (Array.isArray(_data["shares"])) {
+                this.shares = [] as any;
+                for (let item of _data["shares"])
+                    this.shares!.push(Share.fromJS(item));
+            }
+            this.isDeleted = _data["isDeleted"];
+        }
+    }
+
+    static override fromJS(data: any): Post {
+        data = typeof data === 'object' ? data : {};
+        let result = new Post();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["content"] = this.content;
+        data["imageURL"] = this.imageURL;
+        data["videoURL"] = this.videoURL;
+        data["numberOfLikes"] = this.numberOfLikes;
+        data["numberOfComments"] = this.numberOfComments;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        if (Array.isArray(this.likes)) {
+            data["likes"] = [];
+            for (let item of this.likes)
+                data["likes"].push(item.toJSON());
+        }
+        if (Array.isArray(this.comments)) {
+            data["comments"] = [];
+            for (let item of this.comments)
+                data["comments"].push(item.toJSON());
+        }
+        if (Array.isArray(this.shares)) {
+            data["shares"] = [];
+            for (let item of this.shares)
+                data["shares"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IPost extends IBaseAuditableEntity {
+    content?: string | undefined;
+    imageURL?: string | undefined;
+    videoURL?: string | undefined;
+    numberOfLikes?: number;
+    numberOfComments?: number;
+    userId?: number;
+    user?: InnerUser | undefined;
+    likes?: Like[];
+    comments?: Comment[];
+    shares?: Share[];
+    isDeleted?: boolean;
+}
+
+export class Like extends BaseAuditableEntity implements ILike {
+    userId?: number | undefined;
+    user?: InnerUser | undefined;
+    postId?: number | undefined;
+    post?: Post | undefined;
+    jobId?: number | undefined;
+    job?: Job | undefined;
+
+    constructor(data?: ILike) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            this.postId = _data["postId"];
+            this.post = _data["post"] ? Post.fromJS(_data["post"]) : <any>undefined;
+            this.jobId = _data["jobId"];
+            this.job = _data["job"] ? Job.fromJS(_data["job"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Like {
+        data = typeof data === 'object' ? data : {};
+        let result = new Like();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["postId"] = this.postId;
+        data["post"] = this.post ? this.post.toJSON() : <any>undefined;
+        data["jobId"] = this.jobId;
+        data["job"] = this.job ? this.job.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ILike extends IBaseAuditableEntity {
+    userId?: number | undefined;
+    user?: InnerUser | undefined;
+    postId?: number | undefined;
+    post?: Post | undefined;
+    jobId?: number | undefined;
+    job?: Job | undefined;
+}
+
+export class Job extends BaseAuditableEntity implements IJob {
+    title?: string | undefined;
+    description?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    comments?: Comment[] | undefined;
+    likes?: Like[] | undefined;
+    skills?: Skill[] | undefined;
+    isDeleted?: boolean;
+
+    constructor(data?: IJob) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.title = _data["title"];
+            this.description = _data["description"];
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            if (Array.isArray(_data["comments"])) {
+                this.comments = [] as any;
+                for (let item of _data["comments"])
+                    this.comments!.push(Comment.fromJS(item));
+            }
+            if (Array.isArray(_data["likes"])) {
+                this.likes = [] as any;
+                for (let item of _data["likes"])
+                    this.likes!.push(Like.fromJS(item));
+            }
+            if (Array.isArray(_data["skills"])) {
+                this.skills = [] as any;
+                for (let item of _data["skills"])
+                    this.skills!.push(Skill.fromJS(item));
+            }
+            this.isDeleted = _data["isDeleted"];
+        }
+    }
+
+    static override fromJS(data: any): Job {
+        data = typeof data === 'object' ? data : {};
+        let result = new Job();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        if (Array.isArray(this.comments)) {
+            data["comments"] = [];
+            for (let item of this.comments)
+                data["comments"].push(item.toJSON());
+        }
+        if (Array.isArray(this.likes)) {
+            data["likes"] = [];
+            for (let item of this.likes)
+                data["likes"].push(item.toJSON());
+        }
+        if (Array.isArray(this.skills)) {
+            data["skills"] = [];
+            for (let item of this.skills)
+                data["skills"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IJob extends IBaseAuditableEntity {
+    title?: string | undefined;
+    description?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    comments?: Comment[] | undefined;
+    likes?: Like[] | undefined;
+    skills?: Skill[] | undefined;
+    isDeleted?: boolean;
+}
+
+export class Comment extends BaseAuditableEntity implements IComment {
+    content?: string | undefined;
+    postId?: number | undefined;
+    post?: Post | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    jobId?: number | undefined;
+    job?: Job | undefined;
+
+    constructor(data?: IComment) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.content = _data["content"];
+            this.postId = _data["postId"];
+            this.post = _data["post"] ? Post.fromJS(_data["post"]) : <any>undefined;
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            this.jobId = _data["jobId"];
+            this.job = _data["job"] ? Job.fromJS(_data["job"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Comment {
+        data = typeof data === 'object' ? data : {};
+        let result = new Comment();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["content"] = this.content;
+        data["postId"] = this.postId;
+        data["post"] = this.post ? this.post.toJSON() : <any>undefined;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["jobId"] = this.jobId;
+        data["job"] = this.job ? this.job.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IComment extends IBaseAuditableEntity {
+    content?: string | undefined;
+    postId?: number | undefined;
+    post?: Post | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    jobId?: number | undefined;
+    job?: Job | undefined;
+}
+
+export class Share extends BaseAuditableEntity implements IShare {
+    title?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    postId?: number;
+    post?: Post | undefined;
+
+    constructor(data?: IShare) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.title = _data["title"];
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? InnerUser.fromJS(_data["user"]) : <any>undefined;
+            this.postId = _data["postId"];
+            this.post = _data["post"] ? Post.fromJS(_data["post"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Share {
+        data = typeof data === 'object' ? data : {};
+        let result = new Share();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        data["postId"] = this.postId;
+        data["post"] = this.post ? this.post.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IShare extends IBaseAuditableEntity {
+    title?: string | undefined;
+    userId?: number;
+    user?: InnerUser | undefined;
+    postId?: number;
+    post?: Post | undefined;
+}
+
+export class Follow extends BaseEntity implements IFollow {
+    followerID?: number;
+    followingID?: number;
+    follower?: InnerUser | undefined;
+    followee?: InnerUser | undefined;
+
+    constructor(data?: IFollow) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.followerID = _data["followerID"];
+            this.followingID = _data["followingID"];
+            this.follower = _data["follower"] ? InnerUser.fromJS(_data["follower"]) : <any>undefined;
+            this.followee = _data["followee"] ? InnerUser.fromJS(_data["followee"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Follow {
+        data = typeof data === 'object' ? data : {};
+        let result = new Follow();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["followerID"] = this.followerID;
+        data["followingID"] = this.followingID;
+        data["follower"] = this.follower ? this.follower.toJSON() : <any>undefined;
+        data["followee"] = this.followee ? this.followee.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IFollow extends IBaseEntity {
+    followerID?: number;
+    followingID?: number;
+    follower?: InnerUser | undefined;
+    followee?: InnerUser | undefined;
+}
+
 export class CreateSkillCommand implements ICreateSkillCommand {
     title?: string | undefined;
     userId?: number;
@@ -8906,6 +8954,7 @@ export class UserDto implements IUserDto {
     lastName?: string | undefined;
     userName?: string | undefined;
     profileImage?: string | undefined;
+    role?: string | undefined;
 
     constructor(data?: IUserDto) {
         if (data) {
@@ -8923,6 +8972,7 @@ export class UserDto implements IUserDto {
             this.lastName = _data["lastName"];
             this.userName = _data["userName"];
             this.profileImage = _data["profileImage"];
+            this.role = _data["role"];
         }
     }
 
@@ -8940,6 +8990,7 @@ export class UserDto implements IUserDto {
         data["lastName"] = this.lastName;
         data["userName"] = this.userName;
         data["profileImage"] = this.profileImage;
+        data["role"] = this.role;
         return data;
     }
 }
@@ -8950,6 +9001,7 @@ export interface IUserDto {
     lastName?: string | undefined;
     userName?: string | undefined;
     profileImage?: string | undefined;
+    role?: string | undefined;
 }
 
 export class WeatherForecast implements IWeatherForecast {

@@ -13,11 +13,15 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserDto>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
+    private readonly ICurrentUserService _userService;
+    private readonly IIdentityService _identityService;
 
-    public GetUserQueryHandler(IApplicationDbContext context, IMapper mapper)
+    public GetUserQueryHandler(IApplicationDbContext context, IMapper mapper, ICurrentUserService userService, IIdentityService identityService)
     {
         _context = context;
         _mapper = mapper;
+        _userService = userService;
+        _identityService = identityService;
     }
     public async Task<UserDto> Handle(GetUserQuery request, CancellationToken cancellationToken)
     {
@@ -27,6 +31,7 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserDto>
             throw new NotFoundException(nameof(InnerUser), request.username);
         }
 
+        var role = await _identityService.GetUserRole(_userService.UserId!);
         var entity = new UserDto
         {
             Id = user.Id,
@@ -34,6 +39,7 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserDto>
             FirstName = user.FirstName,
             LastName = user.LastName,
             ProfileImage = user.ProfileImage,
+            Role = role,
         };
 
         return entity;

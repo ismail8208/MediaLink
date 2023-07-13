@@ -24,6 +24,7 @@ export class TokenComponent implements OnInit {
         this.isError = true;
       }
     );
+
   }
 
   copyToClipboard(): void {

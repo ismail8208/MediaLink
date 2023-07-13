@@ -7,8 +7,8 @@
            <span style="margin-right: 4px;">{{listOfEndorsements.length}}</span>
             Endorsements
        </li>
-       <div class="delete" ><i class="fa fa-trash fa-lg" aria-hidden="true" (click)="deleteSkill()"></i></div>
-       <button [class.active]="isEndorsed" (click)="toggleEndorsement()" (click)="Endorsement()">
+       <div class="delete" *ngIf="isOwner"><i class="fa fa-trash fa-lg" aria-hidden="true" (click)="deleteSkill()"></i></div>
+       <button [class.active]="isEndorsed" (click)="toggleEndorsement()" (click)="Endorsement()" *ngIf="!isOwner">
         <span [class.unEndorsed]="!isEndorsed" [class.endorsed]="isEndorsed">Endorse</span>
       </button>
     </ul>

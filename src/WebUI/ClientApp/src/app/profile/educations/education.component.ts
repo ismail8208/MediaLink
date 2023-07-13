@@ -9,6 +9,7 @@ import { IEducation, IEducationDto } from 'src/app/web-api-client';
 export class EducationComponent {
 
   @Input() education?: IEducationDto;
+  @Input() isOwner: boolean;
 
   @Output() educationForUpdate: EventEmitter<IEducationDto> = new EventEmitter<IEducationDto>();
 

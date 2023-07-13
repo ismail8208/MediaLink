@@ -66,7 +66,7 @@ import { DialogComponent } from './home/post/DialogComponent/dialog.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     ModalModule.forRoot(),
-    StoreModule.forRoot({ user: userReducer })
+    StoreModule.forRoot({ user: userReducer})
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }

@@ -14,7 +14,7 @@ export const routes: Routes = [
   { path: '#openModal', component: AddSkillComponent },
   { path: 'counter', component: CounterComponent },
   { path: 'fetch-data', component: FetchDataComponent },
-  { path: 'profile', component: ProfileComponent, canActivate: [AuthorizeGuard] },
+  { path: 'profile/:username', component: ProfileComponent, canActivate: [AuthorizeGuard] },
   { path: 'todo', component: TodoComponent, canActivate: [AuthorizeGuard] },
   { path: 'token', component: TokenComponent, canActivate: [AuthorizeGuard] }
 ];
