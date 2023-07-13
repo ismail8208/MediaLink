@@ -32,7 +32,6 @@ import { UpdateExperienceComponent } from './profile/experiences/updateExperienc
 import { converToRoot } from './sheard/conver-to-root.pip';
 import { PostComponent } from './home/post/post.component';
 import { AddPostCardComponent } from './home/addPostCard/addPostCard.component';
-import { DialogComponent } from './home/post/DialogComponent/dialog.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +55,6 @@ import { DialogComponent } from './home/post/DialogComponent/dialog.component';
     converToRoot,
     PostComponent,
     AddPostCardComponent,
-    DialogComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
