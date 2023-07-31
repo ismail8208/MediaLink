@@ -3,21 +3,23 @@
     <div class="card-body">
         <div class="textbox" (click)="showNewPostModal(newPostModalTemplate)">
             <span>
-                <img src="" class="userImg">
+                <a href="" [routerLink]="['/profile/{{Comment.userName}}']">  <img [src]="user.profileImage" class="userImg"></a>
             </span>
             <span><button class="startAPost">
                     start a post
                 </button></span>
+    
         </div>
-        <span><button class="reacts">
-                <i class="bi bi-image"></i>
+        
+        <span><button class="reacts" >
+                <i class="bi bi-image" style="color:green"></i>
                 <span class="reactspan">Photo</span>
             </button></span>
         <span><button class="reacts">
-                <i class="bi bi-play-btn-fill"></i>
+                <i class="bi bi-play-btn-fill"  style="color:darkred"></i>
                 <span class="reactspan">Video</span>
             </button></span>
-        <span><button class="reacts">
+        <span *ngIf="user.role=='admin'"><button class="reacts">
                 <i class="bi bi-briefcase-fill"></i>
                 <span class="reactspan">Job</span>
             </button></span>

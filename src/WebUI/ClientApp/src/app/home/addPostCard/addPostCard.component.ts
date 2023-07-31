@@ -44,8 +44,6 @@ export class AddPostCardComponent implements OnInit {
   }
   addPost(): void {
     
-  
-
       this.postsClinte.create(this.newPostEditor.content,this.newPostEditor.image as FileParameter,this.newPostEditor.video as FileParameter,this.user.id)
       .subscribe( error => console.error(error))
       this.newPostEditor.content={};

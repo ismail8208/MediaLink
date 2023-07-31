@@ -1,5 +1,15 @@
 import { Component, OnInit, TemplateRef,  } from '@angular/core';
-import { PostDto, PostsClient, LikesClient, CreateLikeCommand, IUserDto, CommentsClient, CreateCommentCommand, ICommentDto } from '../../web-api-client';
+import { 
+  PostDto,
+  PostsClient,
+  LikesClient, 
+  CreateLikeCommand, 
+  IUserDto, 
+  CommentsClient, 
+  CreateCommentCommand, 
+  ICommentDto, 
+  UsersClient
+ } from '../../web-api-client';
 import { mergeMap, of } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { selectUser } from 'src/app/stateManagement/user.selectors';
@@ -21,6 +31,8 @@ export class PostComponent implements OnInit {
   thispost: number = 1;
   public posts: Postsw[] = [];
   user: IUserDto;
+  users: IUserDto[];
+
   like = {
     userId: 2,
     postId: 5,
@@ -30,7 +42,8 @@ export class PostComponent implements OnInit {
     private likeClient: LikesClient,
     private commentClient: CommentsClient,
     private store: Store,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private usersClient:UsersClient,
   ) { }
 
 

@@ -1,3 +1,9 @@
+a{
+  text-decoration: none;
+  color: #686868;
+}
+
+
 .postContainer{
   width: 700px;
 text-align: center;
@@ -23,6 +29,13 @@ box-shadow: 0 2px 8px rgba(156, 156, 156, 0.4); /* ظل للدايلوج */
 hr{
   margin-bottom: 3px;
   margin-top:  0px; ;
+}
+.mainhr{
+  width: 700px;
+  margin: auto;
+  color:#000000 ;
+  text-align: center;
+ 
 }
 
 .reacts:hover {
@@ -133,9 +146,7 @@ justify-content: left;
   box-shadow: 1px 1px 3px #000;
   box-shadow: 1px 1px 3px #000;
   }
-  a{
-    text-decoration: none;
-  }
+
   .text-body{
     text-align: left;
     margin-top: 18px;
@@ -183,4 +194,20 @@ justify-content: left;
     margin-right: 7px;
   }
   
+  .commentimg{
+    margin:3px 8px 8px 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+
+  }
+  .commentDetails{
+    margin: 3px 8px 8px 8px;
+    display: flex;
+    align-items: center;
   
+  }
+  .commentDetails-body{
+    text-align: left;
+    margin-top: 8px;
+
+
+  }

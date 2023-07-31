@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { AuthorizeService } from 'src/api-authorization/authorize.service';
 import { IUserDto } from '../web-api-client';
 import { Store } from '@ngrx/store';
