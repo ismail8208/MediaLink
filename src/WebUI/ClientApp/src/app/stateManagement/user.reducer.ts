@@ -14,3 +14,17 @@ export const userReducer = createReducer(
   initialState,
   on(setUser, (state, { user }) => ({ ...state, user }))
 );
+
+// export interface UserRoleState {
+//   role: string | null;
+// }
+
+// export const initialUserState: UserRoleState = {
+//   role: null
+// };
+
+
+// export const userRoleReducer = createReducer(
+//   initialUserState,
+//   on(setUserRole, (state, { role }) => ({ ...state, role }))
+// );

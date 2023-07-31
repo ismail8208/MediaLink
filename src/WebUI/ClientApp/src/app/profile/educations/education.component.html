@@ -7,7 +7,7 @@
             <i class="fa fa-circle" style="font-size:7px;margin: 5px 5px 5px 20px;"></i>
             {{education!.level}}</span>  
        </li>
-       <div class="details">
+       <div class="details" *ngIf="isOwner">
         <div class="delete" ><i class="fa fa-trash fa-lg" aria-hidden="true" (click)="deleteEducation()"></i></div>
         <span (click)="openD()"><div class="edit"><i class='fa fa-edit fa-lg' (click)="send()"></i> 
         </div>

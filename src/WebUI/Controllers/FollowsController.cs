@@ -2,6 +2,7 @@
 using MediaLink.Application.Follows.Commands.CancelFollower;
 using MediaLink.Application.Follows.Commands.Follow;
 using MediaLink.Application.Follows.Commands.UnFollow;
+using MediaLink.Application.Follows.Queries;
 using MediaLink.Application.Follows.Queries.GetFollowers;
 using MediaLink.Application.Follows.Queries.GetFollowingsWithPagination;
 using MediaLink.Domain.Entities;
@@ -31,13 +32,13 @@ public class FollowsController : ApiControllerBase
     }
 
     [HttpGet("Followings")]
-    public async Task<ActionResult<PaginatedList<InnerUser>>> GetFollowingsWithPagination([FromQuery] GetFollowingsWithPaginationQuery query)
+    public async Task<ActionResult<PaginatedList<BriefUserDto>>> GetFollowingsWithPagination([FromQuery] GetFollowingsWithPaginationQuery query)
     {
         return await Mediator.Send(query);
     }
 
     [HttpGet("Followers")]
-    public async Task<ActionResult<PaginatedList<InnerUser>>> GetFollowersWithPagination([FromQuery] GetFollowersWithPaginationQuery query)
+    public async Task<ActionResult<PaginatedList<BriefUserDto>>> GetFollowersWithPagination([FromQuery] GetFollowersWithPaginationQuery query)
     {
         return await Mediator.Send(query);
     }

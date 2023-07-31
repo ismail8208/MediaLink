@@ -15,6 +15,11 @@ export class SkillComponent implements OnInit {
   userId: number;
   isEndorsed = false;
   endorseId: number;
+  @Input() isOwner: boolean;
+  
+  @Input() skill: ISkillDto; 
+   
+  @Output() skillForDeleted: EventEmitter<number> = new EventEmitter<number>();
   constructor(
     private endorsementsClient: EndorsementsClient,
     private store: Store,
@@ -36,9 +41,6 @@ export class SkillComponent implements OnInit {
     );
   }
 
-  @Input() skill: ISkillDto; 
-   
-  @Output() skillForDeleted: EventEmitter<number> = new EventEmitter<number>();
   
   Endorsement(){
     if(!this.isEndorsed) 

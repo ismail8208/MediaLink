@@ -79,4 +79,21 @@ public class IdentityService : IIdentityService
 
         return result.ToApplicationResult();
     }
+
+    public async Task<string?> GetUserRole(string userId)
+    {
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user != null)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            if (roles != null && roles.Any())
+            {
+                var userRole = roles.First();
+                return userRole;
+            }
+            return null;
+        }
+        else { return null; }
+    }
 }

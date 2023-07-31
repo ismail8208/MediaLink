@@ -4,6 +4,7 @@ import { AuthorizeService } from 'src/api-authorization/authorize.service';
 import { IUserDto } from '../web-api-client';
 import { Store } from '@ngrx/store';
 import { setUser } from '../stateManagement/user.actions';
+import { TokenService } from '../sheard/tokenService';
 
 @Component({
   selector: 'app-home',
@@ -12,12 +13,18 @@ import { setUser } from '../stateManagement/user.actions';
 })
 export class HomeComponent implements OnInit {
 
-  user: IUserDto
-  constructor(private authorizeService: AuthorizeService, private store: Store)
-  {
+  user: IUserDto;
+  userRole: any;
+  token: string = "";
+  isError: boolean = false;
 
+  constructor(private authorizeService: AuthorizeService, private store: Store, private tokenService: TokenService)
+  {
   }
+
   ngOnInit(): void {
+
+
     this.authorizeService.getUserInfo().subscribe({
       next: data => {
         this.user = data;
@@ -30,6 +37,7 @@ export class HomeComponent implements OnInit {
         this.store.dispatch(setUser({ user: this.user }));
       } 
     });
+
   }
 
   

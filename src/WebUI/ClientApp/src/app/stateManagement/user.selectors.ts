@@ -10,3 +10,11 @@ export const selectUser = createSelector(
   selectUserState,
   (state: UserState) => state.user
 );
+
+// export const selectUserRoleState = createFeatureSelector<UserRoleState>('role');
+
+
+// export const selectUserRole = createSelector(
+//   selectUserRoleState,
+//   (state: UserRoleState) => state.role
+// );

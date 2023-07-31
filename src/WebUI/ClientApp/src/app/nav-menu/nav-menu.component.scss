@@ -36,3 +36,22 @@ a:hover {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 // 231E39
+.search-box {
+  position: relative;
+}
+.searchbar {
+  font-size: 12px;
+  width: 15rem;
+  height: 2rem;
+  border: none;
+  outline: none;
+  border-radius: 10rem;
+  padding: 10px;
+  transition: all .1s;
+  transition-delay: .1s;
+}
+
+.searchbar:hover {
+  border-radius: 0;
+  width: 20rem;
+}
